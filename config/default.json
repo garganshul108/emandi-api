@@ -2,5 +2,6 @@
   "db-hostname": "gloud",
   "db-host": "35.240.161.166",
   "db-name": "emandi-db",
-  "db-password": "password@1234"
+  "db-password": "password@1234",
+  "sms-apikey": "84chSBOeylkvaQ3HsRd16tnmf7wU2rLpDFNYoMZTjGKJiA0gEPjXSFrtloVmnx1NPK3QYsZpTAiduveR"
 }

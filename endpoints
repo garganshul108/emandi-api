@@ -1,0 +1,54 @@
+/admin POST
+
+/login POST
+/signup POST
+/customer/:id PUT
+/customer/:id DELETE
+
+/distributor POST
+/distributor/:id PUT
+/distributor/:id DELETE
+
+/product POST
+/product GET
+/product/:id DELETE
+
+/product/:state_id/:city_id GET
+/product/:state_id/:city_id POST
+
+/crop GET
+/crop POST
+
+/order POST
+/order GET
+
+/complaint POST
+/complaint GET
+/complaint/:id GET
+/complaint/:id POST
+
+/proof/:id GET
+/proof/:complaint_id GET
+/proof POST
+
+/city GET
+/city POST
+
+/state GET
+/state POST
+
+
+---------previledged admin calls---------
+/admin/product GET
+/admin/customer GET
+/admin/distrubutor GET
+
+/admin/product DELETE
+/admin/customer DELETE
+/admin/distrubutor DELETE
+
+/admin/customer/:id PUT (issue BAN)
+/admin/distrubutor/:id PUT (issue BAN)
+
+/admin/customer/:id DELETE
+/admin/distrubutor/:id DELETE

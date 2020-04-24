@@ -13,9 +13,14 @@ connection.query("Select database() as db_name;", (err, result) => {
   console.log("Result: ", result[0].db_name);
 });
 
-app.get("/", (req, res) => {
+app.get("/:pathname?", (req, res) => {
+  if (req.params.pathname) res.write("No path " + req.params.pathname + "\n");
   res.write("Emandi Server is active");
   res.end();
+});
+
+app.use((req, res) => {
+  res.redirect("/");
 });
 
 app.listen(PORT, () => {
