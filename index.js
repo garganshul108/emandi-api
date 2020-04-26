@@ -8,6 +8,8 @@ const morgan = require("morgan");
 
 const login = require("./routes/login");
 const state = require("./routes/state");
+const city = require("./routes/city");
+
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -17,7 +19,7 @@ app.use(compression());
 
 app.use("/login", login);
 app.use("/state", state);
-
+app.use("/city", city);
 // app.use("/state", state);
 
 // app.post("/city", (req, res) => {});

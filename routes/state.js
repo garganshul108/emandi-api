@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const connectionPool = require("../db/pool");
-const checkAdmin = require("../middleware/checkAdmin");
+const authAdmin = require("../middleware/authAdmin");
 const decodeToken = require("../middleware/decodeToken");
 
 router.get("/", (req, res) => {
@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.put("/", [decodeToken, checkAdmin], (req, res) => {
+router.put("/", [decodeToken, authAdmin], (req, res) => {
   const { state_id, name } = req.body;
   if (!state_id || !name) {
     return res.status(400).send('"state_id" and "name" must be specified');
@@ -71,7 +71,7 @@ router.put("/", [decodeToken, checkAdmin], (req, res) => {
   });
 });
 
-router.delete("/", [decodeToken, checkAdmin], (req, res) => {
+router.delete("/", [decodeToken, authAdmin], (req, res) => {
   const { state_id } = req.body;
   if (!state_id) {
     return res.status(400).send('"state_id" must be specified');
@@ -95,7 +95,7 @@ router.delete("/", [decodeToken, checkAdmin], (req, res) => {
   });
 });
 
-router.post("/", [decodeToken, checkAdmin], (req, res) => {
+router.post("/", [decodeToken, authAdmin], (req, res) => {
   const { name } = req.body;
   if (!name) {
     return res.status(400).send('"name" of the state must be specified');
