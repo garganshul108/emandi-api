@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
         }
         if (results.length < 1) {
           connection.release();
-          return res.status(401).send("Invalid Credentials");
+          return res.status(404).send("Invalid Credentials");
         }
         // console.log("Error passes");
 
@@ -44,7 +44,7 @@ router.post("/", (req, res) => {
             // console.log(token);
             connection.release();
             return res
-              .header("x-auth-key", token)
+              .header("x-auth-token", token)
               .status(201)
               .send(`Successfully Logged in as Admin: ${username}`);
           } catch (ex) {

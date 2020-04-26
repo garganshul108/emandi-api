@@ -1,1 +1,10 @@
-{}
+{
+  "otp-template-1": {
+    "template-id": "26535",
+    "template-variable-order": "{#BB#}|{#AA#}"
+  },
+  "otp-template-2": {
+    "template-id": "26663",
+    "template-variable-order": "{#BB#}|{#AA#}"
+  }
+}
