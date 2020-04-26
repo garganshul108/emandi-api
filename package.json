@@ -8,6 +8,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
+  "engines": {
+    "node": "12.16.1"
+  },
   "keywords": [
     "API",
     "Backend",
@@ -16,8 +19,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^4.0.1",
+    "compression": "^1.7.4",
     "config": "^3.3.1",
     "express": "^4.17.1",
+    "helmet": "^3.22.0",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "mysql": "^2.18.1"
   },
   "devDependencies": {

@@ -1,0 +1,13 @@
+{
+  "bcrypt-salt-level": "api_emandi_bcrypt_salt_level",
+
+  "db-host-platform": "api_emandi_db_host_platform",
+  "db-host": "api_emandi_db_host",
+  "db-user": "api_emandi_db_user",
+  "db-password": "api_emandi_db_password",
+  "db-name": "api_emandi_db_name",
+
+  "sms-apikey": "api_emandi_sms_apikey",
+
+  "jwt-secret-key": "api_emandi_jwt_secret_key"
+}

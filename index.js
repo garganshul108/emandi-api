@@ -1,28 +1,37 @@
 const express = require("express");
-const connection = require("./db/root");
+const helmet = require("helmet");
+const compression = require("compression");
 const app = express();
 const PORT = process.env.PORT || 8080;
-const config = require("config");
 
-const tf = require("./test_file");
+const morgan = require("morgan");
 
-app.use("/tf", tf);
+const login = require("./routes/login");
+const state = require("./routes/state");
+app.use(morgan("tiny"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(`${__dirname}/public`));
+app.use(helmet());
+app.use(compression());
 
-connection.query("Select database() as db_name;", (err, result) => {
-  if (err) throw err;
-  console.log("Result: ", result[0].db_name);
-});
+app.use("/login", login);
+app.use("/state", state);
 
-app.get("/:pathname?", (req, res) => {
-  if (req.params.pathname) res.write("No path " + req.params.pathname + "\n");
-  res.write("Emandi Server is active");
-  res.end();
-});
+// app.use("/state", state);
 
-app.use((req, res) => {
-  res.redirect("/");
-});
+// app.post("/city", (req, res) => {});
+
+// app.post("/vendor", (req, res) => {});
+
+// app.get("/login", (req, res) => {
+//   res.send("Login Workspace");
+// });
+
+// app.get("/", (req, res) => {
+//   res.send("Root Workspace");
+// });
 
 app.listen(PORT, () => {
-  console.log(`Listening to Port ${PORT}`);
+  console.log(`Listening to ${PORT}...`);
 });

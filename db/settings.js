@@ -1,6 +1,9 @@
+const config = require("config");
+
 module.exports = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: "emandi-db",
+  connectionLimt: 1,
+  host: config.get("db-host"),
+  user: config.get("db-user"),
+  password: config.get("db-password"),
+  database: config.get("db-name"),
 };

@@ -1,3 +1,24 @@
+create table ADMIN(
+	admin_id INT PRIMARY KEY AUTO_INCREMENT,
+	api_key VARCHAR(500),
+	name VARCHAR(25)
+);
+
+create table STATE(
+	--- HANDLED BY ADMIN ---
+	state_id TINYINT AUTO_INCRMENT,
+	name VARCHAR(25)
+);
+
+
+create table CITY(
+	--- HANDLED BY ADMIN ---
+	city_id SMALLINT AUTO_INCREMENT,
+	name VARCHAR(25),
+	state_id TINYINT
+);
+
+
 create table VENDOR (
 	--- PROFILE ---
 	vendor_id INT AUTO_INCREMENT,
@@ -53,18 +74,6 @@ create table USER(
 	defaulter_period TIMESTAMP
 );
 
-create table CITY(
-	--- HANDLED BY ADMIN ---
-	city_id SMALLINT AUTO_INCREMENT,
-	name VARCHAR(25),
-	state_id TINYINT
-);
-
-create table STATE(
-	--- HANDLED BY ADMIN ---
-	state_id TINYINT AUTO_INCRMENT,
-	name VARCHAR(25)
-);
 
 
 -- relates distributor participation in sale
@@ -176,9 +185,3 @@ create table PROOF(
 	description VARCHAR(500)
 );
 
-
-create table ADMIN(
-	admin_id INT AUTO_INCREMENT,
-	api_key VARCHAR(500),
-	admin_status TINYINT DEFAULT 3, -- 0: govt, 1: prime_admin, 2: delegates, 3: app 
-);
