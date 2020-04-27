@@ -29,6 +29,10 @@ app.use("/state", state);
 app.use("/city", city);
 app.use("/vendor", vendor);
 
+app.get("/", (req, res) => {
+  res.status(200).send("Server is up and running....");
+});
+
 // app.use("/state", state);
 
 // app.post("/city", (req, res) => {});
