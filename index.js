@@ -56,3 +56,21 @@ app.use("/vendor", vendor);
 //     console.log(ex);
 //   }
 // })();
+
+//
+// const connectionPool = require("./db/pool");
+// (() => {
+//   connectionPool.getConnection((err, connection) => {
+//     if (err) {
+//       console.log("INDEX");
+//       throw err;
+//     }
+//     console.log("ROLLBACK BEFORE: ", connection.rollback);
+//     connection.beginTransaction((err) => {
+//       if (err) {
+//         console.log("INDEX");
+//         throw err;
+//       }
+//     });
+//   });
+// })();

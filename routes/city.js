@@ -1,24 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const connectionPool = require("../db/pool");
-const authAdmin = require("../middleware/authAdmin");
-const decodeToken = require("../middleware/decodeToken");
+const authAdmin = require("../middleware/auth_admin");
+const decodeToken = require("../middleware/decode_token");
+
+const simpleGET = require("../db/requests/simple_get");
+const simpleDELETE = require("../db/requests/simple_delete");
 
 router.get("/", (req, res) => {
   const sql = `select * from CITY`;
-  return connectionPool.getConnection((err, connection) => {
-    if (err) {
-      return res.status(500).send("Internal Server Error");
-    }
-    return connection.query(sql, (err, results, fields) => {
-      if (err) {
-        connection.release();
-        return res.status(500).send("Internal Server Error");
-      }
-      connection.release();
-      return res.status(200).send(results);
-    });
-  });
+  return simpleGET(sql, req, res);
+  // return connectionPool.getConnection((err, connection) => {
+  //   if (err) {
+  //     return res.status(500).send("Internal Server Error");
+  //   }
+  //   return connection.query(sql, (err, results, fields) => {
+  //     if (err) {
+  //       connection.release();
+  //       return res.status(500).send("Internal Server Error");
+  //     }
+  //     connection.release();
+  //     return res.status(200).send(results);
+  //   });
+  // });
 });
 
 router.post("/", [decodeToken, authAdmin], (req, res) => {
@@ -146,23 +150,25 @@ router.delete("/", [decodeToken, authAdmin], (req, res) => {
   if (!city_id) {
     return res.status(400).send('"city_id" must be specified');
   }
-
-  return connectionPool.getConnection((err, connection) => {
-    if (err) {
-      console.log("Error while getting connection from pool");
-      console.log(err);
-      return res.status(500).send("Internal Server Error");
-    }
-    const sql = `delete from CITY where city_id="${city_id}";`;
-    return connection.query(sql, (err, results, fields) => {
-      if (err) {
-        connection.release();
-        return res.status(400).send(err.message);
-      }
-      connection.release();
-      return res.status(201).send("The city has been deleted");
-    });
+  const sql = `delete from CITY where city_id="${city_id}";`;
+  return simpleDELETE(sql, req, res, () => {
+    return res.status(201).send("City Deleted Successfully");
   });
+  // return connectionPool.getConnection((err, connection) => {
+  //   if (err) {
+  //     console.log("Error while getting connection from pool");
+  //     console.log(err);
+  //     return res.status(500).send("Internal Server Error");
+  //   }
+  //   return connection.query(sql, (err, results, fields) => {
+  //     if (err) {
+  //       connection.release();
+  //       return res.status(400).send(err.message);
+  //     }
+  //     connection.release();
+  //     return res.status(201).send("The city has been deleted");
+  //   });
+  // });
 });
 
 module.exports = router;

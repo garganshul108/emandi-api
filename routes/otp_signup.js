@@ -3,11 +3,9 @@ const router = express.Router();
 const connectionPool = require("../db/pool");
 const sendOTP = require("../util/otp_service");
 const jwt = require("../util/jwt");
-const otpGenerator = require("../util/otp_generator");
 
 router.get("/", (req, res) => {
   const { contact, type } = req.query;
-  // console.log(req.query);
   if (!contact || !type) {
     return res.status(400).send('"type" and "contact" both/one not specified');
   }
@@ -26,16 +24,16 @@ router.get("/", (req, res) => {
           connection.release();
           return res.status(500).send("Error occured while quering");
         }
-        if (results.length <= 0) {
+        if (results.length > 0) {
           connection.release();
-          return res.status(404).send("Unregistered Vendor");
+          return res.status(400).send("Vendor already registered!");
         }
-        vendor_id = results[0].vendor_id;
-        const otp = otpGenerator();
+
+        const otp = Math.floor(10000 + Math.random() * 90000);
         (async (req, res, connection) => {
           try {
             await sendOTP(contact, "otp-template-2", `${contact}|${otp}`);
-            let sql2 = `insert into OTP_LOGIN(subscriber_type, subscriber_id, contact, otp) values ("vendor",${vendor_id}, ${contact}, ${otp});`;
+            let sql2 = `insert into OTP_SIGNUP(subscriber_type, contact, otp) values ("vendor", ${contact}, ${otp});`;
             return connection.query(sql2, (err, results, fields) => {
               if (err) {
                 console.log("Error while registering OTP");
@@ -52,7 +50,6 @@ router.get("/", (req, res) => {
     });
   } else if (type === "user") {
   }
-
   return res.status(400).send('"type" specified is not correct');
 });
 
