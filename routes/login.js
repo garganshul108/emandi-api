@@ -57,8 +57,10 @@ router.post("/", (req, res) => {
     });
   } else if (type === "vendor") {
     // TBI
+    return res.status(400).send("Facility Not available");
   } else if (type === "user") {
     //TBI
+    return res.status(400).send("Facility Not available");
   }
 
   return res.status(400).send("Invalid Request Format");

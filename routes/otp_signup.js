@@ -119,7 +119,7 @@ router.post("/", (req, res) => {
               vendor_id: result.subscriber_id,
               isVendor: 1,
             };
-            sql2 = `insert into VENDOR(contact) VALUES(${contact})`;
+            sql2 = `insert into VENDOR(contact, device_fcm_token) VALUES(${contact}, ${device_fcm_token})`;
             sql3 = "select LAST_INSERT_ID() as vendor_id from VENDOR";
           } else if (type === "user") {
             payload = {
@@ -127,7 +127,7 @@ router.post("/", (req, res) => {
               vendor_id: result.subscriber_id,
               isUser: 1,
             };
-            sql2 = `insert into USER(contact) VALUES(${contact})`;
+            sql2 = `insert into USER(contact, device_fcm_token) VALUES(${contact}, ${device_fcm_token})`;
             sql3 = "select LAST_INSERT_ID() as user_id from USER";
           } else {
             return res.status(400).send('"type" specified is not correct');

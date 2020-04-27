@@ -5,7 +5,6 @@ module.exports = (sql, req, res, callback) => {
     if (err) {
       console.log("Error while getting connection from pool");
       console.log(err);
-      connection.release();
       return res.status(500).send("Internal Server Error");
     }
     return connection.query(sql, (err, results, fields) => {

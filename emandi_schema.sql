@@ -5,33 +5,48 @@ create table ADMIN(
 );
 
 create table STATE(
-	--- HANDLED BY ADMIN ---
 	state_id TINYINT AUTO_INCRMENT,
 	name VARCHAR(25)
 );
 
 
 create table CITY(
-	--- HANDLED BY ADMIN ---
 	city_id SMALLINT AUTO_INCREMENT,
 	name VARCHAR(25),
 	state_id TINYINT
 );
 
+create table OTP_SIGNUP(
+    subscriber_type VARCHAR(20) NOT NULL,
+    contact BIGINT PRIMARY KEY,
+    otp INT NOT NULL,
+    reg_timestamp TIMESTAMP DEFAULT NOW()
+);
+
+create table OTP_LOGIN(
+	subscriber_id INT,
+	subscriber_type VARCHAR(20) NOT NULL,
+    contact BIGINT PRIMARY KEY,
+    otp INT NOT NULL,
+    reg_timestamp TIMESTAMP DEFAULT NOW()
+);
 
 create table VENDOR (
 	--- PROFILE ---
-	vendor_id INT AUTO_INCREMENT,
-	type CHAR(1) NOT NULL,
-	name VARCHAR(25) NOT NULL, 
-	state_id  TINYINT NOT NULL,
-	city_id SMALLINT NOT NULL,
-	pin_code SMALLINT NOT NULL,
-	reg_date TIMESTAMP NOT NULL,
-	unreg_date TIMESTAMP,
-	address VARCHAR(1000),
+	-- SIGN UP VIA OTP --
+	vendor_id INT AUTO_INCREMENT PRIMARY KEY,
 	contact BIGINT,
-	profile_picture VARCHAR(1000),	
+	-- PROFILE --
+	type CHAR(1) NOT NULL,
+	name VARCHAR(25), 
+	state_id  TINYINT,
+	city_id SMALLINT,
+	pin_code SMALLINT,
+	address VARCHAR(1000),
+	profile_picture VARCHAR(1000),
+	-- AUTOMATIC --
+	reg_date TIMESTAMP NOT NULL DEFAULT NOW(),
+	unreg_date TIMESTAMP,
 	--- DEVICE RELATED --- SENT ON LOGIN/SIGNUP
 	device_fcm_token VARCHAR(500),
 	--- ORDER RELATED --- HANDLED INTERNALLY
@@ -50,8 +65,10 @@ create table VENDOR (
 
 
 create table USER(
-	--- PROFILE ---
+	--- SIGNUP LOGIN ----
 	user_id INT AUTO_INCREMENT,
+device_fcm_token VARCHAR(500),
+	--- PROFILE ---
 	name VARCHAR(25) NOT NULL, 
 	state_id  TINYINT NOT NULL,
 	city_id SMALLINT NOT NULL,
@@ -62,7 +79,7 @@ create table USER(
 	contact BIGINT,
 	profile_picture VARCHAR(1000),
 	--- DEVICE RELATED ---
-	device_fcm_token VARCHAR(500),
+	
 	--- ORDER RELATED --- HANDLED INTERNALLY
 	orders_issued INT DEFAULT 0,
 	orders_cancelled_by_user INT DEFAULT 0,
@@ -84,6 +101,22 @@ create table USER(
 -- );
 
 -- relates distributor and consumer
+
+
+
+create table CROP(
+	crop_id INT AUTO_INCREMENT,
+	vendor_id INT,
+	qty DECIMAL(10,2) NOT NULL,
+	crop_name VARCHAR(200) NOT NULL,
+	crop_type_id INT,
+	packed_date TIMESTAMP NOT NULL DEFAULT NOW(),
+	exp_date TIMESTAMP,
+	description VARCHAR(200),
+	freeze_status TINYINT DEFAULT 0 -- 0: can be edited, 1: cannot be edited
+	
+);
+
 create table ORDER(
 	--- PROFILE ---
 	order_id INT AUTO_INCREMENT,
@@ -104,6 +137,10 @@ create table ORDERED_ITEM(
 	product_id INT NOT NULL
 );
 
+
+
+
+
 -- relates custumer to the choosen product
 create table CART(
 	user_id INT NOT NULL,
@@ -120,17 +157,6 @@ create table PRODUCT(
 
 
 
-create table CROP(
-	crop_id INT AUTO_INCREMENT,
-	vendor_id INT,
-	qty DECIMAL(10,2) NOT NULL,
-	crop_name VARCHAR(200) NOT NULL,
-	crop_type_id INT,
-	packed_date TIMESTAMP NOT NULL DEFAULT NOW(),
-	exp_date TIMESTAMP,
-	freeze_status TINYINT DEFAULT 0, -- 0: can be edited, 1: cannot be edited
-	description VARCHAR(200)
-);
 
 create table CROP_TYPE(
 	crop_type_id INT AUTO_INCREMENT,

@@ -13,8 +13,11 @@ const morgan = require("morgan");
 const login = require("./routes/login");
 const state = require("./routes/state");
 const city = require("./routes/city");
-const vendor = require("./routes/vendor");
 const otp_login = require("./routes/otp_login");
+const otp_signup = require("./routes/otp_signup");
+
+const vendor = require("./routes/vendor");
+const user = require("./routes/user");
 
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -25,9 +28,19 @@ app.use(compression());
 
 app.use("/login", login);
 app.use("/otp_login", otp_login);
+app.use("/otp_signup", otp_signup);
 app.use("/state", state);
 app.use("/city", city);
 app.use("/vendor", vendor);
+app.use("/user", user);
+
+app.get("/", (req, res) => {
+  return res
+    .status(200)
+    .send(
+      "<h1 style=\"font-family: 'Fira Code';\">Server is up and running...<h1>"
+    );
+});
 
 // app.use("/state", state);
 
