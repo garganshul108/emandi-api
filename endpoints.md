@@ -10,14 +10,14 @@
 > - if this parameter is not specified then admin action is needed
 > - other parameters are optional
 
-| Action           | Endpoint    | Use case                        | Query Parameters                             | Post Object Format                                                                                 | special token needed |
-| ---------------- | ----------- | ------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------- |
+| Action           | Endpoint    | Use case                        | Query Parameters                             | Post Object Format                                                                                 | special token needed | Return                |
+| ---------------- | ----------- | ------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------- | --------------------- |
 | **login/signup** |
-| POST             | /login      | Login admin                     |                                              | type(admin; vendor; user)<br/><br/>username<br/><br/>password                                      |
-| GET              | /otp_login  | vendor; user; for getting OTP   | type("vendor";"user")<br/><br/>contact(int)  |
-| POST             | /otp_login  | vendor; user for confirming OTP |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor";"user")<br/><br/> device_fcm_token(string) |
-| GET              | /otp_signup |                                 | contact(int)<br/><br/> type("vendor";"user") |
-| POST             | /otp_signup |                                 |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor","user")<br/><br/> device_fcm_token(string) |
+| POST             | /login      | Login admin                     |                                              | type(admin; vendor; user)<br/><br/>username<br/><br/>password                                      |                      | admin_token in header |
+| GET              | /otp_login  | vendor; user; for getting OTP   | type("vendor";"user")<br/><br/>contact(int)  |                                                                                                    |                      |
+| POST             | /otp_login  | vendor; user for confirming OTP |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor";"user")<br/><br/> device_fcm_token(string) |                      | token in header       |
+| GET              | /otp_signup |                                 | contact(int)<br/><br/> type("vendor";"user") |                                                                                                    |                      |
+| POST             | /otp_signup |                                 |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor","user")<br/><br/> device_fcm_token(string) |                      | token in header       |
 
 | Action     | Endpoint           | Use case                | Query Parameters                 | Post Object Format                                                                                                                                                           | special token needed           |
 | ---------- | ------------------ | ----------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
