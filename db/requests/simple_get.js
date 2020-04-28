@@ -16,7 +16,7 @@ module.exports = (sql, req, res) => {
         return res.status(400).send(err.message);
       }
       connection.release();
-      console.log(fields);
+      // console.log(fields);
       return res.status(200).send(results);
     });
   });

@@ -16,6 +16,8 @@ create table CITY(
 	state_id TINYINT
 );
 
+---- in dev db ----
+
 create table OTP_SIGNUP(
     subscriber_type VARCHAR(20) NOT NULL,
     contact BIGINT PRIMARY KEY,
