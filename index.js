@@ -87,3 +87,8 @@ app.get("/", (req, res) => {
 //     });
 //   });
 // })();
+
+// (async () => {
+//   const { hash } = require("./util/hash");
+//   console.log(await hash(""));
+// })();

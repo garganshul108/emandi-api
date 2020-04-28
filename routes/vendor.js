@@ -174,7 +174,7 @@ router.get("/crop/:crop_id", [decodeToken, authVendor], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.post("/crop", [decodeToken.authVendor], async (req, res) => {
+router.post("/crop", [decodeToken, authVendor], async (req, res) => {
   let vendor_id = req.actor.vendor_id;
   let {
     qty,
