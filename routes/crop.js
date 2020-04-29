@@ -1,33 +1,89 @@
 const express = require("express");
 const router = express.Router();
-const connectionPool = require("../db/pool");
 
-const authAdmin = require("../middleware/auth_admin");
-const authVendor = require("../middleware/auth_vendor");
-const decodeToken = require("../middleware/decode_token");
+const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 
-const simpleGET = require("../db/requests/simple_get");
+let attributes = [
+  "crop_id",
+  "qty",
+  "crop_name",
+  "crop_type_id",
+  "packed_date",
+  "exp_date",
+  "description",
+  "state_id",
+  "city_id",
+  "crop_class",
+  "crop_type_name",
+  "vendor_id",
+];
 
-const {
-  promisifiedQuery,
-  promisifiedGetConnection,
-  promisifiedBeginTransaction,
-  promisifiedRollback,
-  promisifiedCommit,
-} = require("../db/promisified_sql");
+attributes = attributes.join(",");
 
-router.get("/crop", (req, res) => {
-  let { city_id, state_id } = req.body;
-  let sql;
-  if (state_id && city_id) {
-    sql = `select * from CROP where city_id=${city_id} and state_id=${state_id}`;
-  } else if (state_id) {
-    sql = `select * from CROP where state_id=${state_id}`;
-  } else if (city_id) {
-    sql = `select * from CROP where city_id=${city_id}`;
-  } else {
-    sql = `select * from CROP`;
+router.get("/:id", async (req, res) => {
+  let { id } = req.params;
+
+  let sql = `select ${attributes} from CROP`;
+  sql = `${sql} join VENDOR using(vendor_id)`;
+  sql = `${sql} join CROP_TYPE using(crop_type_id)`;
+  sql = `${sql} where crop_id=${id}`;
+
+  const callbacks = {
+    onSuccess: (req, res, results) => {
+      return res.status(200).send(results);
+    },
+  };
+  try {
+    return await simpleAsyncFetch(sql, req, res, callbacks);
+  } catch (err) {
+    console.log(err);
   }
-  return simpleGET(sql, req, res);
 });
+
+router.get("/", async (req, res) => {
+  let { city_id, state_id, crop_class, crop_type_id, vendor_id } = req.query;
+
+  let locFlag = false;
+  let typeFlag = false;
+  let subSql = [];
+  if (city_id) {
+    locFlag = true;
+    subSql.push(`city_id=${city_id}`);
+  }
+  if (state_id) {
+    locFlag = true;
+    subSql.push(`state_id=${state_id}`);
+  }
+  if (crop_class) {
+    typeFlag = true;
+    subSql.push(`crop_class="${crop_class}"`);
+  }
+  if (crop_type_id) {
+    typeFlag = true;
+    subSql.push(`crop_type_id="${crop_type_id}"`);
+  }
+  if (vendor_id) {
+    subSql.push(`crop_type_id="${vendor_id}"`);
+  }
+
+  subSql = subSql.join(" and ");
+
+  let sql = `select ${attributes} from CROP`;
+  sql = `${sql} join VENDOR using(vendor_id)`;
+  sql = `${sql} join CROP_TYPE using(crop_type_id)`;
+
+  sql = `${sql} where ${subSql}`;
+
+  const callbacks = {
+    onSuccess: (req, res, results) => {
+      return res.status(200).send(results);
+    },
+  };
+  try {
+    return await simpleAsyncFetch(sql, req, res, callbacks);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

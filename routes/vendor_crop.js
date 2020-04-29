@@ -29,7 +29,7 @@ router.get("/", [decodeToken, authVendor], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.delete("/:crop_id", (req, res) => {
+router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
   let crop_id = req.param.crop_id;
   let sql = `delete from crop where crop_id=${crop_id}`;
   return simpleDELETE(sql, req, res, () => {
@@ -37,7 +37,7 @@ router.delete("/:crop_id", (req, res) => {
   });
 });
 
-router.delete("/", (req, res) => {
+router.delete("/", [decodeToken, authVendor], (req, res) => {
   let crop_ids = req.query.id;
   let sql = `delete from crop where crop_id IN (${crop_ids})`;
   return simpleDELETE(sql, req, res, () => {

@@ -10,6 +10,30 @@ const {
 
 module.exports = async (sql, req, res, callbacks) => {
   callbacks = callbacks || {};
+  if (!callbacks.onGetConnectionFail) {
+    callbacks.onGetConnectionFail = (req, res, err) => {
+      console.log("DEFAULT 'getConnection' from the pool fail");
+      console.log(err);
+      return res.status(500).send("Internal Server Error");
+    };
+  }
+
+  if (!callbacks.onDeleteFail) {
+    callbacks.onDeleteFail = (req, res, err) => {
+      console.log("DEFAULT 'Delete Fail' Occured");
+      console.log(err);
+      return res.status(500).send("Internal Server Error");
+    };
+  }
+
+  if (!callbacks.onUnknownError) {
+    callbacks.onUnknownError = (req, res, err) => {
+      console.log("DEFAULT 'Unknown Error' Occured");
+      console.log(err);
+      return res.status(500).send("Internal Server Error");
+    };
+  }
+
   let connection = undefined;
   let errorOnDelete = true;
   try {
