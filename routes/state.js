@@ -79,8 +79,8 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
   });
 });
 
-router.delete("/", [decodeToken, authAdmin], (req, res) => {
-  const { state_id } = req.body;
+router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
+  const { state_id } = req.params;
   if (!state_id) {
     return res.status(400).send('"state_id" must be specified');
   }

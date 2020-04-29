@@ -13,7 +13,7 @@ module.exports = (sql, req, res, callback) => {
         return res.status(400).send(err.message);
       }
       connection.release();
-      return callback();
+      return callback(req, res);
     });
   });
 };

@@ -9,7 +9,6 @@ app.listen(PORT, () => {
 });
 
 const morgan = require("morgan");
-
 const login = require("./routes/login");
 const state = require("./routes/state");
 const city = require("./routes/city");
@@ -18,6 +17,8 @@ const otp_signup = require("./routes/otp_signup");
 
 const vendor = require("./routes/vendor");
 const user = require("./routes/user");
+
+const cropType = require("./routes/crop_type");
 
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/state", state);
 app.use("/city", city);
 app.use("/vendor", vendor);
 app.use("/user", user);
+app.use("/crop_type", cropType);
 
 app.get("/", (req, res) => {
   return res

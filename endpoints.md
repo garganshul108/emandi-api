@@ -20,6 +20,23 @@
 | GET    | /otp_signup |                                 | contact(int)<br/><br/> type("vendor";"user") |                                                                                                    |                      |
 | POST   | /otp_signup |                                 |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor","user")<br/><br/> device_fcm_token(string) |                      | token in header       |
 
+### Admin Controlled
+
+| Action | Endpoint       | Use case                    | Query Parameters                           | Post Object Format                                               | Special Token Needed | Return                |
+| ------ | -------------- | --------------------------- | ------------------------------------------ | ---------------------------------------------------------------- | -------------------- | --------------------- |
+| GET    | /city          | Show all cities             | limit (integer)<br/><br/> offset (integer) |                                                                  | admin token          | result enclosed in [] |
+| POST   | /city          | Add a new city              |                                            | name (string)<br/><br/>state_id(valid int)                       |                      | admin token           | posted city enclosed by [] |
+| DELETE | /city/:id      | Deletes city                |                                            |                                                                  | admin                |
+| PUT    | /city/:id      | Edit city_id specified      |                                            | name (string)<br/><br/>state_id                                  |                      | admin                 | edited city enclosed by [] |
+| GET    | /state         | shows all                   | limit (integer)<br/><br/> offset (integer) |                                                                  | admin token          | result enclosed in [] |
+| POST   | /state         | Add a new state             |                                            | name (string)                                                    |                      | admin token           | posted city enclosed by [] |
+| DELETE | /state/:id     | Deletes state of id         |                                            |                                                                  | admin                |
+| PUT    | /state/:id     | Edit state_id specified     |                                            | name (string)                                                    |                      | admin                 | edited city enclosed by [] |
+| GET    | /crop_type     |                             | limit (integer)<br/><br/> offset (integer) |                                                                  | admin                |
+| POST   | /crop_type     |                             |                                            | crop_type_name<br/><br/>crop_class("fruit","vegetable","grains") | admin                | result enclosed by [] |
+| DELETE | /crop_type/:id | Deletes crop_types          | crop_type_id                               |                                                                  |                      | admin                 |
+| PATCH  | /crop_type/:id | Edit crop_type_id specified |                                            | crop_type_name (string) <br/><br/> crop_class(valid string)      | admin                | result enclosed by [] |
+
 ### Vendor
 
 | Action | Endpoint           | Use case                | Query Parameters                 | Post Object Format                                                                                                                                                           | Special Token Needed           | Return                               |
@@ -71,17 +88,5 @@
 | GET                                  | /admin                                   | Get all admins                                               |                                                                                           |
 | POST                                 | /admin/ban/user/:user_id                 | Bans a user                                                  |
 | POST                                 | /admin/ban/vendor/:vendor_id             | Bans a vendor                                                |
-| GET                                  | /city                                    | Show all cities                                              | limit (integer)<br/><br/> offset (integer)                                                |
-| POST                                 | /city                                    | Add a new city                                               |                                                                                           | name (string)                                                                                                                                                                  |
-| DELETE                               | /city                                    | Deletes all city unless city_id specified                    | !city_id (comma seprated integers)                                                        |
-| PATCH                                | /city/:city_id                           | Edit city_id specified                                       |                                                                                           | !name (string)                                                                                                                                                                 |
-| GET                                  | /state                                   |                                                              | limit (integer)<br/><br/> offset (integer)                                                |
-| POST                                 | /state                                   |                                                              | name (string)                                                                             |
-| DELETE                               | /state                                   | Deletes all state unless state_id specified                  | !state_id (comma seprated integers)                                                       |
-| PATCH                                | /state/:state_id                         | Edit state_id specified                                      |                                                                                           | !name (string)                                                                                                                                                                 |
-| GET                                  | /crop_type                               | limit (integer)<br/><br/> offset (integer)                   |
-| POST                                 | /crop_type                               |
-| DELETE                               | /crop_type                               | Deletes all crop_types unless crop_type_id specified         | !crop_type_id (comma seprated integers)                                                   |
-| PATCH                                | /crop_type/:crop_type_id                 | Edit crop_type_id specified                                  |                                                                                           | !name (string)                                                                                                                                                                 |
 | **misc**                             | NOT SET                                  |
 | POST                                 | /upload                                  | Upload any image or file                                     |
