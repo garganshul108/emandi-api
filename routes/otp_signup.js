@@ -96,7 +96,7 @@ router.post("/", async (req, res) => {
   let errorOnFetchingLastInsertId = true;
   let errorOnFetchingOTPfromSignupTable = true;
   let errorOnInsertingIntoMainTable = true;
-  let sql1 = `select * from OTP_SIGNUP where contact=${contact} ORDER BY reg_timestamp DESC`;
+  let sql1 = `select * from OTP_SIGNUP where contact=${contact} and subscriber_type="${type}" ORDER BY reg_timestamp DESC`;
   let sql2, sql3;
 
   let payload = {
@@ -116,7 +116,7 @@ router.post("/", async (req, res) => {
       return res.status(404).send("OTP not registered / expired");
     }
     let latestOTPResult = matchingContacts[0];
-    if (!otp === latestOTPResult.otp) {
+    if (otp !== latestOTPResult.otp) {
       // rollback
       connection.release();
       return res.status(404).send("Latest OTP did not match");

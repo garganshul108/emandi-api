@@ -98,7 +98,7 @@ router.post("/", async (req, res) => {
   let connection = undefined;
   let errorOnFetchingId = true;
   let errorOnFetchingOTPfromLoginTable = true;
-  let sql1 = `select * from OTP_LOGIN where contact=${contact} ORDER BY reg_timestamp DESC`;
+  let sql1 = `select * from OTP_LOGIN where contact=${contact} and subscriber_type="${type}" ORDER BY reg_timestamp DESC`;
   let sql2;
 
   if (type === "vendor") {
@@ -123,8 +123,11 @@ router.post("/", async (req, res) => {
       return res.status(404).send("OTP not registered / expired");
     }
     let latestOTPResult = matchingContacts[0];
-    if (!otp === latestOTPResult.otp) {
+    console.log(__filename, latestOTPResult);
+    console.log(otp, latestOTPResult.otp);
+    if (otp !== latestOTPResult.otp) {
       // rollback
+      console.log(__filename, "otp do not match");
       connection.release();
       return res.status(404).send("Latest OTP did not match");
     }

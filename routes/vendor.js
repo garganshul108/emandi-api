@@ -38,7 +38,7 @@ router.get("/", (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.patch("/", [decodeToken, authVendor], async (req, res) => {
+router.patch("/me", [decodeToken, authVendor], async (req, res) => {
   let {
     type,
     name,

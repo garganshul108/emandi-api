@@ -16,11 +16,6 @@ const {
   promisifiedCommit,
 } = require("../db/promisified_sql");
 
-router.get("/", (res, req) => {
-  let sql = `select * from USER;`;
-  return simpleGET(sql, req, res);
-});
-
 router.get("/me", [decodeToken, authUser], (req, res) => {
   let user_id = req.actor.user_id;
   let sql = `select * from USER where user_id=${user_id}`;
@@ -33,7 +28,12 @@ router.get("/:id", [decodeToken, authAdmin], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.patch("/", [decodeToken, authUser], async (req, res) => {
+router.get("/", (res, req) => {
+  let sql = `select * from USER;`;
+  return simpleGET(sql, req, res);
+});
+
+router.patch("/me", [decodeToken, authUser], async (req, res) => {
   let {
     name,
     state_id,
@@ -60,10 +60,10 @@ router.patch("/", [decodeToken, authUser], async (req, res) => {
     subSql.push(` name = "${name}" `);
   }
   if (state_id) {
-    subSql.push(` state_id = "${state_id}" `);
+    subSql.push(` state_id = ${state_id} `);
   }
   if (city_id) {
-    subSql.push(` city_id = "${city_id}" `);
+    subSql.push(` city_id = ${city_id} `);
   }
   if (pin_code) {
     subSql.push(` pin_code = "${pin_code}" `);
