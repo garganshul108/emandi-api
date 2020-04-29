@@ -28,7 +28,7 @@ router.get("/:id", [decodeToken, authAdmin], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.get("/", (res, req) => {
+router.get("/", (req, res) => {
   let sql = `select * from USER;`;
   return simpleGET(sql, req, res);
 });
