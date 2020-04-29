@@ -42,6 +42,10 @@ app.get("/", (req, res) => {
     );
 });
 
+app.get("/", (req, res) => {
+  res.status(200).send("Server is up and running....");
+});
+
 // app.use("/state", state);
 
 // app.post("/city", (req, res) => {});
