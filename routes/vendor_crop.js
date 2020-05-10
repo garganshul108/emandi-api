@@ -25,6 +25,8 @@ router.get("/:crop_id", [decodeToken, authVendor], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
+// crop table not implemented
+
 router.get("/", [decodeToken, authVendor], (req, res) => {
   let vendor_id = req.actor.vendor_id;
   let sql = `select * from CROP where vendor_id=${vendor_id}`;
