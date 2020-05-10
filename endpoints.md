@@ -20,22 +20,22 @@
 | GET    | /otp_signup |                                 | contact(int)<br/><br/> type("vendor";"user") |                                                                                                    |                      |
 | POST   | /otp_signup |                                 |                                              | contact(int)<br/><br/> otp(int)<br/><br/> type("vendor","user")<br/><br/> device_fcm_token(string) |                      | token in header       |
 
-### Admin Controlled
+### Special / Universal
 
-| Action | Endpoint       | Use case                    | Query Parameters                           | Post Object Format                                               | Special Token Needed | Return                |
-| ------ | -------------- | --------------------------- | ------------------------------------------ | ---------------------------------------------------------------- | -------------------- | --------------------- |
-| GET    | /city          | Show all cities             | limit (integer)<br/><br/> offset (integer) |                                                                  | admin token          | result enclosed in [] |
-| POST   | /city          | Add a new city              |                                            | name (string)<br/><br/>state_id(valid int)                       |                      | admin token           | posted city enclosed by [] |
-| DELETE | /city/:id      | Deletes city                |                                            |                                                                  | admin                |
-| PUT    | /city/:id      | Edit city_id specified      |                                            | name (string)<br/><br/>state_id                                  |                      | admin                 | edited city enclosed by [] |
-| GET    | /state         | shows all                   | limit (integer)<br/><br/> offset (integer) |                                                                  | admin token          | result enclosed in [] |
-| POST   | /state         | Add a new state             |                                            | name (string)                                                    |                      | admin token           | posted city enclosed by [] |
-| DELETE | /state/:id     | Deletes state of id         |                                            |                                                                  | admin                |
-| PUT    | /state/:id     | Edit state_id specified     |                                            | name (string)                                                    |                      | admin                 | edited city enclosed by [] |
-| GET    | /crop_type     |                             | limit (integer)<br/><br/> offset (integer) |                                                                  | admin                |
-| POST   | /crop_type     |                             |                                            | crop_type_name<br/><br/>crop_class("fruit","vegetable","grains") | admin                | result enclosed by [] |
-| DELETE | /crop_type/:id | Deletes crop_types          | crop_type_id                               |                                                                  |                      | admin                 |
-| PATCH  | /crop_type/:id | Edit crop_type_id specified |                                            | crop_type_name (string) <br/><br/> crop_class(valid string)      | admin                | result enclosed by [] |
+| Action | Endpoint       | Use case                    | Query Parameters                           | Post Object Format                                                  | Special Token Needed | Return                     |
+| ------ | -------------- | --------------------------- | ------------------------------------------ | ------------------------------------------------------------------- | -------------------- | -------------------------- |
+| GET    | /city          | Show all cities             | limit (integer)<br/><br/> offset (integer) |                                                                     |                      | result enclosed in []      |
+| POST   | /city          | Add a new city              |                                            | name (string)<br/><br/>state_id(valid int)                          | admin token          | posted city enclosed by [] |
+| DELETE | /city/:id      | Deletes city                |                                            |                                                                     | admin                |
+| PUT    | /city/:id      | Edit city_id specified      |                                            | name (string)<br/><br/>state_id                                     | admin                | edited city enclosed by [] |
+| GET    | /state         | shows all                   | limit (integer)<br/><br/> offset (integer) |                                                                     |                      | result enclosed in []      |
+| POST   | /state         | Add a new state             |                                            | name (string)                                                       | admin token          | posted city enclosed by [] |
+| DELETE | /state/:id     | Deletes state of id         |                                            |                                                                     | admin                |
+| PUT    | /state/:id     | Edit state_id specified     |                                            | name (string)                                                       | admin                | edited city enclosed by [] |
+| GET    | /crop_type     |                             | limit (integer)<br/><br/> offset (integer) |                                                                     |                      |
+| POST   | /crop_type     |                             |                                            | crop_type_name<br/><br/>crop_class ("fruit", "vegetable", "grains") | admin                | result enclosed by []      |
+| DELETE | /crop_type/:id | Deletes crop_types          | crop_type_id                               |                                                                     | admin                |
+| PATCH  | /crop_type/:id | Edit crop_type_id specified |                                            | crop_type_name (string) <br/><br/> crop_class(valid string)         | admin                | result enclosed by []      |
 
 ### Vendor
 
