@@ -57,6 +57,13 @@
 | GET    | /user/         | Show all users        | limit(int)<br/><br/> offset(int) |                                                                                                                                                        | admin_token(temp not required) | full object of user enclosed by [] |
 | DELETE | /user/me       | Delete account        |                                  |                                                                                                                                                        | user_token                     |
 
+### CROP
+
+| Action | Endpoint  | Use case               | Query Parameters                                                                           | Post Object Format | Special Token Needed | Result                |
+| ------ | --------- | ---------------------- | ------------------------------------------------------------------------------------------ | ------------------ | -------------------- | --------------------- |
+| GET    | /crop     | To fetch all the crops | limit (integer)<br/><br/> offset (integer)                                                 |                    |                      | Object enclosed in [] |
+| GET    | /crop/:id |                        | city_id<br/><br/> state_id<br/><br/> crop_class<br/><br/> crop_type_id<br/><br/> vendor_id |                    |                      | Object enclosed in [] |
+
 | Action                               | Endpoint                                 | Use case                                                     | Query Parameters                                                                          | Post Object Format                                                                                                                                                             | special token needed |
 | ------------------------------------ | ---------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
 | **END POINTS BELOW ARE NOT WORKING** |

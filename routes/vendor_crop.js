@@ -9,6 +9,8 @@ const decodeToken = require("../middleware/decode_token");
 const simpleGET = require("../db/requests/simple_get");
 const simpleDELETE = require("../db/requests/simple_get");
 
+const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_and_fetch");
+
 const {
   promisifiedQuery,
   promisifiedGetConnection,
@@ -128,6 +130,77 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
       console.log(err);
       connection.release();
       return res.status(500).send("Internal Server Error");
+    }
+  }
+});
+
+
+router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
+  let {crop_id} = req.params;
+  let {
+    changeInQty,
+    crop_name,
+    crop_type_id,
+    packed_date,
+    exp_date,
+    description,
+  } = req.body
+
+  if(!changeInQty && !crop_name && !crop_type_id && !packed_date && !exp_date && !description){
+    return res.status(400).send("No attributes specified to be changed");
+  }
+
+  let subSql = [];
+  if(crop_name){
+    subSql.push(`crop_name = "${crop_name}"`)
+  }
+  if(crop_type_id){
+    subSql.push(`crop_type_id = ${crop_type_id}`)
+  }
+  if(packed_date){
+    subSql.push(`packed_date = "${packed_date}"`)
+  }
+  if(exp_date){
+    subSql.push(`exp_date = "${exp_date}"`)
+  }
+  if(description){
+    subSql.push(`description = "${description}"`)
+  }
+
+  if(subSql.length > 0){
+    subSql = subSql.join(' , ');
+    let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id}`;
+    let sql2 = `select * from CROP where crop_id=${crop_id}`;
+    try{
+      await simpleAsyncUpdateAndFetch(sql1, sql2, req, res, callbacks);
+    } catch (err) {
+      console.log('Error while nomal Updates\n', err);
+    }
+  }
+  if(changeInQty){
+    let connection = undefined;
+    try {
+      connection = await promisifiedGetConnection(connectionPool);
+      await promisifiedBeginTransaction(connection);
+      let {results : itemQtyPacket} = await promisifiedQuery(connection, sql3, []);
+      if(itemQtyPacket.length < 1){
+        // rollback
+        // release
+        // no item found
+      }
+      let presentQty = itemQtyPacket.qty;
+      let newQty = presentQty + changeInQty;
+      if(newQty < 0){
+        // rollback
+        // relesase
+        // infeable
+      }
+      await promisifiedQuery(connection, sql4, []);
+      let {results4} = promisifiedQuery(connection, sql5, []);
+      await promisifiedCommit(connection);
+
+    } catch(err) {
+      
     }
   }
 });
