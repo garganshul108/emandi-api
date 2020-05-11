@@ -9,6 +9,9 @@ const {
 } = require("../promisified_sql");
 
 module.exports = async (sqls, req, res, callbacks) => {
+  if (!Array.isArray(sqls)) {
+    sqls = [sqls];
+  }
   callbacks = callbacks || {};
 
   let noOfQueries = sqls.length;
