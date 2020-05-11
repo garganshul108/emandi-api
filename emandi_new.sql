@@ -125,18 +125,26 @@ create table OTP_LOGIN(
 -- relates distributor and consumer
 
 
+create table CROP_TYPE(
+	crop_type_id INT PRIMARY KEY AUTO_INCREMENT,
+	crop_type_name VARCHAR(200) NOT NULL,
+	crop_class VARCHAR(200) NOT NULL DEFAULT "OTHER"
+);
 
 create table CROP(
-	crop_id INT AUTO_INCREMENT,
-	vendor_id INT,
+	crop_id INT PRIMARY KEY AUTO_INCREMENT,
+	vendor_id INT NOT NULL,
 	qty DECIMAL(10,2) NOT NULL,
 	crop_name VARCHAR(200) NOT NULL,
 	crop_type_id INT,
-	packed_timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
-	exp_timestamp TIMESTAMP,
+	packed_timestamp TIMESTAMP DEFAULT NOW(),
+	exp_timestamp TIMESTAMP DEFAULT "1999-01-01 00:00:00",
 	description VARCHAR(200),
-	freeze_status TINYINT DEFAULT 0 -- 0: can be edited, 1: cannot be edited
-	
+	FOREIGN KEY (crop_type_id)
+    REFERENCES CROP_TYPE(crop_type_id),
+	FOREIGN KEY (vendor_id)
+    REFERENCES VENDOR(vendor_id)
+    ON DELETE CASCADE 
 );
 
 create table ORDER(
@@ -180,10 +188,6 @@ create table PRODUCT(
 
 
 
-create table CROP_TYPE(
-	crop_type_id INT AUTO_INCREMENT,
-	crop_type_name VARCHAR(200)
-);
 
 -- create table OFFER(
 -- 	offer_id INT AUTO_INCREMENT,
