@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const connectionPool = require("../db/pool");
 
+const user_cart = require("./user_cart");
+
 const authAdmin = require("../middleware/auth_admin");
 const authUser = require("../middleware/auth_user");
 const decodeToken = require("../middleware/decode_token");
@@ -15,6 +17,8 @@ const {
   promisifiedRollback,
   promisifiedCommit,
 } = require("../db/promisified_sql");
+
+router.use("/cart", user_cart);
 
 router.get("/me", [decodeToken, authUser], (req, res) => {
   let user_id = req.actor.user_id;

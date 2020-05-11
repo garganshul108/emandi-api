@@ -74,7 +74,7 @@
 | GET    | /crop     | To fetch all the crops | limit (integer)<br/><br/> offset (integer)                                                 |                    |                      | Object enclosed in [] |
 | GET    | /crop/:id |                        | city_id<br/><br/> state_id<br/><br/> crop_class<br/><br/> crop_type_id<br/><br/> vendor_id |                    |                      | Object enclosed in [] |
 
-### Vendor/Crop
+### Vendor / Crop
 
 | Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                                                   | Special Token Needed | Result                       |
 | ------ | --------------------- | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | ---------------------------- |
@@ -85,36 +85,38 @@
 | POST   | /vendor/crop          | Add a new crop                |                  | qty<br/><br/>crop_name<br/><br/>crop_type_id<br/><br/>packed_timestamp<br/><br/>exp_timestamp<br/><br/>description<br/><br/>         | vendor               | posted object enclosed by [] |
 | PATCH  | /vendor/crop/:id      |                               |                  | changeInQty<br/><br/>crop_name<br/><br/>crop_type_id<br/><br/>packed_timestamp<br/><br/>exp_timestamp<br/><br/>description<br/><br/> | vendor               | posted object enclosed by [] |
 
-| Action                               | Endpoint                                 | Use case                                                     | Query Parameters                                                                          | Post Object Format                                                                                                                                                             | special token needed |
-| ------------------------------------ | ---------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
+### User / Cart
+
+| Action | Endpoint            | Use case                         | Query Parameters | Post Object Format                  | Special Token Needed | Result                       |
+| ------ | ------------------- | -------------------------------- | ---------------- | ----------------------------------- | -------------------- | ---------------------------- |
+| GET    | /user/cart          | Fetch all cart items of the user |                  |                                     | user                 | object enclosed by []        |
+| GET    | /user/cart/:id      |                                  |                  |                                     | user                 | object enclosed by []        |
+| DELETE | /user/cart/:id      | single delete                    |                  |                                     | user                 |
+| DELETE | /user/cart?id=1,2,3 | multiple delete                  | id               |                                     | user                 |
+| POST   | /user/cart          | Add a new cart item              |                  | item_qty<br/><br/>crop_id<br/><br/> | user                 | posted object enclosed by [] |
+| PATCH  | /user/cart/:id      |                                  |                  | changeInQty                         | user                 | posted object enclosed by [] |
+
+| Action                               | Endpoint                                 | Use case                                           | Query Parameters                                                       | Post Object Format                                                                                                       | special token needed |
+| ------------------------------------ | ---------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------- |
 | **END POINTS BELOW ARE NOT WORKING** |
-| **crop**                             |
-| GET                                  | /crop                                    | Shows all crops unless vendor_id specified                   | vendor_id (integer) limit (integer)<br/><br/> offset (integer)                            |
-| POST                                 | /crop                                    | Adds a crop                                                  |                                                                                           | vendor_id (integer)<br/><br/> qty (decimal)<br/><br/> crop_name (string)<br/><br/> crop_type_id (integer from crop table)<br/><br/> packed_date (string 'YYYY-MM-DD HH:MM:SS') |
-| GET                                  | /crop/:crop_id                           | Shows a specific crop                                        |
-| DELETE                               | /crop                                    | Deletes all crop unless crop_id or vendor_id is specified    | !vendor_id (integer)<br/><br/> !crop_id (integer)                                         |
-| **user cart**                        |
-| GET                                  | /user/me/cart                            | Shows the cart of a user unless product id specified         | product_id (comma seprated integer)<br/><br/> limit (integers)<br/><br/> offset (integer) |
-| POST                                 | /user/me/cart                            | Adds an item to the cart                                     |                                                                                           | crop_id (interger)<br/><br/> qty (decimal)                                                                                                                                     |
-| DELETE                               | /user/me/cart                            | Empty the user cart unless product_id parameter is specified | product_id (comma seprated integers)                                                      |
 | **order**                            |
-| GET                                  | /order                                   | GET all orders unless user_id is specified                   | user_id (integer)<br/><br/>limit (integer)<br/><br/> offset (integer)                     |
-| POST                                 | /order                                   | Place an order                                               |                                                                                           | user_id (integer)<br/><br/> delivery_address (string)<br/><br/> price (decimal)<br/><br/> product_id (array of integers)                                                       |
+| GET                                  | /order                                   | GET all orders unless user_id is specified         | user_id (integer)<br/><br/>limit (integer)<br/><br/> offset (integer)  |
+| POST                                 | /order                                   | Place an order                                     |                                                                        | user_id (integer)<br/><br/> delivery_address (string)<br/><br/> price (decimal)<br/><br/> product_id (array of integers) |
 | GET                                  | /order/:order_id                         |
-| DELETE                               | /order/:order_id                         | Cancel order                                                 |
+| DELETE                               | /order/:order_id                         | Cancel order                                       |
 | **notification**                     | NOT SET                                  |
-| GET                                  | /notification                            | Shows all notification sent                                  |
-| POST                                 | /notification                            | NOT SET                                                      |
+| GET                                  | /notification                            | Shows all notification sent                        |
+| POST                                 | /notification                            | NOT SET                                            |
 | **complaint**                        |
-| GET                                  | /complaint                               | Get all the complaints unless user_id is specified           | user_id (integer)<br/><br/> limit (integer)<br/><br/> offset (integer)                    |
-| POST                                 | /complaint                               | Register a new complaint                                     |                                                                                           | order_id (integer)<br/><br/> type (string)<br/><br/> proof_id (array of integers)                                                                                              |
-| GET                                  | /complaint/:complaint_id                 | Shows full complaint details                                 |
-| GET                                  | /complaint/:complaint_id/proof           | Shows the complaint proofs                                   | limit (integer)<br/><br/> offset (integer)                                                |
-| POST                                 | /complaint/:complaint_id/proof           | Registering a proof                                          |                                                                                           | type ('image'<br/><br/> 'pdf')<br/><br/> resource_url (string url)                                                                                                             |
+| GET                                  | /complaint                               | Get all the complaints unless user_id is specified | user_id (integer)<br/><br/> limit (integer)<br/><br/> offset (integer) |
+| POST                                 | /complaint                               | Register a new complaint                           |                                                                        | order_id (integer)<br/><br/> type (string)<br/><br/> proof_id (array of integers)                                        |
+| GET                                  | /complaint/:complaint_id                 | Shows full complaint details                       |
+| GET                                  | /complaint/:complaint_id/proof           | Shows the complaint proofs                         | limit (integer)<br/><br/> offset (integer)                             |
+| POST                                 | /complaint/:complaint_id/proof           | Registering a proof                                |                                                                        | type ('image'<br/><br/> 'pdf')<br/><br/> resource_url (string url)                                                       |
 | GET                                  | /complaint/:complaint_id/proof/:proof_id |
 | **admin**                            | PROTECTED URL                            |
-| GET                                  | /admin                                   | Get all admins                                               |                                                                                           |
-| POST                                 | /admin/ban/user/:user_id                 | Bans a user                                                  |
-| POST                                 | /admin/ban/vendor/:vendor_id             | Bans a vendor                                                |
+| GET                                  | /admin                                   | Get all admins                                     |                                                                        |
+| POST                                 | /admin/ban/user/:user_id                 | Bans a user                                        |
+| POST                                 | /admin/ban/vendor/:vendor_id             | Bans a vendor                                      |
 | **misc**                             | NOT SET                                  |
-| POST                                 | /upload                                  | Upload any image or file                                     |
+| POST                                 | /upload                                  | Upload any image or file                           |

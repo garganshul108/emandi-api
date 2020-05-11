@@ -35,7 +35,7 @@ router.get("/", [decodeToken, authVendor], (req, res) => {
 
 router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
   let crop_id = req.param.crop_id;
-  let sql = `delete from crop where crop_id=${crop_id}`;
+  let sql = `delete from CROP where crop_id=${crop_id}`;
   return simpleDELETE(sql, req, res, () => {
     return res.status(200).send("Crop Deleted Successfully");
   });
@@ -43,7 +43,7 @@ router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
 
 router.delete("/", [decodeToken, authVendor], (req, res) => {
   let crop_ids = req.query.id;
-  let sql = `delete from crop where crop_id IN (${crop_ids})`;
+  let sql = `delete from CROP where crop_id IN (${crop_ids})`;
   return simpleDELETE(sql, req, res, () => {
     return res.status(200).send("Crops Deleted Successfully");
   });

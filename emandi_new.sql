@@ -134,7 +134,8 @@ create table CROP_TYPE(
 create table CROP(
 	crop_id INT PRIMARY KEY AUTO_INCREMENT,
 	vendor_id INT NOT NULL,
-	qty DECIMAL(10,2) NOT NULL,
+	crop_qty DECIMAL(10,2) UNSIGNED NOT NULL,
+	crop_price DECIMAL(10,2) UNSIGNED NOT NULL,
 	crop_name VARCHAR(200) NOT NULL,
 	crop_type_id INT,
 	packed_timestamp TIMESTAMP DEFAULT NOW(),
@@ -146,6 +147,28 @@ create table CROP(
     REFERENCES VENDOR(vendor_id)
     ON DELETE CASCADE 
 );
+
+
+
+-- relates custumer to the choosen product
+create table CART(
+	item_id INT PRIMARY KEY AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	crop_id INT NOT NULL,
+	item_qty DECIMAL(10,2) UNSIGNED NOT NULL,
+	item_cost DECIMAL(10,2),
+	FOREIGN KEY (crop_id)
+    REFERENCES CROP(crop_id)
+    ON DELETE CASCADE,
+	FOREIGN KEY (user_id)
+    REFERENCES USER(user_id)
+    ON DELETE CASCADE
+);
+
+
+
+
+
 
 create table ORDER(
 	--- PROFILE ---
@@ -170,20 +193,6 @@ create table ORDERED_ITEM(
 
 
 
-
--- relates custumer to the choosen product
-create table CART(
-	user_id INT NOT NULL,
-	product_id INT NOT NULL
-);
-
-
-create table PRODUCT(
-	product_id INT AUTO_INCREMENT,
-	crop_id INT NOT NULL,
-	qty DECIMAL(10,2) NOT NULL,
-	cost DECIMAL(10,2) NOT NULL
-);
 
 
 
