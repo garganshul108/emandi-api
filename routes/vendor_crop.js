@@ -168,41 +168,23 @@ router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
   if(description){
     subSql.push(`description = "${description}"`)
   }
+  if(changeInQty){
+    subSql.push(`qty = qty + ${changeInQty}`);
+  }
 
   if(subSql.length > 0){
     subSql = subSql.join(' , ');
     let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id}`;
     let sql2 = `select * from CROP where crop_id=${crop_id}`;
+    const callbacks = {
+      onSuccess:(req, res, results) => {
+        res.status(201).send(results);
+      }
+    };
     try{
       await simpleAsyncUpdateAndFetch(sql1, sql2, req, res, callbacks);
     } catch (err) {
       console.log('Error while nomal Updates\n', err);
-    }
-  }
-  if(changeInQty){
-    let connection = undefined;
-    try {
-      connection = await promisifiedGetConnection(connectionPool);
-      await promisifiedBeginTransaction(connection);
-      let {results : itemQtyPacket} = await promisifiedQuery(connection, sql3, []);
-      if(itemQtyPacket.length < 1){
-        // rollback
-        // release
-        // no item found
-      }
-      let presentQty = itemQtyPacket.qty;
-      let newQty = presentQty + changeInQty;
-      if(newQty < 0){
-        // rollback
-        // relesase
-        // infeable
-      }
-      await promisifiedQuery(connection, sql4, []);
-      let {results4} = promisifiedQuery(connection, sql5, []);
-      await promisifiedCommit(connection);
-
-    } catch(err) {
-      
     }
   }
 });

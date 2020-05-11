@@ -57,12 +57,23 @@
 | GET    | /user/         | Show all users        | limit(int)<br/><br/> offset(int) |                                                                                                                                                        | admin_token(temp not required) | full object of user enclosed by [] |
 | DELETE | /user/me       | Delete account        |                                  |                                                                                                                                                        | user_token                     |
 
-### CROP
+### Crop
 
 | Action | Endpoint  | Use case               | Query Parameters                                                                           | Post Object Format | Special Token Needed | Result                |
 | ------ | --------- | ---------------------- | ------------------------------------------------------------------------------------------ | ------------------ | -------------------- | --------------------- |
 | GET    | /crop     | To fetch all the crops | limit (integer)<br/><br/> offset (integer)                                                 |                    |                      | Object enclosed in [] |
 | GET    | /crop/:id |                        | city_id<br/><br/> state_id<br/><br/> crop_class<br/><br/> crop_type_id<br/><br/> vendor_id |                    |                      | Object enclosed in [] |
+
+### Vendor/Crop
+
+| Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                                         | Special Token Needed | Result                       |
+| ------ | --------------------- | ----------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------- |
+| GET    | /vendor/crop          | Fetch all crops of the vendor |                  |                                                                                                                            | vendor               | object enclosed by []        |
+| GET    | /vendor/crop/:id      |                               |                  |                                                                                                                            | vendor               | object enclosed by []        |
+| DELETE | /vendor/crop/:id      | single delete                 |                  |                                                                                                                            | vendor               |
+| DELETE | /vendor/crop?id=1,2,3 | multiple delete               | id               |                                                                                                                            | vendor               |
+| POST   | /vendor/crop          | Add a new crop                |                  | qty<br/><br/>crop_name<br/><br/>crop_type_id<br/><br/>packed_date<br/><br/>exp_date<br/><br/>description<br/><br/>         | vendor               | posted object enclosed by [] |
+| PATCH  | /vendor/crop/:id      |                               |                  | changeInQty<br/><br/>crop_name<br/><br/>crop_type_id<br/><br/>packed_date<br/><br/>exp_date<br/><br/>description<br/><br/> | vendor               | posted object enclosed by [] |
 
 | Action                               | Endpoint                                 | Use case                                                     | Query Parameters                                                                          | Post Object Format                                                                                                                                                             | special token needed |
 | ------------------------------------ | ---------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
