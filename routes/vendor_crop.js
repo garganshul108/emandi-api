@@ -52,18 +52,18 @@ router.delete("/", [decodeToken, authVendor], (req, res) => {
 router.post("/", [decodeToken, authVendor], async (req, res) => {
   let vendor_id = req.actor.vendor_id;
   let {
-    qty,
+    crop_qty,
     crop_name,
     crop_type_id,
     packed_date,
     exp_date,
     description,
   } = req.body;
-  if (!qty || !crop_name || !crop_type_id) {
+  if (!crop_qty || !crop_name || !crop_type_id) {
     return res
       .status(400)
       .send(
-        '"qty", "crop_name" and "crop_type_id" all or any one not specified'
+        '"crop_qty", "crop_name" and "crop_type_id" all or any one not specified'
       );
   }
 
@@ -79,7 +79,7 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     description = "NULL";
   }
 
-  let sql1 = `insert into CROP(vendor_id, qty, crop_name, crop_type_id, packed_date, exp_date, description) values (${vendor_id},${qty},"${crop_name}",${crop_type_id},${packed_date},"${exp_date}","${description}")`;
+  let sql1 = `insert into CROP(vendor_id, crop_qty, crop_name, crop_type_id, packed_date, exp_date, description) values (${vendor_id},${crop_qty},"${crop_name}",${crop_type_id},${packed_date},"${exp_date}","${description}")`;
   let sql2 = `select * from CROP where crop_id=LAST_INSERT_ID()`;
   let connection;
   let errorOnBeginTransaction = true;
@@ -169,7 +169,7 @@ router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
     subSql.push(`description = "${description}"`)
   }
   if(changeInQty){
-    subSql.push(`qty =(qty + ${changeInQty})`);
+    subSql.push(`crop_qty =(crop_qty + ${changeInQty})`);
   }
 
   if(subSql.length > 0){

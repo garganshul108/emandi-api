@@ -15,9 +15,9 @@ const transactionProtectedQueries = require("../db/requests/transaction_protecte
 router.get("/me", [decodeToken], async (req, res) => {
   let sql;
   if (req.actor.user_id) {
-    sql = `select * from ORDER join ORDER_ITEM using(order_id) where user_id=${user_id}`;
+    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where user_id=${user_id}`;
   } else if (req.actor.vendor_id) {
-    sql = `select * from ORDER join ORDER_ITEM using(order_id) where vendor_id=${vendor_id}`;
+    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where vendor_id=${vendor_id}`;
   }
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
@@ -28,7 +28,7 @@ router.get("/me", [decodeToken], async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   let order_id = req.params.id;
-  let sql = `select * from ORDER join ORDER_ITEM using(order_id) where order_id=${order_id}`;
+  let sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where order_id=${order_id}`;
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let sql = `select * from ORDER join ORDER_ITEM using(order_id)`;
+  let sql = `select * from ORDER join ORDERED_ITEM using(order_id)`;
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -65,10 +65,10 @@ router.post("/cancel", [decodeToken], async (req, res) => {
     {
       getQueryStatement: (prevResults, prevFields) => {
         let items = prevResults["query_1"];
-        let sql = `update CROP set qty = case`;
+        let sql = `update CROP set crop_qty = case`;
         let ids = [];
         for (let item of items) {
-          sql = `${sql} when crop_id = ${item.crop_id} then (qty + ${item.item_qty})`;
+          sql = `${sql} when crop_id = ${item.crop_id} then (crop_qty + ${item.item_qty})`;
           ids.push(item.crop_id);
         }
         ids = ids.join(",");
@@ -78,7 +78,7 @@ router.post("/cancel", [decodeToken], async (req, res) => {
     },
     {
       getQueryStatement: (prevResults, prevFields) => {
-        let sql = `update ORDER set order_status="CANCELLED" where order_id=${order_id}`;
+        let sql = `update ORDERS set order_status="CANCELLED" where order_id=${order_id}`;
         return sql;
       },
     },
@@ -101,10 +101,10 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
     {
       getQueryStatement: (prevResults, prevFields) => {
         let items = prevResults["query_1"];
-        let sql = `update CROP set qty = case`;
+        let sql = `update CROP set crop_qty = case`;
         let ids = [];
         for (let item of items) {
-          sql = `${sql} when crop_id = ${item.crop_id} then (qty - ${item.item_qty})`;
+          sql = `${sql} when crop_id = ${item.crop_id} then (crop_qty - ${item.item_qty})`;
           ids.push(item.crop_id);
         }
         ids = ids.join(",");
@@ -114,7 +114,7 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
     },
     {
       getQueryStatement: (prevResults, prevFields) => {
-        let sql = `update ORDER set order_status="CONFIRMED" where order_id=${order_id}`;
+        let sql = `update ORDERS set order_status="CONFIRMED" where order_id=${order_id}`;
         return sql;
       },
     },
@@ -156,7 +156,7 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
       // generate Order
       getQueryStatement: (prevResults, prevFields) => {
         let vendor_id = prevResults["query_1"][0].vendor_id;
-        let sql = `insert into ORDER(user_id, vendor_id) values(${user_id}, ${vendor_id})`;
+        let sql = `insert into ORDERS(user_id, vendor_id) values(${user_id}, ${vendor_id})`;
         return sql;
       },
     },
@@ -182,7 +182,7 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     {
       getQueryStatement: (prevResults, prevFields) => {
         let order_id = prevResults["query_4"][0].order_id;
-        return `select * from ORDER_ITEM join ORDER using(order_id) where order_id=${order_id}`;
+        return `select * from ORDERED_ITEM join ORDERS using(order_id) where order_id=${order_id}`;
       },
     },
   ];

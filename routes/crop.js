@@ -5,7 +5,7 @@ const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 
 let attributes = [
   "crop_id",
-  "qty",
+  "crop_qty",
   "crop_name",
   "crop_type_id",
   "packed_date",
