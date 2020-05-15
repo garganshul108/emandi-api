@@ -19,17 +19,21 @@ const {
   promisifiedCommit,
 } = require("../db/promisified_sql");
 
-router.get("/:crop_id", [decodeToken, authVendor], (req, res) => {
-  let crop_id = req.params.crop_id;
-  let sql = `select * from CROP where crop_id=${crop_id}`;
-  return simpleGET(sql, req, res);
-});
+// router.get("/:crop_id", [decodeToken, authVendor], (req, res) => {
+//   let crop_id = req.params.crop_id;
+//   let sql = `select * from CROP where crop_id=${crop_id}`;
+//   return simpleGET(sql, req, res);
+// });
 
 // crop table to be implemented - 2
 
-router.get("/", [decodeToken, authVendor], (req, res) => {
+router.get("/:crop_id?", [decodeToken, authVendor], (req, res) => {
   let vendor_id = req.actor.vendor_id;
+  let crop_id = req.params.crop_id;
   let sql = `select * from CROP where vendor_id=${vendor_id}`;
+  if (crop_id) {
+    sql = `${sql} and crop_id=${crop_id}`;
+  }
   return simpleGET(sql, req, res);
 });
 
@@ -55,31 +59,32 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     crop_qty,
     crop_name,
     crop_type_id,
-    packed_date,
-    exp_date,
+    packed_timestamp,
+    exp_timestamp,
     description,
+    crop_price,
   } = req.body;
-  if (!crop_qty || !crop_name || !crop_type_id) {
+  if (!crop_qty || !crop_name || !crop_type_id || !crop_price) {
     return res
       .status(400)
       .send(
-        '"crop_qty", "crop_name" and "crop_type_id" all or any one not specified'
+        '"crop_qty", "crop_name", "crop_price" and "crop_type_id" all or any one not specified'
       );
   }
 
-  if (!packed_date) {
-    packed_date = "NOW()";
+  if (!packed_timestamp) {
+    packed_timestamp = "NOW()";
   } else {
-    packed_date = `"${packed_date}"`;
+    packed_timestamp = `"${packed_timestamp}"`;
   }
-  if (!exp_date) {
-    exp_date = "1999-01-01 00:00:00";
+  if (!exp_timestamp) {
+    exp_timestamp = "1999-01-01 00:00:00";
   }
   if (!description) {
     description = "NULL";
   }
 
-  let sql1 = `insert into CROP(vendor_id, crop_qty, crop_name, crop_type_id, packed_date, exp_date, description) values (${vendor_id},${crop_qty},"${crop_name}",${crop_type_id},${packed_date},"${exp_date}","${description}")`;
+  let sql1 = `insert into CROP(vendor_id, crop_qty, crop_name, crop_type_id, crop_price, packed_timestamp, exp_timestamp, description) values (${vendor_id},${crop_qty},"${crop_name}",${crop_type_id},${crop_price},${packed_timestamp},"${exp_timestamp}","${description}")`;
   let sql2 = `select * from CROP where crop_id=LAST_INSERT_ID()`;
   let connection;
   let errorOnBeginTransaction = true;
@@ -142,18 +147,20 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
     changeInQty,
     crop_name,
     crop_type_id,
-    packed_date,
-    exp_date,
+    packed_timestamp,
+    exp_timestamp,
     description,
+    crop_price,
   } = req.body;
 
   if (
     !changeInQty &&
     !crop_name &&
     !crop_type_id &&
-    !packed_date &&
-    !exp_date &&
-    !description
+    !packed_timestamp &&
+    !exp_timestamp &&
+    !description &&
+    !crop_price
   ) {
     return res.status(400).send("No attributes specified to be changed");
   }
@@ -165,17 +172,20 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
   if (crop_type_id) {
     subSql.push(`crop_type_id = ${crop_type_id}`);
   }
-  if (packed_date) {
-    subSql.push(`packed_date = "${packed_date}"`);
+  if (packed_timestamp) {
+    subSql.push(`packed_timestamp = "${packed_timestamp}"`);
   }
-  if (exp_date) {
-    subSql.push(`exp_date = "${exp_date}"`);
+  if (exp_timestamp) {
+    subSql.push(`exp_timestamp = "${exp_timestamp}"`);
   }
   if (description) {
     subSql.push(`description = "${description}"`);
   }
   if (changeInQty) {
     subSql.push(`crop_qty =(crop_qty + ${changeInQty})`);
+  }
+  if (crop_price) {
+    subSql.push(`crop_price = ${crop_price}`);
   }
 
   if (subSql.length > 0) {

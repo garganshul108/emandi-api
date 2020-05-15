@@ -15,9 +15,9 @@ const transactionProtectedQueries = require("../db/requests/transaction_protecte
 router.get("/me", [decodeToken], async (req, res) => {
   let sql;
   if (req.actor.user_id) {
-    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where user_id=${user_id}`;
+    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where user_id=${req.actor.user_id}`;
   } else if (req.actor.vendor_id) {
-    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where vendor_id=${vendor_id}`;
+    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where vendor_id=${req.actor.vendor_id}`;
   }
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let sql = `select * from ORDER join ORDERED_ITEM using(order_id)`;
+  let sql = `select * from ORDERS join ORDERED_ITEM using(order_id)`;
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -127,7 +127,7 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
 });
 
 router.post("/request", [decodeToken, authUser], async (req, res) => {
-  let { delivery_address } = req.body.delivery_address;
+  let delivery_address = req.body.delivery_address;
   if (!delivery_address) {
     return res.status(400).send("No Delivery Address Provided");
   }
@@ -136,11 +136,13 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     {
       // get the vendor_id from the user cart
       getQueryStatement: (prevResults, prevFields) => {
-        return `select DISTINCT(vendor_id) from CART join CROP using(crop_id) where user_id=${user_id}`;
+        return `select DISTINCT(vendor_id) as vendor_id from CART join CROP using(crop_id) where user_id=${user_id}`;
       },
-      onQueryResultUnsatisfied: (prevResults, prevFields) => {
+      checkQueryResultSatisfaction: (prevResults, prevFields) => {
+        console.log("ORDER statisfaction Ran");
         let statisfactionStatus = true;
         let action = undefined;
+        console.log(prevResults["query_1"]);
         if (prevResults["query_1"].length !== 1) {
           statisfactionStatus = false;
           action = (req, res, results) => {
@@ -156,22 +158,24 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
       // generate Order
       getQueryStatement: (prevResults, prevFields) => {
         let vendor_id = prevResults["query_1"][0].vendor_id;
-        let sql = `insert into ORDERS(user_id, vendor_id) values(${user_id}, ${vendor_id})`;
+        let sql = `insert into ORDERS(user_id, vendor_id, delivery_address) values(${user_id}, ${vendor_id}, "${delivery_address}")`;
         return sql;
       },
     },
     {
       // get last order Order ID
       getQueryStatement: (prevResults, prevFields) => {
-        return `select LAST_INSERT_ID() as order_id from ORDER`;
+        return `select LAST_INSERT_ID() as order_id from ORDERS`;
       },
     },
     {
       // get items from the Cart => insert into order item
       getQueryStatement: (prevResults, prevFields) => {
         let vendor_id = prevResults["query_1"][0].vendor_id;
-        let order_id = prevResults["query_4"][0].order_id;
-        return `insert into ORDERED_ITEM(order_id ,crop_id, item_qty, item_freezed_cost) select ${order_id}, crop_id, item_qty, (item_qty*crop_price) as item_freezed_cost from CART join CROP using(crop_id) where user_id=${user_id} and vendor_id=${vendor_id})`;
+        let order_id = prevResults["query_3"][0].order_id;
+        // console.log("PREV RESULTS");
+        // console.log(prevResults);
+        return `insert into ORDERED_ITEM(order_id ,crop_id, item_qty, item_freezed_cost) select ${order_id}, crop_id, item_qty, (item_qty*crop_price) as item_freezed_cost from CART join CROP using(crop_id) where user_id=${user_id} and vendor_id=${vendor_id}`;
       },
     },
     {
@@ -181,7 +185,7 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     },
     {
       getQueryStatement: (prevResults, prevFields) => {
-        let order_id = prevResults["query_4"][0].order_id;
+        let order_id = prevResults["query_3"][0].order_id;
         return `select * from ORDERED_ITEM join ORDERS using(order_id) where order_id=${order_id}`;
       },
     },
@@ -189,7 +193,8 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
 
   return await transactionProtectedQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
-      res.status(201).send(results);
+      const finalResults = results["query_6"];
+      res.status(201).send(finalResults);
     },
   });
 });

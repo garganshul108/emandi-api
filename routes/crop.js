@@ -8,8 +8,8 @@ let attributes = [
   "crop_qty",
   "crop_name",
   "crop_type_id",
-  "packed_date",
-  "exp_date",
+  "packed_timestamp",
+  "exp_timestamp",
   "description",
   "state_id",
   "city_id",
@@ -18,52 +18,63 @@ let attributes = [
   "vendor_id",
 ];
 
-attributes = attributes.join(",");
+attributes = attributes.join(" , ");
 
-router.get("/:id", async (req, res) => {
-  let { id } = req.params;
+// router.get("/:id?", async (req, res) => {
+//   let { id } = req.params;
 
-  let sql = `select ${attributes} from CROP`;
-  sql = `${sql} join VENDOR using(vendor_id)`;
-  sql = `${sql} join CROP_TYPE using(crop_type_id)`;
-  sql = `${sql} where crop_id=${id}`;
+//   let sql = `select ${attributes} from CROP`;
+//   sql = `${sql} join VENDOR using(vendor_id)`;
+//   sql = `${sql} join CROP_TYPE using(crop_type_id)`;
+//   sql = `${sql} where crop_id=${id}`;
 
-  const callbacks = {
-    onSuccess: (req, res, results) => {
-      return res.status(200).send(results);
-    },
-  };
-  try {
-    return await simpleAsyncFetch(sql, req, res, callbacks);
-  } catch (err) {
-    console.log(err);
-  }
-});
+//   const callbacks = {
+//     onSuccess: (req, res, results) => {
+//       return res.status(200).send(results);
+//     },
+//   };
+//   try {
+//     return await simpleAsyncFetch(sql, req, res, callbacks);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
-router.get("/", async (req, res) => {
+router.get("/:id?", async (req, res) => {
   let { city_id, state_id, crop_class, crop_type_id, vendor_id } = req.query;
+  let { id } = req.params;
 
   let locFlag = false;
   let typeFlag = false;
+  let extraQueries = false;
   let subSql = [];
   if (city_id) {
     locFlag = true;
+    extraQueries = true;
     subSql.push(`city_id=${city_id}`);
   }
   if (state_id) {
     locFlag = true;
+    extraQueries = true;
     subSql.push(`state_id=${state_id}`);
   }
   if (crop_class) {
     typeFlag = true;
+    extraQueries = true;
     subSql.push(`crop_class="${crop_class}"`);
   }
   if (crop_type_id) {
     typeFlag = true;
+    extraQueries = true;
     subSql.push(`crop_type_id="${crop_type_id}"`);
   }
   if (vendor_id) {
+    extraQueries = true;
     subSql.push(`crop_type_id="${vendor_id}"`);
+  }
+  if (id) {
+    extraQueries = true;
+    subSql.push(`crop_id=${id}`);
   }
 
   subSql = subSql.join(" and ");
@@ -72,7 +83,7 @@ router.get("/", async (req, res) => {
   sql = `${sql} join VENDOR using(vendor_id)`;
   sql = `${sql} join CROP_TYPE using(crop_type_id)`;
 
-  sql = `${sql} where ${subSql}`;
+  if (extraQueries) sql = `${sql} where ${subSql}`;
 
   const callbacks = {
     onSuccess: (req, res, results) => {
