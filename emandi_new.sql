@@ -256,3 +256,20 @@ create table PROOF(
 	description VARCHAR(500)
 );
 
+
+
+
+-- crop type table
+
+('Potato','VEGETABLE'),
+('Tomato','VEGETABLE'),
+('Onion','VEGETABLE'),
+('Lady Finger','VEGETABLE'),
+('Apple','FRUITS'),
+('Banana','FRUITS'),
+('Mango','FRUITS'),
+('Orange','FRUITS'),
+('Rice','GRAINS'),
+('Wheat','GRAINS'),
+('Masoor Dal','GRAINS')
+('Maize','GRAINS')

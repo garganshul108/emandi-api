@@ -14,6 +14,8 @@ const state = require("./routes/state");
 const city = require("./routes/city");
 const otp_login = require("./routes/otp_login");
 const otp_signup = require("./routes/otp_signup");
+const crop = require("./routes/order");
+const order = require("./order");
 
 const vendor = require("./routes/vendor");
 const user = require("./routes/user");
@@ -35,6 +37,8 @@ app.use("/city", city);
 app.use("/vendor", vendor);
 app.use("/user", user);
 app.use("/crop_type", cropType);
+app.use("/crop", crop);
+app.use("/order", order);
 
 app.get("/", (req, res) => {
   return res
