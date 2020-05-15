@@ -157,6 +157,7 @@ create table CART(
 	crop_id INT NOT NULL,
 	item_qty DECIMAL(10,2) UNSIGNED NOT NULL,
 	item_cost DECIMAL(10,2),
+	UNIQUE(crop_id, user_id),
 	FOREIGN KEY (crop_id)
     REFERENCES CROP(crop_id)
     ON DELETE CASCADE,
