@@ -40,12 +40,12 @@
 
 ### Crop Type
 
-| Action | Endpoint       | Use case                    | Query Parameters                      | Post Object Format                                             | Special Token Needed | Return                |
-| ------ | -------------- | --------------------------- | ------------------------------------- | -------------------------------------------------------------- | :------------------: | --------------------- |
-| GET    | /crop_type     |                             | limit (integer)<br/> offset (integer) |                                                                |                      |
-| POST   | /crop_type     |                             |                                       | crop_type_name<br/>crop_class ("fruit", "vegetable", "grains") |        admin         | result enclosed by [] |
-| DELETE | /crop_type/:id | Deletes crop_types          | crop_type_id                          |                                                                |        admin         |
-| PATCH  | /crop_type/:id | Edit crop_type_id specified |                                       | crop_type_name (string) <br/> crop_class(valid string)         |        admin         | result enclosed by [] |
+| Action | Endpoint       | Use case                    | Query Parameters                      | Post Object Format                                               | Special Token Needed | Return                |
+| ------ | -------------- | --------------------------- | ------------------------------------- | ---------------------------------------------------------------- | :------------------: | --------------------- |
+| GET    | /crop_type     |                             | limit (integer)<br/> offset (integer) |                                                                  |                      |
+| POST   | /crop_type     |                             |                                       | crop_type_name<br/>crop_class ("FRUITS", "VEGETABLES", "GRAINS") |        admin         | result enclosed by [] |
+| DELETE | /crop_type/:id | Deletes crop_types          | crop_type_id                          |                                                                  |        admin         |
+| PATCH  | /crop_type/:id | Edit crop_type_id specified |                                       | crop_type_name (string) <br/> crop_class(valid string)           |        admin         | result enclosed by [] |
 
 ### Vendor
 
