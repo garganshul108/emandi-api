@@ -78,7 +78,11 @@ router.get("/", async (req, res) => {
 
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   let { crop_type_name, crop_class } = req.body;
-  let sql1 = `insert into CROP_TYPE(crop_type_name, crop_type_class) values("${crop_type_name}","${crop_class}")`;
+  if(!crop_class) crop_class = "OTHER";
+  if(!crop_type_name) {
+    return res.status(400).send("crop_type_name not specified!!");
+  }
+  let sql1 = `insert into CROP_TYPE(crop_type_name, crop_class) values("${crop_type_name}","${crop_class}")`;
   let sql2 = `select * from CROP_TYPE where id=LAST_INSERT_ID()`;
   let callbacks = {
     onSuccess: (req, res, results) => {
