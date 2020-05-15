@@ -23,6 +23,7 @@ create table CITY(
 
 create table VENDOR (
 	vendor_id INT AUTO_INCREMENT PRIMARY KEY,
+	-- device fcm code ---
 	contact BIGINT UNIQUE NOT NULL,
 	type VARCHAR(25),
 	name VARCHAR(25), 

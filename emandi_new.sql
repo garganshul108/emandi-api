@@ -171,23 +171,34 @@ create table CART(
 
 
 create table ORDER(
-	--- PROFILE ---
 	order_id INT AUTO_INCREMENT,
-	issue_timestamp TIMESTAMP NOT NULL,
+	issue_timestamp TIMESTAMP NOT NULL DEFAULT NOW(),	
 	user_id INT NOT NULL,
-	vendor_id INT NOT NULL,
 	delivery_address VARCHAR(300) NOT NULL,
-price DECIMAL(10,2),
-	--- ORDER STATUS ---
-	order_status TINYINT DEFAULT 0, -- 0: placed 1: delivered 2: cancelled
-	user_delivery_confirmation BOOLEAN DEFAULT 0,
-	vendor_delivery_confirmation BOOLEAN DEFAULT 0
+	vendor_id INT NOT NULL,
+	order_status VARCHAR(20) DEFAULT "PENDING",
+
+	FOREIGN KEY (user_id)
+    REFERENCES USER(user_id)
+    ON DELETE CASCADE,
+	FOREIGN KEY (vendor_id)
+    REFERENCES VENDOR(vendor_id)
+    ON DELETE CASCADE
+
 );
 
 -- relates the order to the product
 create table ORDERED_ITEM(
 	order_id INT NOT NULL,
-	product_id INT NOT NULL
+	crop_id INT NOT NULL,
+	item_qty DECIMAL(10,2) UNSIGNED NOT NULL,
+	item_freezed_cost DECIMAL(10,2) UNSIGNED NOT NULL
+	FOREIGN KEY (order_id)
+    REFERENCES ORDER(order_id)
+    ON DELETE CASCADE,
+	FOREIGN KEY (crop_id)
+    REFERENCES CROP(crop_id)
+    ON DELETE CASCADE
 );
 
 
