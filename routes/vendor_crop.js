@@ -136,9 +136,8 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
   }
 });
 
-
-router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
-  let {crop_id} = req.params;
+router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
+  let { crop_id } = req.params;
   let {
     changeInQty,
     crop_name,
@@ -146,45 +145,52 @@ router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
     packed_date,
     exp_date,
     description,
-  } = req.body
+  } = req.body;
 
-  if(!changeInQty && !crop_name && !crop_type_id && !packed_date && !exp_date && !description){
+  if (
+    !changeInQty &&
+    !crop_name &&
+    !crop_type_id &&
+    !packed_date &&
+    !exp_date &&
+    !description
+  ) {
     return res.status(400).send("No attributes specified to be changed");
   }
 
   let subSql = [];
-  if(crop_name){
-    subSql.push(`crop_name = "${crop_name}"`)
+  if (crop_name) {
+    subSql.push(`crop_name = "${crop_name}"`);
   }
-  if(crop_type_id){
-    subSql.push(`crop_type_id = ${crop_type_id}`)
+  if (crop_type_id) {
+    subSql.push(`crop_type_id = ${crop_type_id}`);
   }
-  if(packed_date){
-    subSql.push(`packed_date = "${packed_date}"`)
+  if (packed_date) {
+    subSql.push(`packed_date = "${packed_date}"`);
   }
-  if(exp_date){
-    subSql.push(`exp_date = "${exp_date}"`)
+  if (exp_date) {
+    subSql.push(`exp_date = "${exp_date}"`);
   }
-  if(description){
-    subSql.push(`description = "${description}"`)
+  if (description) {
+    subSql.push(`description = "${description}"`);
   }
-  if(changeInQty){
+  if (changeInQty) {
     subSql.push(`crop_qty =(crop_qty + ${changeInQty})`);
   }
 
-  if(subSql.length > 0){
-    subSql = subSql.join(' , ');
+  if (subSql.length > 0) {
+    subSql = subSql.join(" , ");
     let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id}`;
     let sql2 = `select * from CROP where crop_id=${crop_id}`;
     const callbacks = {
-      onSuccess:(req, res, results) => {
+      onSuccess: (req, res, results) => {
         res.status(201).send(results);
-      }
+      },
     };
-    try{
+    try {
       await simpleAsyncUpdateAndFetch(sql1, sql2, req, res, callbacks);
     } catch (err) {
-      console.log('Error while nomal Updates\n', err);
+      console.log("Error while nomal Updates\n", err);
     }
   }
 });

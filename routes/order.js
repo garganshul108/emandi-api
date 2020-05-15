@@ -3,7 +3,7 @@ const router = express.Router();
 
 const authUser = require("../middleware/auth_user");
 const authAdmin = require("../middleware/auth_admin");
-const authVendor = require("../middleware/auth_Vendor");
+const authVendor = require("../middleware/auth_vendor");
 const decodeToken = require("../middleware/decode_token");
 
 const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_and_fetch");

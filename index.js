@@ -14,8 +14,8 @@ const state = require("./routes/state");
 const city = require("./routes/city");
 const otp_login = require("./routes/otp_login");
 const otp_signup = require("./routes/otp_signup");
-const crop = require("./routes/order");
-const order = require("./order");
+const crop = require("./routes/crop");
+const order = require("./routes/order");
 
 const vendor = require("./routes/vendor");
 const user = require("./routes/user");
