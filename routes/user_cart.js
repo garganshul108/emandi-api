@@ -9,10 +9,14 @@ const simpleAsyncInsertAndFetch = require("../db/requests/simple_async_insert_an
 const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 const simpleAsyncDelete = require("../db/requests/simple_async_delete");
 
+let attributes = ["item_id", "user_id", "crop_id", "item_qty"];
+
+attributes = attributes.join(" , ");
+
 router.get("/:item_id", [decodeToken, authUser], async (req, res) => {
   let item_id = req.params.item_id;
   let user_id = req.actor.user_id;
-  let sql = `select * from CART where item_id=${item_id} and user_id=${user_id}`;
+  let sql = `select ${attributes}, crop_price, user_id, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) where item_id=${item_id} and user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -23,7 +27,8 @@ router.get("/:item_id", [decodeToken, authUser], async (req, res) => {
 
 router.get("/", [decodeToken, authUser], async (req, res) => {
   let user_id = req.actor.user_id;
-  let sql = `select * from CART where user_id=${user_id}`;
+  let sql = `select ${attributes}, crop_price, user_id, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) where user_id=${user_id}`;
+  // let sql = `select * from CART where user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -59,7 +64,7 @@ router.delete("/", [decodeToken, authUser], async (req, res) => {
 router.post("/", [decodeToken, authUser], async (req, res) => {
   let user_id = req.actor.user_id;
   let { crop_id, item_qty } = req.body;
-  if (!item_qty || crop_id) {
+  if (!item_qty || !crop_id) {
     return res
       .status(400)
       .send('"item_qty" and "crop_id" all or any one not specified');

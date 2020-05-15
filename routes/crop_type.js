@@ -9,44 +9,55 @@ const simpleAsyncInsertAndFetch = require("../db/requests/simple_async_insert_an
 const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_and_fetch");
 
-router.get("/:id", async (req, res) => {
-  let { id } = req.params;
-  let sql = `select * from crop_type where crop_type_id = ${id}`;
+// router.get("/:id", async (req, res) => {
+//   let { id } = req.params;
+//   let sql = `select * from CROP_TYPE where crop_type_id = ${id}`;
 
-  const callbacks = {
-    onSuccess: (req, res, results) => {
-      return res.status(200).send(results);
-    },
-    onGetConnectionFail: (req, res, err) => {
-      console.log(err);
-      return res.status(500).send("Internal Server Error");
-    },
-    onFetchFail: (req, res, err) => {
-      console.log(err);
-      return res.status(500).send("Internal Server Error");
-    },
-    onUnknownError: (req, res, err) => {
-      console.log(err);
-      return res.status(500).send("Internal Server Error");
-    },
-  };
+//   const callbacks = {
+//     onSuccess: (req, res, results) => {
+//       return res.status(200).send(results);
+//     },
+//     onGetConnectionFail: (req, res, err) => {
+//       console.log(err);
+//       return res.status(500).send("Internal Server Error");
+//     },
+//     onFetchFail: (req, res, err) => {
+//       console.log(err);
+//       return res.status(500).send("Internal Server Error");
+//     },
+//     onUnknownError: (req, res, err) => {
+//       console.log(err);
+//       return res.status(500).send("Internal Server Error");
+//     },
+//   };
 
-  try {
-    await simpleAsyncFetch(sql, req, res, callbacks);
-  } catch (err) {
-    console.log(err);
-  }
-  return;
-});
+//   try {
+//     await simpleAsyncFetch(sql, req, res, callbacks);
+//   } catch (err) {
+//     console.log(err);
+//   }
+//   return;
+// });
 
-router.get("/", async (req, res) => {
+router.get("/:id?", async (req, res) => {
   let { crop_class } = req.query;
-  let sql = "select * from crop_type";
+  let { id } = req.params;
+
+  let sql = "select * from CROP_TYPE";
+  let subSql = [];
   if (crop_class) {
     crop_class = crop_class.split(",");
     crop_class = crop_class.map((str) => `"${str}"`);
     crop_class = crop_class.join(",");
-    sql = `${sql} where crop_class IN (${crop_class})`;
+    subSql.push(`crop_class IN (${crop_class})`);
+  }
+  if (id) {
+    subSql.push(`crop_type_id = ${id}`);
+  }
+
+  if (subSql.length > 0) {
+    subSql = subSql.join(" and ");
+    sql = `${sql} where ${subSql}`;
   }
 
   const callbacks = {
@@ -152,7 +163,7 @@ router.patch("/:id", [decodeToken, authAdmin], async (req, res) => {
   }
   subSql = subSql.join(" , ");
   let sql1 = `update CROP_TYPE ${subSql} where crop_type_id=${id}`;
-  let sql2 = `select * from crop_type where crop_type_id=${id}`;
+  let sql2 = `select * from CROP_TYPE where crop_type_id=${id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
       return res.status(201).send(results);
