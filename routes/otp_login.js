@@ -96,20 +96,21 @@ router.post("/", async (req, res) => {
   }
 
   let connection = undefined;
-  let errorOnFetchingId = true;
+  // let errorOnFetchingId = true;
   let errorOnFetchingOTPfromLoginTable = true;
   let sql1 = `select * from OTP_LOGIN where contact=${contact} and subscriber_type="${type}" ORDER BY reg_timestamp DESC`;
-  let sql2;
+  // let sql2;
 
-  if (type === "vendor") {
-    sql2 = `select vendor_id as id from VENDOR where contact=${contact}`;
-  } else if (type === "user") {
-    sql2 = `select user_id as id from USER where contact=${contact}`;
-  }
+  // if (type === "vendor") {
+  //   sql2 = `select vendor_id as id from VENDOR where contact=${contact}`;
+  // } else if (type === "user") {
+  //   sql2 = `select user_id as id from USER where contact=${contact}`;
+  // }
   let payload = {
     contact: contact,
     device_fcm_token: device_fcm_token,
   };
+
   try {
     connection = await promisifiedGetConnection(connectionPool);
     let { results: matchingContacts } = await promisifiedQuery(
@@ -131,18 +132,18 @@ router.post("/", async (req, res) => {
       connection.release();
       return res.status(404).send("Latest OTP did not match");
     }
-    let { results: idPacket } = await promisifiedQuery(connection, sql2, []);
-    errorOnFetchingId = false;
+    // let { results: idPacket } = await promisifiedQuery(connection, sql2, []);
+    // errorOnFetchingId = false;
     if (type === "vendor") {
       payload = {
         ...payload,
-        vendor_id: idPacket[0].id,
+        vendor_id: latestOTPResult.subscriber_id,
         isVendor: 1,
       };
     } else if (type === "user") {
       payload = {
         ...payload,
-        user_id: idPacket[0].id,
+        user_id: latestOTPResult.subscriber_id,
         isUser: 1,
       };
     }
@@ -163,12 +164,14 @@ router.post("/", async (req, res) => {
       console.log(err);
       connection.release();
       return res.status(500).send("Internal Server Error");
-    } else if (errorOnFetchingId) {
-      console.log(__filename + " Error in fetching index");
-      console.log(err);
-      connection.release();
-      return res.status(500).send("Internal Server Error");
-    } else {
+    }
+    // else if (errorOnFetchingId) {
+    //   console.log(__filename + " Error in fetching index");
+    //   console.log(err);
+    //   connection.release();
+    //   return res.status(500).send("Internal Server Error");
+    // }
+    else {
       console.log(__filename + " UNKNOWN ERROR");
       console.log(err);
       connection.release();
