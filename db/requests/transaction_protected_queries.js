@@ -89,10 +89,12 @@ module.exports = async (sqls, req, res, callbacks) => {
       errorOnQuery[i] = false;
       resultsFromPreviousQuery[`query_${i + 1}`] = results;
       fieldsFromPreviousQuery[`query_${i + 1}`] = fields;
-      if (sql[i].onQueryResultUnsatisfied) {
-        const { statisfactionStatus: satisfied, action } = sql[
+      console.log("Query", i, "Ran", "Just above Unsatisfied");
+      if (sqls[i].checkQueryResultSatisfaction) {
+        console.log("Running Unatisfied");
+        const { statisfactionStatus: satisfied, action } = sqls[
           i
-        ].onQueryResultUnsatisfied(
+        ].checkQueryResultSatisfaction(
           resultsFromPreviousQuery,
           fieldsFromPreviousQuery
         );
