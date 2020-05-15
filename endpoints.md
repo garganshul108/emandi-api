@@ -76,14 +76,14 @@
 
 ### Vendor / Crop
 
-| Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                     | Special Token Needed | Result                       |
-| ------ | --------------------- | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------ | :------------------: | ---------------------------- |
-| GET    | /vendor/crop          | Fetch all crops of the vendor |                  |                                                                                                        |        vendor        | object enclosed by []        |
-| GET    | /vendor/crop/:id      |                               |                  |                                                                                                        |        vendor        | object enclosed by []        |
-| DELETE | /vendor/crop/:id      | single delete                 |                  |                                                                                                        |        vendor        |
-| DELETE | /vendor/crop?id=1,2,3 | multiple delete               | id               |                                                                                                        |        vendor        |
-| POST   | /vendor/crop          | Add a new crop                |                  | crop_qty<br/>crop_name<br/>crop_type_id<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/>    |        vendor        | posted object enclosed by [] |
-| PATCH  | /vendor/crop/:id      |                               |                  | changeInQty<br/>crop_name<br/>crop_type_id<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/> |        vendor        | posted object enclosed by [] |
+| Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                                 | Special Token Needed | Result                       |
+| ------ | --------------------- | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------ | :------------------: | ---------------------------- |
+| GET    | /vendor/crop          | Fetch all crops of the vendor |                  |                                                                                                                    |        vendor        | object enclosed by []        |
+| GET    | /vendor/crop/:id      |                               |                  |                                                                                                                    |        vendor        | object enclosed by []        |
+| DELETE | /vendor/crop/:id      | single delete                 |                  |                                                                                                                    |        vendor        |
+| DELETE | /vendor/crop?id=1,2,3 | multiple delete               | id               |                                                                                                                    |        vendor        |
+| POST   | /vendor/crop          | Add a new crop                |                  | crop_qty<br/>crop_name<br/>crop_type_id<br/>crop_price<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/> |        vendor        | posted object enclosed by [] |
+| PATCH  | /vendor/crop/:id      |                               |                  | changeInQty<br/>crop_name<br/>crop_type_id<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/>             |        vendor        | posted object enclosed by [] |
 
 ### User / Cart
 
