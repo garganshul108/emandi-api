@@ -10,7 +10,7 @@
 > - if this parameter is not specified then admin action is needed
 > - other parameters are optional
 
-### Login/Signup
+### Login / Signup
 
 | Action | Endpoint    | Use case                        | Query Parameters                        | Post Object Format                                                                  | Special Token Needed | Return          |
 | ------ | ----------- | ------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------- | :------------------: | --------------- |
