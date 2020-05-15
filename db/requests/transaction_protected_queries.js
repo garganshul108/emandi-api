@@ -67,24 +67,52 @@ module.exports = async (sqls, req, res, callbacks) => {
     connection = await promisifiedGetConnection(connectionPool);
     await promisifiedBeginTransaction(connection);
     errorOnBeginTransaction = false;
-    let resultsFromPreviousQuery = null,
-      fieldsFromPreviousQuery = null;
+    let resultsFromPreviousQuery = {},
+      fieldsFromPreviousQuery = {};
     for (let i = 0; i < noOfQueries; i++) {
-      let sql = sqls[i].getQueryStatement({
+      let sql = sqls[i].getQueryStatement(
         resultsFromPreviousQuery,
-        fieldsFromPreviousQuery,
-      });
-      let { results, fields } = await promisifiedQuery(connection, sql, []);
+        fieldsFromPreviousQuery
+      );
+      let sqlOptions = [];
+      if (sqls[i].getQueryOptions) {
+        sqlOptions = sqls[i].getQueryOptions(
+          resultsFromPreviousQuery,
+          fieldsFromPreviousQuery
+        );
+      }
+      let { results, fields } = await promisifiedQuery(
+        connection,
+        sql,
+        sqlOptions
+      );
       errorOnQuery[i] = false;
-      resultsFromPreviousQuery = results;
-      fieldsFromPreviousQuery = fields;
+      resultsFromPreviousQuery[`query_${i + 1}`] = results;
+      fieldsFromPreviousQuery[`query_${i + 1}`] = fields;
+      if (sql[i].onQueryResultUnsatisfied) {
+        const { statisfactionStatus: satisfied, action } = sql[
+          i
+        ].onQueryResultUnsatisfied(
+          resultsFromPreviousQuery,
+          fieldsFromPreviousQuery
+        );
+        if (!satisfied) {
+          if (action)
+            action(req, res, resultsFromPreviousQuery, fieldsFromPreviousQuery);
+          connection.rollback(() => connection.release());
+          return;
+        } else {
+          if (action)
+            action(req, res, resultsFromPreviousQuery, fieldsFromPreviousQuery);
+        }
+      }
     }
     errorOnExplicitQueries = false;
     await promisifiedCommit(connection);
     errorOnCommit = false;
     connection.release();
     if (callbacks.onSuccess) {
-      callbacks.onSuccess(req, res, results);
+      callbacks.onSuccess(req, res, resultsFromPreviousQuery);
     }
     return;
   } catch (err) {
