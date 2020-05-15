@@ -73,7 +73,7 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     packed_date = `"${packed_date}"`;
   }
   if (!exp_date) {
-    exp_date = "NULL";
+    exp_date = "1999-01-01 00:00:00";
   }
   if (!description) {
     description = "NULL";
@@ -169,7 +169,7 @@ router.patch("/:crop_id",[decodeToken, authVendor], (req, res) => {
     subSql.push(`description = "${description}"`)
   }
   if(changeInQty){
-    subSql.push(`qty = qty + ${changeInQty}`);
+    subSql.push(`qty =(qty + ${changeInQty})`);
   }
 
   if(subSql.length > 0){
