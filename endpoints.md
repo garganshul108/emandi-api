@@ -98,14 +98,14 @@
 
 ### Order
 
-| Action | Endpoint       | Use case            | Query Parameters | Post Object Format |   Special Token Needed   | Result |
-| ------ | -------------- | ------------------- | ---------------- | ------------------ | :----------------------: | ------ |
-| GET    | /order/me      | To view self orders |                  |                    | vendor <br/>or<br/> user |
-| GET    | /order/:id     | View specific order |                  |                    |                          |
-| GET    | /order/        | View all Orders     |                  |                    |                          |
-| POST   | /order/cancel  | Cancel an order     |                  | order_id           | vendor <br/>or<br/> user |
-| POST   | /order/confirm | Confirm an order    |                  | order_id           |          vendor          |
-| POST   | /order/request | Place a order       |                  | delivery_address   |           user           |
+| Action | Endpoint       | Use case            | Query Parameters | Post Object Format                                                                                  |   Special Token Needed   | Result |
+| ------ | -------------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------- | :----------------------: | ------ |
+| GET    | /order/me      | To view self orders |                  |                                                                                                     | vendor <br/>or<br/> user |
+| GET    | /order/:id     | View specific order |                  |                                                                                                     |                          |
+| GET    | /order/        | View all Orders     |                  |                                                                                                     |                          |
+| POST   | /order/cancel  | Cancel an order     |                  | order_id                                                                                            | vendor <br/>or<br/> user |
+| POST   | /order/confirm | Confirm an order    |                  | order_id                                                                                            |          vendor          |
+| POST   | /order/request | Place a order       |                  | delivery_address <br/> order:[{crop_id, item_qty}, {crop_id, item_qty}] with order from same vendor |           user           |
 
 | Action                               | Endpoint                                 | Use case                                           | Query Parameters                                             | Post Object Format                                                      | special token needed |
 | ------------------------------------ | ---------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------- | -------------------- |
