@@ -10,7 +10,7 @@ const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_an
 const simpleAsyncInsertAndFetch = require("../db/requests/simple_async_insert_and_fetch");
 const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 const simpleAsyncDelete = require("../db/requests/simple_async_delete");
-const transactionProtectedQueries = require("../db/requests/transaction_protected_queries");
+const transactionProtectedAsyncQueries = require("../db/requests/transaction_protected_async_queries");
 
 router.get("/me", [decodeToken], async (req, res) => {
   let sql;
@@ -83,7 +83,7 @@ router.post("/cancel", [decodeToken], async (req, res) => {
       },
     },
   ];
-  return await transactionProtectedQueries(sqls, req, res, {
+  return await transactionProtectedAsyncQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
       res.status(201).send("ORDER CANCELLED");
     },
@@ -119,7 +119,7 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
       },
     },
   ];
-  return await transactionProtectedQueries(sqls, req, res, {
+  return await transactionProtectedAsyncQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
       res.status(201).send("ORDER CONFIRMED");
     },
@@ -207,7 +207,7 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     },
   ];
 
-  return await transactionProtectedQueries(sqls, req, res, {
+  return await transactionProtectedAsyncQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
       const finalResults = results["query_5"];
       res.status(201).send(finalResults);
