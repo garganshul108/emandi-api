@@ -1,13 +1,36 @@
 const Joi = require("@hapi/joi");
 
 const defaultSchema = {
-  city_id: Joi.number(),
-  state_id: Joi.number(),
-  crop_class: Joi.string()
-    .valid("FRUITS", "GRAINS", "VEGETABLES", "OTHER")
-    .default("OTHER"),
-  vendor_id: Joi.number(),
+  city_id: Joi.number().min(1),
+  state_id: Joi.number().min(1),
+  vendor_id: Joi.number().min(1),
+  order_id: Joi.number().min(1),
+  item_id: Joi.number().min(1),
+
+  item_qty: Joi.number(),
+
+  username: Joi.string().min(3),
+  password: Joi.string().min(3),
+
+  contact: Joi.number().min(1000000000).max(9999999999),
+  device_fcm_token: Joi.string(),
+
+  delivery_address: Joi.string().min(3),
+  pincode: Joi.number().min(100000).max(999999),
+
+  crop_qty: Joi.number(),
+  crop_name: Joi.string().min(3),
+  crop_type_id: Joi.number(),
+  crop_price: Joi.number().min(0),
+
+  packed_timestamp: Joi.string(),
+  exp_timestamp: Joi.string(),
+  description: Joi.string(),
+
+  type: Joi.string().valid("vendor", "admin", "user"),
+  crop_class: Joi.string().valid("FRUITS", "GRAINS", "VEGETABLES", "OTHER"),
   crop_type_name: Joi.string().min(3),
+  name: Joi.string().min(3),
 };
 
 const joiValidator = (pairs) => {
@@ -15,8 +38,9 @@ const joiValidator = (pairs) => {
     pair.schema = Joi.object(pair.schema);
   }
 
+  let result = {};
   for (let pair of pairs) {
-    const { error: err } = pair.schema.validate(pair.object);
+    const { error: err, value } = pair.schema.validate(pair.object);
     if (err) {
       console.log("Invalid Request Format\n", err);
       let errorList = [];
@@ -27,9 +51,10 @@ const joiValidator = (pairs) => {
 
       return { status: false, error: err, optionals: { errorList } };
     }
+    result = { ...result, ...value };
   }
 
-  return { status: true, error: undefined };
+  return { status: true, value: result, error: undefined };
 };
 
 module.exports = { joiValidator, defaultSchema };
