@@ -4,6 +4,9 @@ const router = express.Router();
 const authAdmin = require("../middleware/auth_admin");
 const decodeToken = require("../middleware/decode_token");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 // const simpleGET = require("../db/requests/simple_get");
 // const simpleDELETE = require("../db/requests/simple_delete");
 const simpleAsyncDELETE = require("../db/requests/simple_async_delete");
@@ -106,13 +109,28 @@ router.get("/", async (req, res) => {
 
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   const { name, state_id } = req.body;
-  if (!name || !state_id) {
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        name: Joi.required(),
+        state_id: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!validationStatus) {
     return res
       .status(400)
-      .send([
-        { message: '"name" and "state_id" of the city must be specified' },
-      ]);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
+
   let sql1 = `insert into CITY(name,state_id) values("${name}", ${state_id})`;
   let sql2 = `select * from CITY where city_id=(LAST_INSERT_ID())`;
 
@@ -216,14 +234,33 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
 
 router.put("/", [decodeToken, authAdmin], async (req, res) => {
   const { city_id, name, state_id } = req.body;
-  if (!city_id && (!state_id || !name)) {
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        city_id: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!validationStatus) {
     return res
       .status(400)
-      .send([
-        {
-          message: '"city_id" and ("state_id" and/or "name") must be specified',
-        },
-      ]);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  if (!state_id || !name) {
+    return res.status(400).send([
+      {
+        message: '"city_id" and ("state_id" and/or "name") must be specified',
+      },
+    ]);
   }
 
   let subSql = [];
@@ -341,8 +378,25 @@ router.put("/", [decodeToken, authAdmin], async (req, res) => {
 
 router.delete("/:city_id", [decodeToken, authAdmin], async (req, res) => {
   const { city_id } = req.params;
-  if (!city_id) {
-    return res.status(400).send([{ message: '"city_id" must be specified' }]);
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.params },
+    },
+    {
+      schema: {
+        city_id: Joi.required(),
+      },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!validationStatus) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format\n${optionals.errorList}` }]);
   }
   const sql = `delete from CITY where city_id=${city_id};`;
   const callbacks = {

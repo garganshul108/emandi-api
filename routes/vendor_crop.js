@@ -6,6 +6,9 @@ const authAdmin = require("../middleware/auth_admin");
 const authVendor = require("../middleware/auth_vendor");
 const decodeToken = require("../middleware/decode_token");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const simpleGET = require("../db/requests/simple_get");
 const simpleDELETE = require("../db/requests/simple_get");
 
@@ -30,6 +33,17 @@ const {
 router.get("/:crop_id?", [decodeToken, authVendor], (req, res) => {
   let vendor_id = req.actor.vendor_id;
   let crop_id = req.params.crop_id;
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.actor, ...req.params },
+    },
+  ]);
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
   let sql = `select * from CROP where vendor_id=${vendor_id}`;
   if (crop_id) {
     sql = `${sql} and crop_id=${crop_id}`;
@@ -38,8 +52,20 @@ router.get("/:crop_id?", [decodeToken, authVendor], (req, res) => {
 });
 
 router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
-  let crop_id = req.param.crop_id;
-  let sql = `delete from CROP where crop_id=${crop_id}`;
+  let vendor_id = req.actor.vendor_id;
+  let crop_id = req.params.crop_id;
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.actor, ...req.params },
+    },
+  ]);
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+  let sql = `delete from CROP where crop_id=${crop_id} and vendor_id=${vendor_id}`;
   return simpleDELETE(sql, req, res, () => {
     return res.status(200).send([{ message: "Crop Deleted Successfully" }]);
   });
@@ -47,7 +73,23 @@ router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
 
 router.delete("/", [decodeToken, authVendor], (req, res) => {
   let crop_ids = req.query.id;
-  let sql = `delete from CROP where crop_id IN (${crop_ids})`;
+  let vendor_id = req.actor.vendor_id;
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.actor },
+    },
+    {
+      schema: { id: Joi.string().required() },
+      object: { ...req.query },
+    },
+  ]);
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+  let sql = `delete from CROP where crop_id IN (${crop_ids}) and vendor_id=${vendor_id}`;
   return simpleDELETE(sql, req, res, () => {
     return res.status(200).send([{ message: "Crops Deleted Successfully" }]);
   });
@@ -55,6 +97,43 @@ router.delete("/", [decodeToken, authVendor], (req, res) => {
 
 router.post("/", [decodeToken, authVendor], async (req, res) => {
   let vendor_id = req.actor.vendor_id;
+  // let {
+  //   crop_qty,
+  //   crop_name,
+  //   crop_type_id,
+  //   packed_timestamp,
+  //   exp_timestamp,
+  //   description,
+  //   crop_price,
+  // } = req.body;
+
+  const { status: valid, value, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body, vendor_id },
+    },
+    {
+      schema: {
+        crop_qty: Joi.required(),
+        crop_name: Joi.required(),
+        crop_type_id: Joi.required(),
+        crop_price: Joi.required(),
+        packed_timestamp: Joi.default("NOW()"),
+        exp_timestamp: Joi.default("1999-01-01 00:00:00"),
+        description: Joi.default("NULL"),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
+    return res.status(400).send([
+      {
+        message: `Invalid Request Format ${optionals.errorList}`,
+      },
+    ]);
+  }
+
   let {
     crop_qty,
     crop_name,
@@ -63,26 +142,27 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     exp_timestamp,
     description,
     crop_price,
-  } = req.body;
-  if (!crop_qty || !crop_name || !crop_type_id || !crop_price) {
-    return res
-      .status(400)
-      .send(
-        '"crop_qty", "crop_name", "crop_price" and "crop_type_id" all or any one not specified'
-      );
-  }
+  } = value;
 
-  if (!packed_timestamp) {
-    packed_timestamp = "NOW()";
-  } else {
-    packed_timestamp = `"${packed_timestamp}"`;
-  }
-  if (!exp_timestamp) {
-    exp_timestamp = "1999-01-01 00:00:00";
-  }
-  if (!description) {
-    description = "NULL";
-  }
+  // if (!crop_qty || !crop_name || !crop_type_id || !crop_price) {
+  //   return res
+  //     .status(400)
+  //     .send(
+  //       '"crop_qty", "crop_name", "crop_price" and "crop_type_id" all or any one not specified'
+  //     );
+  // }
+
+  // if (!packed_timestamp) {
+  //   packed_timestamp = "NOW()";
+  // } else {
+  //   packed_timestamp = `"${packed_timestamp}"`;
+  // }
+  // if (!exp_timestamp) {
+  //   exp_timestamp = ;
+  // }
+  // if (!description) {
+  //   description = "NULL";
+  // }
 
   let sql1 = `insert into CROP(vendor_id, crop_qty, crop_name, crop_type_id, crop_price, packed_timestamp, exp_timestamp, description) values (${vendor_id},${crop_qty},"${crop_name}",${crop_type_id},${crop_price},${packed_timestamp},"${exp_timestamp}","${description}")`;
   let sql2 = `select * from CROP where crop_id=LAST_INSERT_ID()`;
@@ -143,6 +223,8 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
 
 router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
   let { crop_id } = req.params;
+  let vendor_id = req.actor.vendor_id;
+
   let {
     changeInQty,
     crop_name,
@@ -152,6 +234,33 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
     description,
     crop_price,
   } = req.body;
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body, crop_id, vendor_id },
+    },
+    {
+      schema: {
+        changeInQty: Joi.number(),
+        crop_id: Joi.required(),
+        vendor_id: Joi.required(),
+      },
+      object: {
+        ...req.body,
+        crop_id,
+        vendor_id,
+      },
+    },
+  ]);
+
+  if (!valid) {
+    return res.status(400).send([
+      {
+        message: `Invalid Request Format ${optionals.errorList}`,
+      },
+    ]);
+  }
 
   if (
     !changeInQty &&
@@ -192,7 +301,7 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
 
   if (subSql.length > 0) {
     subSql = subSql.join(" , ");
-    let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id}`;
+    let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id} and vendor_id=${vendor_id}`;
     let sql2 = `select * from CROP where crop_id=${crop_id}`;
     const callbacks = {
       onSuccess: (req, res, results) => {

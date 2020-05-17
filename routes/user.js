@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const connectionPool = require("../db/pool");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const user_cart = require("./user_cart");
 
 const authAdmin = require("../middleware/auth_admin");
@@ -28,6 +31,14 @@ router.get("/me", [decodeToken, authUser], (req, res) => {
 
 router.get("/:id", [decodeToken, authAdmin], (req, res) => {
   let user_id = req.params.id;
+  const { status: valid, optionals } = joiValidator([
+    { schema: { ...defaultSchema }, object: { user_id } },
+  ]);
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
   let sql = `select * from USER where user_id=${user_id}`;
   return simpleGET(sql, req, res);
 });
@@ -46,6 +57,17 @@ router.patch("/me", [decodeToken, authUser], async (req, res) => {
     address,
     profile_picture,
   } = req.body;
+  
+  const {status: valid, optionals} = joiValidator([{
+    schema:{...defaultSchema},
+    object = {...req.body}
+  }]);
+
+  if(!valid){
+    return res.status(400).send([{message: `Invalid Request Format ${optionals.errorList}`}])
+  }
+  
+  
   if (
     !name &&
     !state_id &&
@@ -120,6 +142,17 @@ router.patch("/me", [decodeToken, authUser], async (req, res) => {
 
 router.delete("/me", [decodeToken, authUser], async (req, res) => {
   let user_id = req.actor.user_id;
+  const {status:valid, optionals} = joiValidator([
+    {
+      schema:{...defaultSchema},
+      object:{...req.actor}
+    }
+  ]);
+  
+  if(!valid){
+    return res.status(400).send([{message: `Invalid Request Format ${optionals.errorList}`}])
+  }
+  
   let sql1 = `DELETE from USER where user_id=${user_id}`;
   let connection = null;
   let errorOnDelete = true;

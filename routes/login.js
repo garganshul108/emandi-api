@@ -4,8 +4,34 @@ const connectionPool = require("../db/pool");
 const { compare } = require("../util/hash");
 const jwt = require("../util/jwt");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 router.post("/", (req, res) => {
-  const { type, username, password } = req.body;
+  // const { type, username, password } = req.body;
+
+  const { status: valid, optionals, value } = joiValidator([
+    {
+      schema: {
+        username: Joi.required(),
+        password: Joi.required(),
+        type: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  const { type, username, password } = value;
   // console.log(req.body);/
   if (type === "admin") {
     // console.log("admin cnrf");

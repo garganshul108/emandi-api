@@ -24,10 +24,10 @@ let attributes = [
 attributes = attributes.join(" , ");
 
 router.get("/:id?", async (req, res) => {
-  let { city_id, state_id, crop_class, crop_type_id, vendor_id } = req.query;
-  let { id } = req.params;
+  // let { city_id, state_id, crop_class, crop_type_id, vendor_id } = req.query;
+  // let { id } = req.params;
 
-  const { status: validationStatus, error, optionals } = joiValidator([
+  const { status: validationStatus, error, value, optionals } = joiValidator([
     {
       schema: {
         ...defaultSchema,
@@ -45,8 +45,11 @@ router.get("/:id?", async (req, res) => {
   if (!validationStatus) {
     return res
       .status(400)
-      .send(`Invalid Request Format ${optionals.errorList}`);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
+
+  let { city_id, state_id, crop_class, crop_type_id, vendor_id } = value;
+  let { id } = value;
 
   let locFlag = false;
   let typeFlag = false;

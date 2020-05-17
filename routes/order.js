@@ -6,6 +6,9 @@ const authAdmin = require("../middleware/auth_admin");
 const authVendor = require("../middleware/auth_vendor");
 const decodeToken = require("../middleware/decode_token");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_and_fetch");
 const simpleAsyncInsertAndFetch = require("../db/requests/simple_async_insert_and_fetch");
 const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
@@ -27,7 +30,22 @@ router.get("/me", [decodeToken], async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  let order_id = req.params.id;
+  // let order_id = req.params.id;
+  const { status: valid, optionals, value } = joiValidator([
+    {
+      schema: { id: Joi.number().min(1) },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  let order_id = value.id;
+
   let sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where order_id=${order_id}`;
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
@@ -55,7 +73,23 @@ router.get("/", async (req, res) => {
 //order cannot be deleted or edited once posted
 
 router.post("/cancel", [decodeToken], async (req, res) => {
-  let order_id = req.body.order_id;
+  // let order_id = req.body.order_id;
+
+  const { status: valid, optionals, value } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  let order_id = value.order_id;
+
   let sqls = [
     {
       getQueryStatement: (prevResults, prevFields) => {
@@ -91,7 +125,23 @@ router.post("/cancel", [decodeToken], async (req, res) => {
 });
 
 router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
-  let order_id = req.body.order_id;
+  // let order_id = req.body.order_id;
+
+  const { status: valid, optionals, value } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  let order_id = value.order_id;
+
   let sqls = [
     {
       getQueryStatement: (prevResults, prevFields) => {
@@ -129,16 +179,44 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
 router.post("/request", [decodeToken, authUser], async (req, res) => {
   let delivery_address = req.body.delivery_address;
   let order = req.body.order;
-  if (!delivery_address || !order) {
+
+  const { status: valid, optionals, value } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        delivery_address: Joi.required(),
+        order: Joi.array()
+          .items(
+            Joi.object({
+              item_qty: Joi.number().required(),
+              crop_id: Joi.number().min(1).required(),
+            })
+          )
+          .min(1),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
     return res
       .status(400)
-      .send([{ message: '"delivery_address" or "order" not provided' }]);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
-  if (order.length == 0) {
-    return res
-      .status(400)
-      .send([{ message: "No items specified for ordering" }]);
-  }
+
+  // if (!delivery_address || !order) {
+  //   return res
+  //     .status(400)
+  //     .send([{ message: '"delivery_address" or "order" not provided' }]);
+  // }
+  // if (order.length == 0) {
+  //   return res
+  //     .status(400)
+  //     .send([{ message: "No items specified for ordering" }]);
+  // }
   let user_id = req.actor.user_id;
   let crop_ids = [];
   for (let item of order) {

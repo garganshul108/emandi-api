@@ -5,6 +5,9 @@ const sendOTP = require("../util/otp_service");
 const jwt = require("../util/jwt");
 const otpGenerator = require("../util/otp_generator");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const {
   promisifiedQuery,
   promisifiedGetConnection,
@@ -15,13 +18,29 @@ const {
 
 router.get("/", (req, res) => {
   let { contact, type } = req.query;
-  if (!contact || !type) {
+  // console.log(req.query);
+  if (typeof req.query.contact !== "number") {
+    req.query.contact = parseInt(req.query.contact);
+  }
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.query },
+    },
+    {
+      schema: {
+        contact: Joi.required(),
+        type: Joi.required(),
+      },
+      object: { ...req.query },
+    },
+  ]);
+
+  if (!valid) {
     return res
       .status(400)
-      .send([{ message: '"type" and "contact" all/any one not specified' }]);
-  }
-  if (typeof contact !== "number") {
-    contact = parseInt(contact);
+      .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
   let sql1, sql2;
   const otp = otpGenerator();
@@ -85,20 +104,43 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res) => {
   const { contact, otp, type, device_fcm_token } = req.body;
-  console.log(__filename + " incoming", req.body);
-  if (!contact || !otp || !type || !device_fcm_token) {
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        contact: Joi.required(),
+        otp: Joi.number().required(),
+        type: Joi.required(),
+        device_fcm_token: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
     return res
       .status(400)
-      .send(
-        '"type", "otp", "contact", "device_fcm_token" maybe all or any one not specified'
-      );
+      .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
-  console.log(`${__filename} type of type ${typeof type}: ${type}`);
-  if (!(type === "vendor" || type === "user")) {
-    return res
-      .status(400)
-      .send([{ message: '"type" specified is not correct' }]);
-  }
+
+  // console.log(__filename + " incoming", req.body);
+  // if (!contact || !otp || !type || !device_fcm_token) {
+  //   return res
+  //     .status(400)
+  //     .send(
+  //       '"type", "otp", "contact", "device_fcm_token" maybe all or any one not specified'
+  //     );
+  // }
+  // console.log(`${__filename} type of type ${typeof type}: ${type}`);
+  // if (!(type === "vendor" || type === "user")) {
+  //   return res
+  //     .status(400)
+  //     .send([{ message: '"type" specified is not correct' }]);
+  // }
 
   let connection = undefined;
   let errorOnBeginTransaction = true;

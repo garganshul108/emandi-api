@@ -3,6 +3,10 @@ const router = express.Router();
 const connectionPool = require("../db/pool");
 const authAdmin = require("../middleware/auth_admin");
 const decodeToken = require("../middleware/decode_token");
+
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const {
   promisifiedBeginTransaction,
   promisifiedCommit,
@@ -31,10 +35,24 @@ router.get("/", (req, res) => {
 
 router.put("/", [decodeToken, authAdmin], (req, res) => {
   const { state_id, name } = req.body;
-  if (!state_id || !name) {
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        state_id: Joi.required(),
+        name: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
     return res
       .status(400)
-      .send([{ message: '"state_id" and "name" must be specified' }]);
+      .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
 
   return connectionPool.getConnection((err, connection) => {
@@ -85,10 +103,29 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
 
 router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
   const { state_id } = req.params;
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        state_id: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request ${optionals.errorList}` }]);
+  }
+
   if (!state_id) {
     return res.status(400).send([{ message: '"state_id" must be specified' }]);
   }
-
   return connectionPool.getConnection((err, connection) => {
     if (err) {
       console.log("Error while getting connection from pool");
@@ -160,11 +197,31 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   const { name } = req.body;
-  if (!name) {
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        name: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!valid) {
     return res
       .status(400)
-      .send([{ message: '"name" of the state must be specified' }]);
+      .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
+
+  // if (!name) {
+  //   return res
+  //     .status(400)
+  //     .send([{ message: '"name" of the state must be specified' }]);
+  // }
 
   let connection = null;
   let errorOnBeginTransaction = true;

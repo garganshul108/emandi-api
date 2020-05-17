@@ -8,6 +8,9 @@ const authAdmin = require("../middleware/auth_admin");
 const authVendor = require("../middleware/auth_vendor");
 const decodeToken = require("../middleware/decode_token");
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const simpleGET = require("../db/requests/simple_get");
 const simpleDELETE = require("../db/requests/simple_get");
 
@@ -29,6 +32,15 @@ router.get("/me", [decodeToken, authVendor], (req, res) => {
 
 router.get("/:id", [decodeToken, authAdmin], (req, res) => {
   let vendor_id = req.params.id;
+  const { status: valid, optionals } = joiValidator({
+    schema: { ...defaultSchema },
+    object: { vendor_id },
+  });
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
   let sql = `select * from VENDOR where vendor_id=${vendor_id}`;
   return simpleGET(sql, req, res);
 });
@@ -125,6 +137,15 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
 
 router.delete("/me", [decodeToken, authVendor], async (req, res) => {
   let vendor_id = req.actor.vendor_id;
+  const { status: valid, optionals } = joiValidator({
+    schema: { ...defaultSchema },
+    object: { vendor_id },
+  });
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
   let sql1 = `DELETE from VENDOR where vendor_id=${vendor_id}`;
   let connection = null;
   let errorOnDelete = true;

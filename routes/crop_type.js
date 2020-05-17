@@ -43,10 +43,7 @@ const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_an
 // });
 
 router.get("/:id?", async (req, res) => {
-  let { crop_class } = req.query;
-  let { id } = req.params;
-
-  const { status: validationStatus, error, optionals } = joiValidator([
+  const { status: validationStatus, error, value, optionals } = joiValidator([
     {
       schema: {
         ...defaultSchema,
@@ -61,23 +58,13 @@ router.get("/:id?", async (req, res) => {
     },
   ]);
 
+  let { crop_class } = value;
+  let { id } = value;
+
   if (!validationStatus) {
     return res
       .status(400)
-      .send(`Invalid Request Format ${optionals.errorList}`);
-  }
-
-  try {
-    await querySchema.validateAsync(req.query);
-    await paramsSchema.validateAsync(req.params);
-  } catch (err) {
-    console.log("Invalid Request Format\n", err);
-    let errorList = [];
-    for (let i = 0; i < err.details.length; i++) {
-      errorList.push(`${i + 1}. ${err.details[i].message}`);
-    }
-    errorList = errorList.join("\n");
-    return res.status(400).send(`Invalid Request Format\n${errorList}`);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
 
   let sql = "select * from CROP_TYPE";
@@ -124,18 +111,17 @@ router.get("/:id?", async (req, res) => {
 });
 
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
-  let { crop_type_name, crop_class } = req.body;
-
-  const { status: validationStatus, error, optionals } = joiValidator([
+  const { status: validationStatus, value, error, optionals } = joiValidator([
     {
       schema: {
-        ...defaultSchema,
+        crop_type_name: Joi.required(),
+        crop_class: Joi.string().default("OTHER"),
       },
       object: { ...req.body },
     },
     {
       schema: {
-        crop_type_name: Joi.required(),
+        ...defaultSchema,
       },
       object: { ...req.body },
     },
@@ -144,20 +130,14 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
   if (!validationStatus) {
     return res
       .status(400)
-      .send(`Invalid Request Format ${optionals.errorList}`);
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
 
-  if (!crop_class) {
-    crop_class = "OTHER";
-    console.log("This ran");
-  }
-  if (!crop_type_name) {
-    return res
-      .status(400)
-      .send([{ message: "crop_type_name not specified!!" }]);
-  }
+  console.log(value);
+  let { crop_type_name, crop_class } = value;
+
   let sql1 = `insert into CROP_TYPE(crop_type_name, crop_class) values("${crop_type_name}","${crop_class}")`;
-  let sql2 = `select * from CROP_TYPE where id=LAST_INSERT_ID()`;
+  let sql2 = `select * from CROP_TYPE where crop_type_id=LAST_INSERT_ID()`;
   let callbacks = {
     onSuccess: (req, res, results) => {
       return res.status(201).send(results);
@@ -191,7 +171,23 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
 });
 
 router.delete("/:id", [decodeToken, authAdmin], async (req, res) => {
-  let { id } = req.params;
+  // let { id } = req.params;
+
+  const { status: valid, value, optionals } = joiValidator([
+    {
+      schema: { id: Joi.number().min(1) },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
+  let { id } = value;
+
   const sql = `delete from CROP_TYPE where crop_type_id=${id};`;
   const callbacks = {
     onSuccess: (req, res) => {
@@ -216,8 +212,26 @@ router.delete("/:id", [decodeToken, authAdmin], async (req, res) => {
 });
 
 router.patch("/:id", [decodeToken, authAdmin], async (req, res) => {
-  let { id } = req.params;
-  let { crop_type_name, crop_class } = req.body;
+  // let { id } = req.params;
+  // let { crop_type_name, crop_class } = req.body;
+
+  const { status: valid, value, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { ...req.body },
+    },
+    {
+      schema: { id: Joi.number().min(1) },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!valid) {
+  }
+
+  let { id } = value;
+  let { crop_type_name, crop_class } = value;
+
   let subSql = [];
   if (crop_type_name) {
     subSql.push(`crop_type_name="${crop_type_name}"`);
