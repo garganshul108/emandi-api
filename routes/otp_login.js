@@ -53,7 +53,9 @@ router.get("/", (req, res) => {
         connection.release();
         return res
           .status(404)
-          .send(`You are not registered as ${type} with ${contact}`);
+          .send([
+            { message: `You are not registered as ${type} with ${contact}` },
+          ]);
       }
       if (type === "vendor") {
         vendor_id = results[0].vendor_id;
