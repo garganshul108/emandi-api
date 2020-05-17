@@ -46,7 +46,9 @@ router.post("/", (req, res) => {
             return res
               .header("x-auth-token", token)
               .status(201)
-              .send(`Successfully Logged in as Admin: ${username}`);
+              .send([
+                { message: `Successfully Logged in as Admin: ${username}` },
+              ]);
           } catch (ex) {
             console.log("Error: ", ex.message, ex);
             connection.release();
