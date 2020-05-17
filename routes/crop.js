@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 
 let attributes = [
@@ -20,29 +23,30 @@ let attributes = [
 
 attributes = attributes.join(" , ");
 
-// router.get("/:id?", async (req, res) => {
-//   let { id } = req.params;
-
-//   let sql = `select ${attributes} from CROP`;
-//   sql = `${sql} join VENDOR using(vendor_id)`;
-//   sql = `${sql} join CROP_TYPE using(crop_type_id)`;
-//   sql = `${sql} where crop_id=${id}`;
-
-//   const callbacks = {
-//     onSuccess: (req, res, results) => {
-//       return res.status(200).send(results);
-//     },
-//   };
-//   try {
-//     return await simpleAsyncFetch(sql, req, res, callbacks);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 router.get("/:id?", async (req, res) => {
   let { city_id, state_id, crop_class, crop_type_id, vendor_id } = req.query;
   let { id } = req.params;
+
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.query },
+    },
+    {
+      schema: {
+        id: Joi.number(),
+      },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!validationStatus) {
+    return res
+      .status(400)
+      .send(`Invalid Request Format ${optionals.errorList}`);
+  }
 
   let locFlag = false;
   let typeFlag = false;

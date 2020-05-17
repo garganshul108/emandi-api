@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const Joi = require("@hapi/joi");
+const { joiValidator, defaultSchema } = require("../util/joi_validator");
+
 const authAdmin = require("../middleware/auth_admin");
 const decodeToken = require("../middleware/decode_token");
 
@@ -42,6 +45,40 @@ const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_an
 router.get("/:id?", async (req, res) => {
   let { crop_class } = req.query;
   let { id } = req.params;
+
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.query },
+    },
+    {
+      schema: {
+        id: Joi.number(),
+      },
+      object: { ...req.params },
+    },
+  ]);
+
+  if (!validationStatus) {
+    return res
+      .status(400)
+      .send(`Invalid Request Format ${optionals.errorList}`);
+  }
+
+  try {
+    await querySchema.validateAsync(req.query);
+    await paramsSchema.validateAsync(req.params);
+  } catch (err) {
+    console.log("Invalid Request Format\n", err);
+    let errorList = [];
+    for (let i = 0; i < err.details.length; i++) {
+      errorList.push(`${i + 1}. ${err.details[i].message}`);
+    }
+    errorList = errorList.join("\n");
+    return res.status(400).send(`Invalid Request Format\n${errorList}`);
+  }
 
   let sql = "select * from CROP_TYPE";
   let subSql = [];
@@ -88,7 +125,32 @@ router.get("/:id?", async (req, res) => {
 
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   let { crop_type_name, crop_class } = req.body;
-  if (!crop_class) crop_class = "OTHER";
+
+  const { status: validationStatus, error, optionals } = joiValidator([
+    {
+      schema: {
+        ...defaultSchema,
+      },
+      object: { ...req.body },
+    },
+    {
+      schema: {
+        crop_type_name: Joi.required(),
+      },
+      object: { ...req.body },
+    },
+  ]);
+
+  if (!validationStatus) {
+    return res
+      .status(400)
+      .send(`Invalid Request Format ${optionals.errorList}`);
+  }
+
+  if (!crop_class) {
+    crop_class = "OTHER";
+    console.log("This ran");
+  }
   if (!crop_type_name) {
     return res.status(400).send("crop_type_name not specified!!");
   }

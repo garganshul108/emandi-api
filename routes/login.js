@@ -6,6 +6,7 @@ const jwt = require("../util/jwt");
 
 router.post("/", (req, res) => {
   const { type, username, password } = req.body;
+  // console.log(req.body);/
   if (type === "admin") {
     // console.log("admin cnrf");
     const sql = `select password from ADMIN where admin_name = "${username}"`;
