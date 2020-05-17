@@ -3,7 +3,9 @@ module.exports = (req, res, next) => {
   console.log("INDECODE TOKEN");
   const token = req.headers["x-auth-token"];
   if (!token) {
-    return res.status(401).send("Invalid Request Format. No token provided");
+    return res
+      .status(401)
+      .send([{ message: "Invalid Request Format. No token provided" }]);
   }
 
   try {
@@ -14,7 +16,7 @@ module.exports = (req, res, next) => {
     next();
   } catch (ex) {
     console.log("Invalid token", ex);
-    return res.status(400).send("Invalid token provided");
+    return res.status(400).send([{ message: "Invalid token provided" }]);
   }
 
   return;
