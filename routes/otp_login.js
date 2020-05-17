@@ -36,14 +36,14 @@ router.get("/", (req, res) => {
     if (err) {
       console.log("Error in getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
     return connection.query(sql1, (err, results, fields) => {
       if (err) {
         console.log("Error while quering for id");
         console.log(err);
         connection.release();
-        return res.status(500).send(err.message);
+        return res.status(500).send([{ message: err.message }]);
       }
       if (results.length <= 0) {
         connection.release();
@@ -66,14 +66,20 @@ router.get("/", (req, res) => {
               console.log("Error while registering OTP");
               console.log(err);
               connection.release();
-              return res.status(500).send("Internal Server Error, OTP");
+              return res
+                .status(500)
+                .send([{ message: "Internal Server Error, OTP" }]);
             }
             connection.release();
-            return res.status(201).send("OTP sent and registered");
+            return res
+              .status(201)
+              .send([{ message: "OTP sent and registered" }]);
           });
         } catch (ex) {
           connection.release();
-          return res.status(500).send("Error while sending the OTP");
+          return res
+            .status(500)
+            .send([{ message: "Error while sending the OTP" }]);
         }
       })(req, res, connection);
     });
@@ -121,7 +127,9 @@ router.post("/", async (req, res) => {
     if (matchingContacts.length < 1) {
       // rollback
       connection.release();
-      return res.status(404).send("OTP not registered / expired");
+      return res
+        .status(404)
+        .send([{ message: "OTP not registered / expired" }]);
     }
     let latestOTPResult = matchingContacts[0];
     console.log(__filename, latestOTPResult);
@@ -130,7 +138,7 @@ router.post("/", async (req, res) => {
       // rollback
       console.log(__filename, "otp do not match");
       connection.release();
-      return res.status(404).send("Latest OTP did not match");
+      return res.status(404).send([{ message: "Latest OTP did not match" }]);
     }
     // let { results: idPacket } = await promisifiedQuery(connection, sql2, []);
     // errorOnFetchingId = false;
@@ -153,29 +161,29 @@ router.post("/", async (req, res) => {
     return res
       .header("x-auth-token", token)
       .status(201)
-      .send("Successfully logged in via OTP");
+      .send([{ message: "Successfully logged in via OTP" }]);
   } catch (err) {
     if (!connection) {
       console.log(__filename + " Error in fetching connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnFetchingOTPfromLoginTable) {
       console.log(__filename + " Error in fetching OTP from Login table");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
     // else if (errorOnFetchingId) {
     //   console.log(__filename + " Error in fetching index");
     //   console.log(err);
     //   connection.release();
-    //   return res.status(500).send("Internal Server Error");
+    //   return res.status(500).send([{message:"Internal Server Error"}]);
     // }
     else {
       console.log(__filename + " UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });

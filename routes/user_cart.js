@@ -43,7 +43,7 @@ router.delete("/:item_id", [decodeToken, authUser], async (req, res) => {
   let sql = `delete from CART where item_id=${item_id} and user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
-      return res.status(200).send("Item Deleted Successfully");
+      return res.status(200).send([{ message: "Item Deleted Successfully" }]);
     },
   };
   return await simpleAsyncDelete(sql, req, res, callbacks);
@@ -55,7 +55,7 @@ router.delete("/", [decodeToken, authUser], async (req, res) => {
   let sql = `delete from CART where item_id IN (${item_ids}) and user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
-      return res.status(200).send("Item Deleted Successfully");
+      return res.status(200).send([{ message: "Item Deleted Successfully" }]);
     },
   };
   return await simpleAsyncDelete(sql, req, res, callbacks);
@@ -87,7 +87,9 @@ router.patch("/:item_id", [decodeToken, authUser], async (req, res) => {
   let { changeInQty } = req.body;
 
   if (!changeInQty) {
-    return res.status(400).send("No attributes specified to be changed");
+    return res
+      .status(400)
+      .send([{ message: "No attributes specified to be changed" }]);
   }
 
   let subSql = [];

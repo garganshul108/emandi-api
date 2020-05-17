@@ -85,7 +85,7 @@ router.post("/cancel", [decodeToken], async (req, res) => {
   ];
   return await transactionProtectedQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
-      res.status(201).send("ORDER CANCELLED");
+      res.status(201).send([{ message: "ORDER CANCELLED" }]);
     },
   });
 });
@@ -121,7 +121,7 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
   ];
   return await transactionProtectedQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
-      res.status(201).send("ORDER CONFIRMED");
+      res.status(201).send([{ message: "ORDER CONFIRMED" }]);
     },
   });
 });
@@ -133,7 +133,9 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     return res.status(400).send('"delivery_address" or "order" not provided');
   }
   if (order.length == 0) {
-    return res.status(400).send("No items specified for ordering");
+    return res
+      .status(400)
+      .send([{ message: "No items specified for ordering" }]);
   }
   let user_id = req.actor.user_id;
   let crop_ids = [];
@@ -159,7 +161,12 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
           action = (req, res, results) => {
             res
               .status(400)
-              .send("No Item in the cart / too many vendors at same time");
+              .send([
+                {
+                  message:
+                    "No Item in the cart / too many vendors at same time",
+                },
+              ]);
           };
         }
         return { statisfactionStatus, action };

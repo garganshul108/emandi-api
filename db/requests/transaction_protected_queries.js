@@ -20,14 +20,14 @@ module.exports = async (sqls, req, res, callbacks) => {
     callbacks.onExplicitQueryFail = (req, res, err) => {
       console.log("DEFAULT 'some explicit query' fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
   if (!callbacks.onGetConnectionFail) {
     callbacks.onGetConnectionFail = (req, res, err) => {
       console.log("DEFAULT 'getConnection' from the pool fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 
@@ -35,7 +35,7 @@ module.exports = async (sqls, req, res, callbacks) => {
     callbacks.onUnknownError = (req, res, err) => {
       console.log("DEFAULT 'Unknown Error' Occured");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 
@@ -43,7 +43,7 @@ module.exports = async (sqls, req, res, callbacks) => {
     callbacks.onCommitFail = (req, res, err) => {
       console.log("DEFAULT 'Commit' Fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 
@@ -51,7 +51,7 @@ module.exports = async (sqls, req, res, callbacks) => {
     callbacks.onBeginTransactionFail = (req, res, err) => {
       console.log("DEFAULT 'Begin Transaction' Fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 

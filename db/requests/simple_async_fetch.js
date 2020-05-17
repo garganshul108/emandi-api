@@ -14,21 +14,21 @@ module.exports = async (sql, req, res, callbacks) => {
     callbacks.onGetConnectionFail = (req, res, err) => {
       console.log("DEFAULT 'getConnection' from the pool fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
   if (!callbacks.onFetchFail) {
     callbacks.onFetchFail = (req, res, err) => {
       console.log("DEFAULT 'Fetch' fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
   if (!callbacks.onUnknownError) {
     callbacks.onUnknownError = (req, res, err) => {
       console.log("DEFAULT 'Unknown Error' Occured");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
   let connection = undefined;

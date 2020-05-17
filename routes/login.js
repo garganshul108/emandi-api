@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
     return connectionPool.getConnection((err, connection) => {
       if (err) {
         console.log("Error while getting connection from pool");
-        return res.status(500).send("Intenal Server error");
+        return res.status(500).send([{ message: "Intenal Server error" }]);
       }
       return connection.query(sql, (err, results, fields) => {
         if (err) {
@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
         }
         if (results.length < 1) {
           connection.release();
-          return res.status(404).send("Invalid Credentials");
+          return res.status(404).send([{ message: "Invalid Credentials" }]);
         }
         // console.log("Error passes");
 
@@ -33,7 +33,7 @@ router.post("/", (req, res) => {
             // console.log(match);
             if (!match) {
               connection.release();
-              return res.status(400).send("Invalid Credentials");
+              return res.status(400).send([{ message: "Invalid Credentials" }]);
             }
             // console.log("matched");
             const payload = {
@@ -50,20 +50,20 @@ router.post("/", (req, res) => {
           } catch (ex) {
             console.log("Error: ", ex.message, ex);
             connection.release();
-            return res.status(500).send("Internal Server Error");
+            return res.status(500).send([{ message: "Internal Server Error" }]);
           }
         })();
       });
     });
   } else if (type === "vendor") {
     // TBI
-    return res.status(400).send("Facility Not available");
+    return res.status(400).send([{ message: "Facility Not available" }]);
   } else if (type === "user") {
     //TBI
-    return res.status(400).send("Facility Not available");
+    return res.status(400).send([{ message: "Facility Not available" }]);
   }
 
-  return res.status(400).send("Invalid Request Format");
+  return res.status(400).send([{ message: "Invalid Request Format" }]);
 });
 
 module.exports = router;
