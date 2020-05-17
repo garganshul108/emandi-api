@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
   if (!contact || !type) {
     return res
       .status(400)
-      .send('"type" and "contact" all/any one not specified');
+      .send([{ message: '"type" and "contact" all/any one not specified' }]);
   }
   if (typeof contact !== "number") {
     contact = parseInt(contact);
@@ -32,7 +32,9 @@ router.get("/", (req, res) => {
     sql1 = `select user_id from USER where contact=${contact};`;
     sql2 = `insert into OTP_SIGNUP(subscriber_type, contact, otp) values ("user", ${contact}, ${otp});`;
   } else {
-    return res.status(400).send('"type" specified is not correct');
+    return res
+      .status(400)
+      .send([{ message: '"type" specified is not correct' }]);
   }
   return connectionPool.getConnection((err, connection) => {
     if (err) {
@@ -93,7 +95,9 @@ router.post("/", async (req, res) => {
   }
   console.log(`${__filename} type of type ${typeof type}: ${type}`);
   if (!(type === "vendor" || type === "user")) {
-    return res.status(400).send('"type" specified is not correct');
+    return res
+      .status(400)
+      .send([{ message: '"type" specified is not correct' }]);
   }
 
   let connection = undefined;

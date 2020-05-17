@@ -52,7 +52,7 @@ router.get("/", async (req, res) => {
 //   if (!name || !state_id) {
 //     return res
 //       .status(400)
-//       .send('"name" and "state_id" of the city must be specified');
+//       .send([{message:'"name" and "state_id" of the city must be specified'}]);
 //   }
 
 //   return connectionPool.getConnection((err, connection) => {
@@ -109,7 +109,9 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
   if (!name || !state_id) {
     return res
       .status(400)
-      .send('"name" and "state_id" of the city must be specified');
+      .send([
+        { message: '"name" and "state_id" of the city must be specified' },
+      ]);
   }
   let sql1 = `insert into CITY(name,state_id) values("${name}", ${state_id})`;
   let sql2 = `select * from CITY where city_id=(LAST_INSERT_ID())`;
@@ -154,7 +156,7 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
 //   if (!city_id && (!state_id || !name)) {
 //     return res
 //       .status(400)
-//       .send('"city_id" and ("state_id" and/or "name") must be specified');
+//       .send([{message:'"city_id" and ("state_id" and/or "name") must be specified'}]);
 //   }
 
 //   return connectionPool.getConnection((err, connection) => {
@@ -217,7 +219,11 @@ router.put("/", [decodeToken, authAdmin], async (req, res) => {
   if (!city_id && (!state_id || !name)) {
     return res
       .status(400)
-      .send('"city_id" and ("state_id" and/or "name") must be specified');
+      .send([
+        {
+          message: '"city_id" and ("state_id" and/or "name") must be specified',
+        },
+      ]);
   }
 
   let subSql = [];
@@ -310,7 +316,7 @@ router.put("/", [decodeToken, authAdmin], async (req, res) => {
 // router.delete("/", [decodeToken, authAdmin], (req, res) => {
 //   const { city_id } = req.body;
 //   if (!city_id) {
-//     return res.status(400).send('"city_id" must be specified');
+//     return res.status(400).send([{message:'"city_id" must be specified'}]);
 //   }
 //   const sql = `delete from CITY where city_id="${city_id}";`;
 //   return simpleDELETE(sql, req, res, () => {
@@ -336,7 +342,7 @@ router.put("/", [decodeToken, authAdmin], async (req, res) => {
 router.delete("/:city_id", [decodeToken, authAdmin], async (req, res) => {
   const { city_id } = req.params;
   if (!city_id) {
-    return res.status(400).send('"city_id" must be specified');
+    return res.status(400).send([{ message: '"city_id" must be specified' }]);
   }
   const sql = `delete from CITY where city_id=${city_id};`;
   const callbacks = {

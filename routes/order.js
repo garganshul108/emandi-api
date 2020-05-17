@@ -130,7 +130,9 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
   let delivery_address = req.body.delivery_address;
   let order = req.body.order;
   if (!delivery_address || !order) {
-    return res.status(400).send('"delivery_address" or "order" not provided');
+    return res
+      .status(400)
+      .send([{ message: '"delivery_address" or "order" not provided' }]);
   }
   if (order.length == 0) {
     return res
@@ -141,7 +143,9 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
   let crop_ids = [];
   for (let item of order) {
     if (!item.crop_id)
-      return res.status(400).send('"crop_id" not specified for an item');
+      return res
+        .status(400)
+        .send([{ message: '"crop_id" not specified for an item' }]);
     crop_ids.push(item.crop_id);
   }
   crop_ids = crop_ids.join(" , ");
@@ -159,14 +163,11 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
         if (prevResults["query_1"].length !== 1) {
           statisfactionStatus = false;
           action = (req, res, results) => {
-            res
-              .status(400)
-              .send([
-                {
-                  message:
-                    "No Item in the cart / too many vendors at same time",
-                },
-              ]);
+            res.status(400).send([
+              {
+                message: "No Item in the cart / too many vendors at same time",
+              },
+            ]);
           };
         }
         return { statisfactionStatus, action };

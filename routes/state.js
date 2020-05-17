@@ -32,7 +32,9 @@ router.get("/", (req, res) => {
 router.put("/", [decodeToken, authAdmin], (req, res) => {
   const { state_id, name } = req.body;
   if (!state_id || !name) {
-    return res.status(400).send('"state_id" and "name" must be specified');
+    return res
+      .status(400)
+      .send([{ message: '"state_id" and "name" must be specified' }]);
   }
 
   return connectionPool.getConnection((err, connection) => {
@@ -84,7 +86,7 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
 router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
   const { state_id } = req.params;
   if (!state_id) {
-    return res.status(400).send('"state_id" must be specified');
+    return res.status(400).send([{ message: '"state_id" must be specified' }]);
   }
 
   return connectionPool.getConnection((err, connection) => {
@@ -108,7 +110,7 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 // router.post("/", [decodeToken, authAdmin], (req, res) => {
 //   const { name } = req.body;
 //   if (!name) {
-//     return res.status(400).send('"name" of the state must be specified');
+//     return res.status(400).send([{message:'"name" of the state must be specified'}]);
 //   }
 
 //   return connectionPool.getConnection((err, connection) => {
@@ -159,7 +161,9 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   const { name } = req.body;
   if (!name) {
-    return res.status(400).send('"name" of the state must be specified');
+    return res
+      .status(400)
+      .send([{ message: '"name" of the state must be specified' }]);
   }
 
   let connection = null;

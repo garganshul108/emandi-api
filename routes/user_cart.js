@@ -67,7 +67,9 @@ router.post("/", [decodeToken, authUser], async (req, res) => {
   if (!item_qty || !crop_id) {
     return res
       .status(400)
-      .send('"item_qty" and "crop_id" all or any one not specified');
+      .send([
+        { message: '"item_qty" and "crop_id" all or any one not specified' },
+      ]);
   }
 
   let sql1 = `insert into CART(user_id, item_qty, crop_id) values (${user_id},${item_qty},${crop_id})`;
