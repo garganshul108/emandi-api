@@ -1,5 +1,7 @@
 # Endpoints
 
+##### NOTE: Validation Added but not tested
+
 ### Using Query String
 
 ```shell
