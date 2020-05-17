@@ -41,7 +41,7 @@ router.delete("/:crop_id", [decodeToken, authVendor], (req, res) => {
   let crop_id = req.param.crop_id;
   let sql = `delete from CROP where crop_id=${crop_id}`;
   return simpleDELETE(sql, req, res, () => {
-    return res.status(200).send("Crop Deleted Successfully");
+    return res.status(200).send([{ message: "Crop Deleted Successfully" }]);
   });
 });
 
@@ -49,7 +49,7 @@ router.delete("/", [decodeToken, authVendor], (req, res) => {
   let crop_ids = req.query.id;
   let sql = `delete from CROP where crop_id IN (${crop_ids})`;
   return simpleDELETE(sql, req, res, () => {
-    return res.status(200).send("Crops Deleted Successfully");
+    return res.status(200).send([{ message: "Crops Deleted Successfully" }]);
   });
 });
 
@@ -111,32 +111,32 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     if (!connection) {
       console.log("Error on getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnBeginTransaction) {
       console.log("Error on begin transaction");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnInsertCrop) {
       console.log("Error on inserting Crop");
       console.log(err);
       connection.release();
-      return res.status(400).send(err.message);
+      return res.status(400).send([{ message: err.message }]);
     } else if (errorOnFetchLastCrop) {
       console.log("Error on fetching Crop");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnCommit) {
       console.log("Error on Commit");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });
@@ -162,7 +162,9 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
     !description &&
     !crop_price
   ) {
-    return res.status(400).send("No attributes specified to be changed");
+    return res
+      .status(400)
+      .send([{ message: "No attributes specified to be changed" }]);
   }
 
   let subSql = [];

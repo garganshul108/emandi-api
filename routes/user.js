@@ -54,7 +54,9 @@ router.patch("/me", [decodeToken, authUser], async (req, res) => {
     !address &&
     !profile_picture
   ) {
-    return res.status(400).send("No argument is specified to be changed");
+    return res
+      .status(400)
+      .send([{ message: "No argument is specified to be changed" }]);
   }
 
   let user_id = req.actor.user_id;
@@ -96,22 +98,22 @@ router.patch("/me", [decodeToken, authUser], async (req, res) => {
     if (!connection) {
       console.log("Error while getting connetion");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnUpdateQuery) {
       console.log("Error while Updating Table");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnSelectQuery) {
       console.log("Error while getting User");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });
@@ -126,22 +128,22 @@ router.delete("/me", [decodeToken, authUser], async (req, res) => {
     await promisifiedQuery(connection, sql1, []);
     errorOnDelete = false;
     connection.release();
-    return res.status(201).send("Account Deleted");
+    return res.status(201).send([{ message: "Account Deleted" }]);
   } catch (err) {
     if (!connection) {
       console.log("Error on getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnDelete) {
       console.log("Error on Delete");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });

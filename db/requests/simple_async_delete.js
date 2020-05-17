@@ -14,7 +14,7 @@ module.exports = async (sql, req, res, callbacks) => {
     callbacks.onGetConnectionFail = (req, res, err) => {
       console.log("DEFAULT 'getConnection' from the pool fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 
@@ -22,7 +22,7 @@ module.exports = async (sql, req, res, callbacks) => {
     callbacks.onDeleteFail = (req, res, err) => {
       console.log("DEFAULT 'Delete Fail' Occured");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 
@@ -30,7 +30,7 @@ module.exports = async (sql, req, res, callbacks) => {
     callbacks.onUnknownError = (req, res, err) => {
       console.log("DEFAULT 'Unknown Error' Occured");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     };
   }
 

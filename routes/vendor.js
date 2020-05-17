@@ -57,7 +57,9 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
     !address &&
     !profile_picture
   ) {
-    return res.status(400).send("No argument is specified to be changed");
+    return res
+      .status(400)
+      .send([{ message: "No argument is specified to be changed" }]);
   }
 
   let vendor_id = req.actor.vendor_id;
@@ -101,7 +103,7 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
     if (!connection) {
       console.log("Error while getting connetion");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnUpdateQuery) {
       console.log("Error while Updating Table");
       console.log(err);
@@ -111,12 +113,12 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
       console.log("Error while getting Vendor");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });
@@ -131,22 +133,22 @@ router.delete("/me", [decodeToken, authVendor], async (req, res) => {
     await promisifiedQuery(connection, sql1, []);
     errorOnDelete = false;
     connection.release();
-    return res.status(201).send("Account Deleted");
+    return res.status(201).send([{ message: "Account Deleted" }]);
   } catch (err) {
     if (!connection) {
       console.log("Error on getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnDelete) {
       console.log("Error on Delete");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });
@@ -218,32 +220,32 @@ router.delete("/me", [decodeToken, authVendor], async (req, res) => {
 //     if (!connection) {
 //       console.log("Error on getting connection");
 //       console.log(err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     } else if (errorOnBeginTransaction) {
 //       console.log("Error on begin transaction");
 //       console.log(err);
 //       connection.release();
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     } else if (errorOnInsertCrop) {
 //       console.log("Error on inserting Crop");
 //       console.log(err);
 //       connection.release();
-//       return res.status(400).send(err.message);
+//       return res.status(400).send([{message:err.message}]);
 //     } else if (errorOnFetchLastCrop) {
 //       console.log("Error on fetching Crop");
 //       console.log(err);
 //       connection.release();
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     } else if (errorOnCommit) {
 //       console.log("Error on Commit");
 //       console.log(err);
 //       connection.release();
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     } else {
 //       console.log("UNKNOWN ERROR");
 //       console.log(err);
 //       connection.release();
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     }
 //   }
 // });
@@ -263,13 +265,13 @@ module.exports = router;
 //     if (err) {
 //       console.log("Error while getting connection from the pool");
 //       console.log(err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     }
 //     connection.query(sql, (err, results, fields) => {
 //       if (err) {
 //         console.log("Error while fetching the data from DB");
 //         console.log(err);
-//         return res.status(400).send(err.message);
+//         return res.status(400).send([{message:err.message}]);
 //       }
 //       return res.status(200).send(results);
 //     });

@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
   if (!contact || !type) {
     return res
       .status(400)
-      .send('"type" and "contact" all/any one not specified');
+      .send([{ message: '"type" and "contact" all/any one not specified' }]);
   }
   if (typeof contact !== "number") {
     contact = parseInt(contact);
@@ -32,13 +32,15 @@ router.get("/", (req, res) => {
     sql1 = `select user_id from USER where contact=${contact};`;
     sql2 = `insert into OTP_SIGNUP(subscriber_type, contact, otp) values ("user", ${contact}, ${otp});`;
   } else {
-    return res.status(400).send('"type" specified is not correct');
+    return res
+      .status(400)
+      .send([{ message: '"type" specified is not correct' }]);
   }
   return connectionPool.getConnection((err, connection) => {
     if (err) {
       console.log("Error in getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
 
     return connection.query(sql1, (err, results, fields) => {
@@ -46,11 +48,13 @@ router.get("/", (req, res) => {
         console.log("Error while quering for id");
         console.log(err);
         connection.release();
-        return res.status(500).send("Error occured while quering");
+        return res
+          .status(500)
+          .send([{ message: "Error occured while quering" }]);
       }
       if (results.length > 0) {
         connection.release();
-        return res.status(400).send("Already registered!");
+        return res.status(400).send([{ message: "Already registered!" }]);
       }
 
       (async (req, res, connection) => {
@@ -61,14 +65,18 @@ router.get("/", (req, res) => {
               console.log("Error while registering OTP");
               console.log(err);
               connection.release();
-              return res.status(400).send(err.message);
+              return res.status(400).send([{ message: err.message }]);
             }
             connection.release();
-            return res.status(201).send("OTP send and registered");
+            return res
+              .status(201)
+              .send([{ message: "OTP send and registered" }]);
           });
         } catch (ex) {
           connection.release();
-          return res.status(500).send("Error while sending the OTP");
+          return res
+            .status(500)
+            .send([{ message: "Error while sending the OTP" }]);
         }
       })(req, res, connection);
     });
@@ -87,7 +95,9 @@ router.post("/", async (req, res) => {
   }
   console.log(`${__filename} type of type ${typeof type}: ${type}`);
   if (!(type === "vendor" || type === "user")) {
-    return res.status(400).send('"type" specified is not correct');
+    return res
+      .status(400)
+      .send([{ message: '"type" specified is not correct' }]);
   }
 
   let connection = undefined;
@@ -113,13 +123,15 @@ router.post("/", async (req, res) => {
     if (matchingContacts.length < 1) {
       // rollback
       connection.release();
-      return res.status(404).send("OTP not registered / expired");
+      return res
+        .status(404)
+        .send([{ message: "OTP not registered / expired" }]);
     }
     let latestOTPResult = matchingContacts[0];
     if (otp !== latestOTPResult.otp) {
       // rollback
       connection.release();
-      return res.status(404).send("Latest OTP did not match");
+      return res.status(404).send([{ message: "Latest OTP did not match" }]);
     }
     if (type === "vendor") {
       sql2 = `insert into VENDOR(contact, device_fcm_token) VALUES(${contact}, "${device_fcm_token}")`;
@@ -155,48 +167,48 @@ router.post("/", async (req, res) => {
     return res
       .header("x-auth-token", token)
       .status(201)
-      .send("Successfully signed up via OTP");
+      .send([{ message: "Successfully signed up via OTP" }]);
   } catch (err) {
     if (!connection) {
       console.log(__filename + " Error in fetching connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnFetchingOTPfromSignupTable) {
       console.log(__filename + " Error in fetching OTP from Signup table");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnBeginTransaction) {
       console.log(__filename + " Error in beginning transaction");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnInsertingIntoMainTable) {
       console.log(__filename + ` Error in Inserting into ${type} table`);
       console.log(err);
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(400).send(err.message);
+      return res.status(400).send([{ message: err.message }]);
     } else if (errorOnFetchingLastInsertId) {
       console.log(__filename + " Error in fetching last index of table");
       console.log(err);
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnCommit) {
       console.log(__filename + " Error on Commit");
       console.log(err);
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log(__filename + " UNKNOWN ERROR");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }
 });

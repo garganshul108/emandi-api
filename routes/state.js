@@ -16,12 +16,12 @@ router.get("/", (req, res) => {
   return simpleGET(sql, req, res);
   // return connectionPool.getConnection((err, connection) => {
   //   if (err) {
-  //     return res.status(500).send("Internal Server Error");
+  //     return res.status(500).send([{message:"Internal Server Error"}]);
   //   }
   //   return connection.query(sql, (err, results, fields) => {
   //     if (err) {
   //       connection.release();
-  //       return res.status(500).send("Internal Server Error");
+  //       return res.status(500).send([{message:"Internal Server Error"}]);
   //     }
   //     connection.release();
   //     return res.status(200).send(results);
@@ -32,19 +32,21 @@ router.get("/", (req, res) => {
 router.put("/", [decodeToken, authAdmin], (req, res) => {
   const { state_id, name } = req.body;
   if (!state_id || !name) {
-    return res.status(400).send('"state_id" and "name" must be specified');
+    return res
+      .status(400)
+      .send([{ message: '"state_id" and "name" must be specified' }]);
   }
 
   return connectionPool.getConnection((err, connection) => {
     if (err) {
       console.log("Error while getting connection from the pool", err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
     return connection.beginTransaction((err) => {
       if (err) {
         connection.release();
         console.log("transaction begin", err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send([{ message: "Internal Server Error" }]);
       }
 
       let sql1 = `update STATE set name = "${name}" where state_id="${state_id}"`;
@@ -53,7 +55,7 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
           connection.rollback(() => {
             connection.release();
           });
-          return res.status(400).send(err.message);
+          return res.status(400).send([{ message: err.message }]);
         }
         if (results.changedRows <= 0) {
           connection.rollback(() => {
@@ -61,7 +63,9 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
           });
           return res
             .status(400)
-            .send("Not a valid state_id, Hence no rows affected");
+            .send([
+              { message: "Not a valid state_id, Hence no rows affected" },
+            ]);
         }
         let sql2 = `select * from STATE where state_id="${state_id}"`;
         return connection.query(sql2, (err, results, fields) => {
@@ -69,7 +73,7 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
             connection.rollback(() => {
               connection.release();
             });
-            return res.status(400).send(err.message);
+            return res.status(400).send([{ message: err.message }]);
           }
           connection.release();
           return res.status(201).send(results);
@@ -82,23 +86,23 @@ router.put("/", [decodeToken, authAdmin], (req, res) => {
 router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
   const { state_id } = req.params;
   if (!state_id) {
-    return res.status(400).send('"state_id" must be specified');
+    return res.status(400).send([{ message: '"state_id" must be specified' }]);
   }
 
   return connectionPool.getConnection((err, connection) => {
     if (err) {
       console.log("Error while getting connection from pool");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     }
     const sql = `delete from STATE where state_id="${state_id}";`;
     return connection.query(sql, (err, results, fields) => {
       if (err) {
         connection.release();
-        return res.status(400).send(err.message);
+        return res.status(400).send([{ message: err.message }]);
       }
       connection.release();
-      return res.status(201).send("The state has been deleted");
+      return res.status(201).send([{ message: "The state has been deleted" }]);
     });
   });
 });
@@ -106,17 +110,17 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 // router.post("/", [decodeToken, authAdmin], (req, res) => {
 //   const { name } = req.body;
 //   if (!name) {
-//     return res.status(400).send('"name" of the state must be specified');
+//     return res.status(400).send([{message:'"name" of the state must be specified'}]);
 //   }
 
 //   return connectionPool.getConnection((err, connection) => {
 //     if (err) {
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     }
 //     return connection.beginTransaction((err) => {
 //       if (err) {
 //         console.log("transaction begin", err);
-//         return res.status(500).send("Internal Server Error");
+//         return res.status(500).send([{message:"Internal Server Error"}]);
 //       }
 
 //       let sql1 = `insert into STATE(name) values("${name}")`;
@@ -126,7 +130,7 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 //             connection.release();
 //             console.log("Rollback while insert");
 //           });
-//           return res.status(400).send("State Already Exists");
+//           return res.status(400).send([{message:"State Already Exists"}]);
 //         }
 
 //         let sql2 = `select * from STATE where name="${name}"`;
@@ -136,14 +140,14 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 //               connection.release();
 //               console.log("Rollback while fetching", err);
 //             });
-//             return res.status(500).send("Couldn't fetch the Post");
+//             return res.status(500).send([{message:"Couldn't fetch the Post"}]);
 //           }
 //           return connection.commit((err) => {
 //             if (err) {
 //               connection.rollback(() => {
 //                 connection.release();
 //               });
-//               return res.status(500).send("Last Commit Failed");
+//               return res.status(500).send([{message:"Last Commit Failed"}]);
 //             }
 //             connection.release();
 //             return res.status(201).send(results);
@@ -157,7 +161,9 @@ router.delete("/:state_id", [decodeToken, authAdmin], (req, res) => {
 router.post("/", [decodeToken, authAdmin], async (req, res) => {
   const { name } = req.body;
   if (!name) {
-    return res.status(400).send('"name" of the state must be specified');
+    return res
+      .status(400)
+      .send([{ message: '"name" of the state must be specified' }]);
   }
 
   let connection = null;
@@ -187,46 +193,50 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
     if (!connection) {
       console.log("Error on getting connection");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnBeginTransaction) {
       console.log("Error on starting transaction");
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     } else if (errorOnInsertingState) {
       console.log("Error on inserting state");
       console.log(err);
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(400).send(err.message);
+      return res.status(400).send([{ message: err.message }]);
     } else if (errorOnFetchingState) {
       console.log("Error on fetching state");
       console.log(err);
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(400).send(err.message);
+      return res.status(400).send([{ message: err.message }]);
     } else if (errorOnCommit) {
       connection.rollback(() => {
         connection.release();
       });
-      return res.status(500).send("state not saved, Internal Server Error");
+      return res
+        .status(500)
+        .send([{ message: "state not saved, Internal Server Error" }]);
     } else {
       console.log(err);
-      return res.status(500).send("Something unhandled went wrong");
+      return res
+        .status(500)
+        .send([{ message: "Something unhandled went wrong" }]);
     }
   }
 });
 
 // return connectionPool.getConnection((err, connection) => {
 //   if (err) {
-//     return res.status(500).send("Internal Server Error");
+//     return res.status(500).send([{message:"Internal Server Error"}]);
 //   }
 //   return connection.beginTransaction((err) => {
 //     if (err) {
 //       console.log("transaction begin", err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     }
 
 //     let sql1 = `insert into STATE(name) values("${name}")`;
@@ -236,7 +246,7 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
 //           connection.release();
 //           console.log("Rollback while insert");
 //         });
-//         return res.status(400).send("State Already Exists");
+//         return res.status(400).send([{message:"State Already Exists"}]);
 //       }
 
 //       let sql2 = `select * from STATE where name="${name}"`;
@@ -246,14 +256,14 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
 //             connection.release();
 //             console.log("Rollback while fetching", err);
 //           });
-//           return res.status(500).send("Couldn't fetch the Post");
+//           return res.status(500).send([{message:"Couldn't fetch the Post"}]);
 //         }
 //         return connection.commit((err) => {
 //           if (err) {
 //             connection.rollback(() => {
 //               connection.release();
 //             });
-//             return res.status(500).send("Last Commit Failed");
+//             return res.status(500).send([{message:"Last Commit Failed"}]);
 //           }
 //           connection.release();
 //           return res.status(201).send(results);

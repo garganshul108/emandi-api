@@ -85,7 +85,7 @@ router.post("/cancel", [decodeToken], async (req, res) => {
   ];
   return await transactionProtectedAsyncQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
-      res.status(201).send("ORDER CANCELLED");
+      res.status(201).send([{ message: "ORDER CANCELLED" }]);
     },
   });
 });
@@ -121,7 +121,7 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
   ];
   return await transactionProtectedAsyncQueries(sqls, req, res, {
     onSuccess: (req, res, results) => {
-      res.status(201).send("ORDER CONFIRMED");
+      res.status(201).send([{ message: "ORDER CONFIRMED" }]);
     },
   });
 });
@@ -130,16 +130,22 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
   let delivery_address = req.body.delivery_address;
   let order = req.body.order;
   if (!delivery_address || !order) {
-    return res.status(400).send('"delivery_address" or "order" not provided');
+    return res
+      .status(400)
+      .send([{ message: '"delivery_address" or "order" not provided' }]);
   }
   if (order.length == 0) {
-    return res.status(400).send("No items specified for ordering");
+    return res
+      .status(400)
+      .send([{ message: "No items specified for ordering" }]);
   }
   let user_id = req.actor.user_id;
   let crop_ids = [];
   for (let item of order) {
     if (!item.crop_id)
-      return res.status(400).send('"crop_id" not specified for an item');
+      return res
+        .status(400)
+        .send([{ message: '"crop_id" not specified for an item' }]);
     crop_ids.push(item.crop_id);
   }
   crop_ids = crop_ids.join(" , ");
@@ -157,9 +163,11 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
         if (prevResults["query_1"].length !== 1) {
           statisfactionStatus = false;
           action = (req, res, results) => {
-            res
-              .status(400)
-              .send("No Item in the cart / too many vendors at same time");
+            res.status(400).send([
+              {
+                message: "No Item in the cart / too many vendors at same time",
+              },
+            ]);
           };
         }
         return { statisfactionStatus, action };

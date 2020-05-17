@@ -22,15 +22,15 @@ const simpleAsyncUpdateAndFetch = require("../db/requests/simple_async_update_an
 //     },
 //     onGetConnectionFail: (req, res, err) => {
 //       console.log(err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     },
 //     onFetchFail: (req, res, err) => {
 //       console.log(err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     },
 //     onUnknownError: (req, res, err) => {
 //       console.log(err);
-//       return res.status(500).send("Internal Server Error");
+//       return res.status(500).send([{message:"Internal Server Error"}]);
 //     },
 //   };
 
@@ -103,15 +103,15 @@ router.get("/:id?", async (req, res) => {
     },
     onGetConnectionFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onFetchFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onUnknownError: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
   };
 
@@ -152,7 +152,9 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
     console.log("This ran");
   }
   if (!crop_type_name) {
-    return res.status(400).send("crop_type_name not specified!!");
+    return res
+      .status(400)
+      .send([{ message: "crop_type_name not specified!!" }]);
   }
   let sql1 = `insert into CROP_TYPE(crop_type_name, crop_class) values("${crop_type_name}","${crop_class}")`;
   let sql2 = `select * from CROP_TYPE where id=LAST_INSERT_ID()`;
@@ -162,23 +164,23 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
     },
     onBeginTransactionFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onInsertFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send(err.message);
+      return res.status(500).send([{ message: err.message }]);
     },
     onFetchFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onCommitFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onUnknownError: (req, res, err) => {
       console.log(err);
-      return res.status(500).send(err.message);
+      return res.status(500).send([{ message: err.message }]);
     },
   };
   try {
@@ -193,17 +195,17 @@ router.delete("/:id", [decodeToken, authAdmin], async (req, res) => {
   const sql = `delete from CROP_TYPE where crop_type_id=${id};`;
   const callbacks = {
     onSuccess: (req, res) => {
-      return res.status(201).send("Crop Deleted Successfully");
+      return res.status(201).send([{ message: "Crop Deleted Successfully" }]);
     },
     onGetConnectionFail: (req, res, err) => {
       console.log("on get connection fail");
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onDeleteFail: (req, res, err) => {
       console.log("on delete Fail");
       console.log(err);
-      return res.status(500).send(err.message);
+      return res.status(500).send([{ message: err.message }]);
     },
   };
   try {
@@ -232,23 +234,23 @@ router.patch("/:id", [decodeToken, authAdmin], async (req, res) => {
     },
     onBeginTransactionFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onUpdateFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send(err.message);
+      return res.status(500).send([{ message: err.message }]);
     },
     onFetchFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onCommitFail: (req, res, err) => {
       console.log(err);
-      return res.status(500).send("Internal Server Error");
+      return res.status(500).send([{ message: "Internal Server Error" }]);
     },
     onUnknownError: (req, res, err) => {
       console.log(err);
-      return res.status(500).send(err.message);
+      return res.status(500).send([{ message: err.message }]);
     },
   };
   try {
