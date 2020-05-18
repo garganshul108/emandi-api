@@ -3,6 +3,7 @@ const helmet = require("helmet");
 const compression = require("compression");
 const app = express();
 const PORT = process.env.PORT || 8080;
+const path = require("path");
 
 app.listen(PORT, () => {
   console.log(`Listening to ${PORT}...`);
@@ -16,6 +17,7 @@ const otp_login = require("./routes/otp_login");
 const otp_signup = require("./routes/otp_signup");
 const crop = require("./routes/crop");
 const order = require("./routes/order");
+const upload = require("./routes/upload");
 
 const vendor = require("./routes/vendor");
 const user = require("./routes/user");
@@ -25,10 +27,37 @@ const cropType = require("./routes/crop_type");
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(`${__dirname}/public`));
+
+// CORS
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
+
+// STATIC FILE SERVING
+app.use(
+  "/images",
+  express.static(path.join(__dirname, "public/uploads/images"))
+);
+
+app.use(
+  "/defaults/crop_type/fruits",
+  express.static(path.join(__dirname, "public/defaults/crop_type/fruits"))
+);
+app.use(
+  "/defaults/crop_type/grains",
+  express.static(path.join(__dirname, "public/defaults/crop_type/grains"))
+);
+app.use(
+  "/defaults/crop_type/vegetables",
+  express.static(path.join(__dirname, "public/defaults/crop_type/vegetables"))
+);
+
 app.use(helmet());
 app.use(compression());
 
+app.use("/upload", upload);
 app.use("/login", login);
 app.use("/otp_login", otp_login);
 app.use("/otp_signup", otp_signup);
