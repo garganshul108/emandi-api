@@ -32,10 +32,12 @@ router.get("/me", [decodeToken, authVendor], (req, res) => {
 
 router.get("/:id", [decodeToken, authAdmin], (req, res) => {
   let vendor_id = req.params.id;
-  const { status: valid, optionals } = joiValidator({
-    schema: { ...defaultSchema },
-    object: { vendor_id },
-  });
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { vendor_id },
+    },
+  ]);
   if (!valid) {
     return res
       .status(400)
@@ -137,10 +139,12 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
 
 router.delete("/me", [decodeToken, authVendor], async (req, res) => {
   let vendor_id = req.actor.vendor_id;
-  const { status: valid, optionals } = joiValidator({
-    schema: { ...defaultSchema },
-    object: { vendor_id },
-  });
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: { vendor_id },
+    },
+  ]);
   if (!valid) {
     return res
       .status(400)
