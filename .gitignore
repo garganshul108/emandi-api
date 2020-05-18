@@ -4,4 +4,6 @@ node_modules/
 public/uploads/images/*
 public/uploads/pdfs/*
 
+!public/uploads/pdfs/.gitkeep 
+!public/uploads/images/.gitkeep
 ___*
