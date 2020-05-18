@@ -127,3 +127,19 @@ app.get("/", (req, res) => {
 //   const { hash } = require("./util/hash");
 //   console.log(await hash(""));
 // })();
+
+// let uri = "https://emandi-api.herokuapp.com";
+// const f = `('Garlic','VEGETABLES','${uri}/defaults/crop_type/vegetables/garlic.jpg'),
+// ('Okra','VEGETABLES','${uri}/defaults/crop_type/vegetables/okra.jpg'),
+// ('Cucumber','VEGETABLES','${uri}/defaults/crop_type/vegetables/cucumber.jpg'),
+// ('Peas','VEGETABLES','${uri}/defaults/crop_type/vegetables/frozen_peas.jpg'),
+// ('Apple','FRUITS','${uri}/defaults/crop_type/fruits/apple.jpg'),
+// ('Banana','FRUITS','${uri}/defaults/crop_type/fruits/banana.jpg'),
+// ('Grapes','FRUITS','${uri}/defaults/crop_type/fruits/grapes.jpg'),
+// ('Orange','FRUITS','${uri}/defaults/crop_type/fruits/orange.jpg'),
+// ('Barley','GRAINS','${uri}/defaults/crop_type/grains/barley.jpg'),
+// ('Oats','GRAINS','${uri}/defaults/crop_type/grains/oats.jpg'),
+// ('Quinoa','GRAINS','${uri}/defaults/crop_type/grains/quinoa.jpg'),
+// ('Rice','GRAINS','${uri}/defaults/crop_type/grains/rice.jpg')`;
+
+// console.log(f);
