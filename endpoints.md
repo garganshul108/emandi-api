@@ -107,6 +107,12 @@
 | POST   | /order/confirm | Confirm an order    |                  | order_id                                                                                            |          vendor          |
 | POST   | /order/request | Place a order       |                  | delivery_address <br/> order:[{crop_id, item_qty}, {crop_id, item_qty}] with order from same vendor |           user           |
 
+### Misc
+
+| Action | Endpoint      | Use case         | Query Parameters | Post Object Format                                     |    Special Token Needed    | Result                |
+| ------ | ------------- | ---------------- | ---------------- | ------------------------------------------------------ | :------------------------: | --------------------- |
+| POST   | /upload/image | Upload any image |                  | form-data key : image_to_upload, value: file_to_upload | admin<br/>vendor<br/>token | check result_formats/ |
+
 | Action                               | Endpoint                                 | Use case                                           | Query Parameters                                             | Post Object Format                                                      | special token needed |
 | ------------------------------------ | ---------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------- | -------------------- |
 | **END POINTS BELOW ARE NOT WORKING** |
@@ -124,5 +130,3 @@
 | GET                                  | /admin                                   | Get all admins                                     |                                                              |
 | POST                                 | /admin/ban/user/:user_id                 | Bans a user                                        |
 | POST                                 | /admin/ban/vendor/:vendor_id             | Bans a vendor                                      |
-| **misc**                             | NOT SET                                  |
-| POST                                 | /upload                                  | Upload any image or file                           |

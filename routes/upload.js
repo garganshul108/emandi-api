@@ -32,7 +32,7 @@ router.post(
       }
       callback(null, true);
     },
-  }).single("imageToBeUploaded"),
+  }).single("image_to_upload"),
   (req, res) => {
     try {
       let url = `${config.get("api-url")}/images/${req.file.filename}`;
