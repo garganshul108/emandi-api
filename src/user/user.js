@@ -54,14 +54,12 @@ module.exports = function buildMakeUser({ valid, dateFormater, makeAddress }) {
         if (!id) {
           throw new Error("User's id is not assigned");
         }
+        return id;
       },
       getContact: () => contact,
       getAddress: () => address,
       getOptions: () => {
         profile_picture, device_fcm_token, reg_timestamp;
-      },
-      setId: (_id) => {
-        id = _id;
       },
     });
   };
