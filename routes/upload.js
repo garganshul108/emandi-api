@@ -9,7 +9,8 @@ router.post(
   multer({
     storage: multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, `./public/uploads/images`);
+        console.log("path", path.join(__dirname, "../public/uploads/images"));
+        cb(null, path.join(__dirname, "../public/uploads/images"));
       },
       filename: (req, file, cb) => {
         const fext = path.extname(file.originalname);
@@ -36,7 +37,7 @@ router.post(
   (req, res) => {
     try {
       let url = `${config.get("api-url")}/images/${req.file.filename}`;
-      console.log("REQ FILES\n", req.files, "\n", url);
+      console.log("REQ FILES\n", req.file, "\n", url);
       let details = { ...req.file };
       for (let key of ["destination", "path"]) delete details[key];
 
