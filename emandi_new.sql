@@ -262,15 +262,32 @@ create table PROOF(
 
 -- crop type table
 
-('Potato','VEGETABLE'),
-('Tomato','VEGETABLE'),
-('Onion','VEGETABLE'),
-('Lady Finger','VEGETABLE'),
-('Apple','FRUITS'),
-('Banana','FRUITS'),
-('Mango','FRUITS'),
-('Orange','FRUITS'),
-('Rice','GRAINS'),
-('Wheat','GRAINS'),
-('Masoor Dal','GRAINS')
-('Maize','GRAINS')
+-- let uri = https://emandi-api.herokuapp.com/
+-- `('Potato','VEGETABLES','${uri}/'),
+-- ('Tomato','VEGETABLES','${uri}/'),
+-- ('Onion','VEGETABLES',,'${uri}/'),
+-- ('Lady Finger','VEGETABLES','${uri}/'),
+-- ('Apple','FRUITS','${uri}/'),
+-- ('Banana','FRUITS','${uri}/'),
+-- ('Mango','FRUITS','${uri}/'),
+-- ('Orange','FRUITS','${uri}/'),
+-- ('Rice','GRAINS','${uri}/'),
+-- ('Wheat','GRAINS','${uri}/'),
+-- ('Masoor Dal','GRAINS','${uri}/'),
+-- ('Maize','GRAINS','${uri}/')`
+
+
+/**
+('Garlic','VEGETABLES','https://emandi-api.herokuapp.com//defaults/crop_type/vegetables/garlic.jpg'),
+('Okra','VEGETABLES','https://emandi-api.herokuapp.com//defaults/crop_type/vegetables/okra.jpg'),
+('Cucumber','VEGETABLES',,'https://emandi-api.herokuapp.com//defaults/crop_type/vegetables/cucumber.jpg'),
+('Peas','VEGETABLES','https://emandi-api.herokuapp.com//defaults/crop_type/vegetables/frozen_peas.jpg'),
+('Apple','FRUITS','https://emandi-api.herokuapp.com//defaults/crop_type/fruits/apple.jpg'),
+('Banana','FRUITS','https://emandi-api.herokuapp.com//defaults/crop_type/fruits/banana.jpg'),
+('Grapes','FRUITS','https://emandi-api.herokuapp.com//defaults/crop_type/fruits/grapes.jpg'),
+('Orange','FRUITS','https://emandi-api.herokuapp.com//defaults/crop_type/fruits/orange.jpg'),
+('Barley','GRAINS','https://emandi-api.herokuapp.com//defaults/crop_type/grains/barley.jpg'),
+('Oats','GRAINS','https://emandi-api.herokuapp.com//defaults/crop_type/grains/oats.jpg'),
+('Quinoa','GRAINS','https://emandi-api.herokuapp.com//defaults/crop_type/grains/quinoa.jpg'),
+('Rice','GRAINS','https://emandi-api.herokuapp.com//defaults/crop_type/grains/rice.jpg')
+*/

@@ -2,3 +2,4 @@ node_modules/
 *.sh
 
 ___*
+public/uploads/*/*
