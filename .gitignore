@@ -1,5 +1,7 @@
 node_modules/
 *.sh
 
+public/uploads/images/*
+public/uploads/pdfs/*
+
 ___*
-public/uploads/*/*
