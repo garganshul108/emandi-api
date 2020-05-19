@@ -12,16 +12,16 @@ const defaultSchema = {
   username: Joi.string().min(3),
   password: Joi.string().min(3),
 
-  contact: Joi.number().min(1000000000).max(9999999999),
+  contact: Joi.number(),
   device_fcm_token: Joi.string(),
 
   delivery_address: Joi.string().min(3),
-  pincode: Joi.number().min(100000).max(999999),
+  pincode: Joi.number(),
 
   crop_qty: Joi.number(),
   crop_name: Joi.string().min(3),
   crop_type_id: Joi.number(),
-  crop_price: Joi.number().min(0),
+  crop_price: Joi.number(),
 
   packed_timestamp: Joi.string(),
   exp_timestamp: Joi.string(),
@@ -35,6 +35,11 @@ const defaultSchema = {
 
 const joiValidator = (pairs) => {
   for (let pair of pairs) {
+    for (let key in pair.object) {
+      if (!pair.schema[key]) {
+        pair.schema[key] = Joi.any();
+      }
+    }
     pair.schema = Joi.object(pair.schema);
   }
 
