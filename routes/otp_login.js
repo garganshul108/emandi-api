@@ -122,7 +122,7 @@ router.post("/", async (req, res) => {
     {
       schema: {
         contact: Joi.required(),
-        otp: Joi.number().required(),
+        otp: Joi.number().required().min(0),
         type: Joi.required(),
         device_fcm_token: Joi.required(),
       },

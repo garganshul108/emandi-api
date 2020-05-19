@@ -114,7 +114,7 @@ router.post("/", [decodeToken, authAdmin], async (req, res) => {
   const { status: validationStatus, value, error, optionals } = joiValidator([
     {
       schema: {
-        crop_type_name: Joi.required(),
+        crop_type_name: Joi.any().required(),
         crop_class: Joi.string().default("OTHER"),
       },
       object: { ...req.body },
@@ -175,7 +175,7 @@ router.delete("/:id", [decodeToken, authAdmin], async (req, res) => {
 
   const { status: valid, value, optionals } = joiValidator([
     {
-      schema: { id: Joi.number().min(1) },
+      schema: { id: Joi.number().min(1).required() },
       object: { ...req.params },
     },
   ]);
