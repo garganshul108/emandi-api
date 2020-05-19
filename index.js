@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Listening to ${PORT}...`);
 });
-
+const _v2 = require("./v2");
 const morgan = require("morgan");
 const login = require("./routes/login");
 const state = require("./routes/state");
@@ -28,6 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 app.use(helmet());
 app.use(compression());
+
+app.use("/v2", _v2);
 
 app.use("/login", login);
 app.use("/otp_login", otp_login);
