@@ -1,4 +1,4 @@
-export default function makeDeleteVendor({ removeVendor }) {
+module.exports = function makeDeleteVendor({ removeVendor }) {
   return async function deleteVendor(httpRequest) {
     const headers = {
       "Content-Type": "application/json",
@@ -22,4 +22,4 @@ export default function makeDeleteVendor({ removeVendor }) {
       };
     }
   };
-}
+};

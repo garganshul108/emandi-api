@@ -1,26 +1,25 @@
 const makeVendor = require("../vendor");
 
-function makeListVendors({vendorDb}){
-    function listVendors({id}) {
-        if(!id){
-            const vendors = await vendorDb.findAll();
-            return vendors;
-        }
-        
-        const vendor = makeVendor({id});
-        const existing = await vendorDb.findById(vendor.id);
-        if(!existing){
-            return sendNothing();
-        }
-        return [existing];
-
+function makeListVendors({ vendorDb }) {
+  async function listVendors({ id }) {
+    if (!id) {
+      const vendors = await vendorDb.findAll();
+      return vendors;
     }
 
-    function sendNothing(){
-        return []
+    const vendor = makeVendor({ id });
+    const existing = await vendorDb.findById(vendor.id);
+    if (!existing) {
+      return sendNothing();
     }
+    return [existing];
+  }
 
-    return listVendors;
+  function sendNothing() {
+    return [];
+  }
+
+  return listVendors;
 }
 
 module.exports = makeListVendors;

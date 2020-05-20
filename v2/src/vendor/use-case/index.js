@@ -16,5 +16,4 @@ const vendorService = Object.freeze({
   removeVendor,
 });
 
-export default vendorService;
-export { addVendor, editVendor, listVendors, removeVendor };
+module.exports = vendorService;

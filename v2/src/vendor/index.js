@@ -1,10 +1,10 @@
-const router = require("express").router;
+const router = require("express").Router();
 const {
   deleteVendor,
   getVendors,
   postVendor,
   patchVendor,
-} = require("./controllers");
+} = require("./controller");
 
 const makeCallback = require("../express-callback");
 

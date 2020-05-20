@@ -1,5 +1,6 @@
 const router = require("express").Router();
+const vendor = require("./src/vendor");
 
-console.log("api/v2 triggered");
+router.use("/vendor", vendor);
 
 module.exports = router;

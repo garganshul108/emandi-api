@@ -1,4 +1,4 @@
-export default function makePatchVendor({ editVendor }) {
+module.exports = function makePatchVendor({ editVendor }) {
   return async function patchVendor(httpRequest) {
     try {
       const { ...vendorInfo } = httpRequest.body;
@@ -40,4 +40,4 @@ export default function makePatchVendor({ editVendor }) {
       };
     }
   };
-}
+};

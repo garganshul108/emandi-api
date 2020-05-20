@@ -1,4 +1,4 @@
-export default function makePostVendor({ addVendor }) {
+module.exports = function makePostVendor({ addVendor }) {
   return async function postVendor(httpRequest) {
     try {
       const vendorInfo = { ...httpRequest.body };
@@ -29,4 +29,4 @@ export default function makePostVendor({ addVendor }) {
       };
     }
   };
-}
+};

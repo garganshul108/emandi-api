@@ -1,4 +1,4 @@
-export default function makeGetVendor({ listVendors }) {
+module.exports = function makeGetVendor({ listVendors }) {
   return async function getVendor(httpRequest) {
     const headers = {
       "Content-Type": "application/json",
@@ -24,4 +24,4 @@ export default function makeGetVendor({ listVendors }) {
       };
     }
   };
-}
+};

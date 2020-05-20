@@ -62,7 +62,7 @@ ORDERS.hasMany(ORDERED_ITEM, {
   onDelete: "CASCADE",
 });
 
-ORDERED_ITEM.belongsTo(ORDER, {
+ORDERED_ITEM.belongsTo(ORDERS, {
   foreignKey: "order_id",
   onDelete: "CASCADE",
 });
@@ -80,24 +80,24 @@ CROP.belongsTo(VENDOR, {
 
 // user and order
 
-USER.hasMany(ORDER, {
+USER.hasMany(ORDERS, {
   foreignKey: "user_id",
   onDelete: "SET NULL",
 });
 
-ORDER.belongsTo(USER, {
+ORDERS.belongsTo(USER, {
   foreignKey: "user_id",
   onDelete: "SET NULL",
 });
 
 // vendor and order
 
-VENDOR.hasMany(ORDER, {
+VENDOR.hasMany(ORDERS, {
   foreignKey: "user_id",
   onDelete: "SET NULL",
 });
 
-ORDER.belongsTo(VENDOR, {
+ORDERS.belongsTo(VENDOR, {
   foreignKey: "user_id",
   onDelete: "SET NULL",
 });

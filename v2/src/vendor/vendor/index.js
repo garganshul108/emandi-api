@@ -27,4 +27,4 @@ const makeVendor = buildMakeVendor({
   sanitize,
 });
 
-export default makeVendor;
+module.exports = makeVendor;
