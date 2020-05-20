@@ -10,6 +10,7 @@ const STATE = require("./models/state");
 const USER = require("./models/user");
 const VENDOR = require("./models/vendor");
 const pool = require("./pool");
+const Sequelize = require("sequelize");
 
 // state and city
 STATE.hasMany(CITY, {
@@ -113,5 +114,6 @@ module.exports = {
   STATE,
   USER,
   VENDOR,
-  pool,
+  ORMPool: pool,
+  ORMClass: Sequelize,
 };

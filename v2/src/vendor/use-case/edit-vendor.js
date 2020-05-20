@@ -16,7 +16,7 @@ function makeEditVendor({ vendorDb }) {
 
     vendor = makeVendor({ ...existing, ...changes });
     const vendorAddress = vendor.getAddress();
-    const updated = await vendorDb.update({
+    const updated = await vendorDb.updateById({
       id: vendor.getId(),
       device_fcm_token: vendor.getDeviceFCMToken(),
       contact: vendor.getContact(),

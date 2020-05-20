@@ -1,14 +1,9 @@
-const connectionPool = require("../pool");
+const makeVendorDb = require("./vendor-db");
+const ORM = require("../../../db");
 
-const {
-  promisifiedQuery,
-  promisifiedGetConnection,
-  promisifiedBeginTransaction,
-  promisifiedRollback,
-  promisifiedCommit,
-} = require("../promisified_sql");
-
-function makeDb(){
-    let connection = await promisifiedGetConnection(connectionPool);
-    
+async function makeDb() {
+  return ORM;
 }
+
+const vendorDb = makeVendorDb({ makeDb });
+return vendorDb;

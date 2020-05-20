@@ -1,7 +1,7 @@
 const makeVendor = require("../vendor");
 
-function makeDeleteVendor({ vendorDb }) {
-  async function deleteVendor({ id }) {
+function makeRemoveVendor({ vendorDb }) {
+  async function removeVendor({ id }) {
     if (!id) {
       throw new Error("Id of the Vendor must be provided");
     }
@@ -27,7 +27,7 @@ function makeDeleteVendor({ vendorDb }) {
     };
   }
 
-  return deleteVendor;
+  return removeVendor;
 }
 
-module.exports = makeDeleteVendor;
+module.exports = makeRemoveVendor;
