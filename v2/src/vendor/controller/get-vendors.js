@@ -1,14 +1,16 @@
-export default function makeDeleteVendor({ removeVendor }) {
-  return async function deleteVendor(httpRequest) {
+export default function makeGetVendor({ listVendors }) {
+  return async function getVendor(httpRequest) {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
-      const deleted = await removeVendor({ id: httpRequest.actor.id });
+      const results = await listVendors();
       return {
         headers,
         statusCode: 200,
-        body: { result: deleted },
+        body: {
+          result: results,
+        },
       };
     } catch (e) {
       // TODO: Error logging

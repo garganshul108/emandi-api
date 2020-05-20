@@ -39,7 +39,10 @@ function makeVendorDb({ makeDb }) {
       vendorInfo = { ...vendorInfo, state_id, city_id, address };
     }
     const db = await makeDb();
-    const result = await db.VENDOR.update({ ...vendorInfo }, { where: { id } });
+    const result = await db.VENDOR.update(
+      { ...vendorInfo },
+      { where: { vendor_id: id } }
+    );
     return result;
   }
 
