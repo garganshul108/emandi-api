@@ -14,6 +14,10 @@ const sequelize = new Sequelize(database, user, passwd, {
     acquire: 30000,
     idle: 10000,
   },
+  define: {
+    timestamp: false,
+    freezeTableName: true,
+  },
 });
 
 (async (sequelize) => {
