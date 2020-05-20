@@ -1,21 +1,19 @@
 const router = require("express").router;
 const {
-  deleteComment,
-  getComments,
-  notFound,
-  postComment,
-  patchComment,
+  deleteVendor,
+  getVendors,
+  postVendor,
+  patchVendor,
 } = require("./controllers");
-const makeCallback = "../express-callback";
 
-dotenv.config();
+const makeCallback = require("../express-callback");
 
-router.post("/vendor", makeCallback(postComment));
-router.delete("/vendor/:id", makeCallback(deleteComment));
-router.delete("/vendor", makeCallback(deleteComment));
-router.patch("/vendor/:id", makeCallback(patchComment));
-router.patch("/vendor", makeCallback(patchComment));
-router.get("/vendor", makeCallback(getComments));
-router.use(makeCallback(notFound));
+router.post("/vendor", makeCallback(postVendor));
+router.delete("/vendor/:id", makeCallback(deleteVendor));
+router.delete("/vendor", makeCallback(deleteVendor));
+router.patch("/vendor/:id", makeCallback(patchVendor));
+router.patch("/vendor", makeCallback(patchVendor));
+router.get("/vendor", makeCallback(getVendors));
+// router.use(makeCallback(notFound));
 
 module.exports = router;
