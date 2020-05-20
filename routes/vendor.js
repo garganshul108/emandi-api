@@ -62,6 +62,24 @@ router.patch("/me", [decodeToken, authVendor], async (req, res) => {
     address,
     profile_picture,
   } = req.body;
+
+  const { status: valid, optionals } = joiValidator([
+    {
+      schema: { ...defaultSchema },
+      object: {
+        state_id: req.body.state_id,
+        state_id: req.body.city_id,
+        pin_code: req.body.pincode,
+      },
+    },
+  ]);
+
+  if (!valid) {
+    return res
+      .status(400)
+      .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
+  }
+
   if (
     !type &&
     !name &&
