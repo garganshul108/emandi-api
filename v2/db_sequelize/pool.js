@@ -24,3 +24,5 @@ const sequelize = new Sequelize(database, user, passwd, {
     console.log("Unable to connect to the databsae: ", err);
   }
 })(sequelize);
+
+module.exports = sequelize;
