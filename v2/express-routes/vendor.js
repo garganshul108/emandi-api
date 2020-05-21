@@ -4,7 +4,7 @@ const {
   getVendors,
   postVendor,
   patchVendor,
-} = require("./controller");
+} = require("../src/vendor/controller");
 
 const makeCallback = require("../express-callback");
 
