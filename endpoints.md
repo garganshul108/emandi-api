@@ -71,21 +71,21 @@
 
 ### Crop
 
-| Action | Endpoint  | Use case               | Query Parameters                                                       | Post Object Format | Special Token Needed | Result                |
-| ------ | --------- | ---------------------- | ---------------------------------------------------------------------- | ------------------ | :------------------: | --------------------- |
-| GET    | /crop     | To fetch all the crops | limit (integer)<br/> offset (integer)                                  |                    |                      | Object enclosed in [] |
-| GET    | /crop/:id |                        | city_id<br/> state_id<br/> crop_class<br/> crop_type_id<br/> vendor_id |                    |                      | Object enclosed in [] |
+| Action | Endpoint  | Use case               | Query Parameters                                                                                                     | Post Object Format | Special Token Needed | Result                |
+| ------ | --------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------ | :------------------: | --------------------- |
+| GET    | /crop     | To fetch all the crops | limit (integer)<br/> offset (integer)                                                                                |                    |                      | Object enclosed in [] |
+| GET    | /crop/:id |                        | city_id(int)<br/> state_id(int)<br/> crop_class(valid crop class, string)<br/> crop_type_id(int)<br/> vendor_id(int) |                    |                      | Object enclosed in [] |
 
 ### Vendor / Crop
 
-| Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                                 | Special Token Needed | Result                       |
-| ------ | --------------------- | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------ | :------------------: | ---------------------------- |
-| GET    | /vendor/crop          | Fetch all crops of the vendor |                  |                                                                                                                    |        vendor        | object enclosed by []        |
-| GET    | /vendor/crop/:id      |                               |                  |                                                                                                                    |        vendor        | object enclosed by []        |
-| DELETE | /vendor/crop/:id      | single delete                 |                  |                                                                                                                    |        vendor        |
-| DELETE | /vendor/crop?id=1,2,3 | multiple delete               | id               |                                                                                                                    |        vendor        |
-| POST   | /vendor/crop          | Add a new crop                |                  | crop_qty<br/>crop_name<br/>crop_type_id<br/>crop_price<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/> |        vendor        | posted object enclosed by [] |
-| PATCH  | /vendor/crop/:id      |                               |                  | changeInQty<br/>crop_name<br/>crop_type_id<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/>             |        vendor        | posted object enclosed by [] |
+| Action | Endpoint              | Use case                      | Query Parameters | Post Object Format                                                                                                                                                                                                  | Special Token Needed | Result                       |
+| ------ | --------------------- | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------: | ---------------------------- |
+| GET    | /vendor/crop          | Fetch all crops of the vendor |                  |                                                                                                                                                                                                                     |        vendor        | object enclosed by []        |
+| GET    | /vendor/crop/:id      |                               |                  |                                                                                                                                                                                                                     |        vendor        | object enclosed by []        |
+| DELETE | /vendor/crop/:id      | single delete                 |                  |                                                                                                                                                                                                                     |        vendor        |
+| DELETE | /vendor/crop?id=1,2,3 | multiple delete               | id               |                                                                                                                                                                                                                     |        vendor        |
+| POST   | /vendor/crop          | Add a new crop                |                  | crop_qty(decimal(10,2))<br/>crop_name(string)<br/>crop_type_id(int)<br/>crop_price(decimal(10,2))<br/>packed_timestamp("yyyy-mm-dd hh:mm:ss")<br/>exp_timestamp("yyyy-mm-dd hh:mm:ss")<br/>description(string)<br/> |        vendor        | posted object enclosed by [] |
+| PATCH  | /vendor/crop/:id      |                               |                  | changeInQty(decimal(10,2))<br/>crop_name<br/>crop_type_id<br/>packed_timestamp<br/>exp_timestamp<br/>description<br/>                                                                                               |        vendor        | posted object enclosed by [] |
 
 ### User / Cart
 
@@ -100,14 +100,14 @@
 
 ### Order
 
-| Action | Endpoint       | Use case            | Query Parameters | Post Object Format                                                                                  |   Special Token Needed   | Result |
-| ------ | -------------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------- | :----------------------: | ------ |
-| GET    | /order/me      | To view self orders |                  |                                                                                                     | vendor <br/>or<br/> user |
-| GET    | /order/:id     | View specific order |                  |                                                                                                     |                          |
-| GET    | /order/        | View all Orders     |                  |                                                                                                     |                          |
-| POST   | /order/cancel  | Cancel an order     |                  | order_id                                                                                            | vendor <br/>or<br/> user |
-| POST   | /order/confirm | Confirm an order    |                  | order_id                                                                                            |          vendor          |
-| POST   | /order/request | Place a order       |                  | delivery_address <br/> order:[{crop_id, item_qty}, {crop_id, item_qty}] with order from same vendor |           user           |
+| Action | Endpoint       | Use case            | Query Parameters | Post Object Format                                                                                                              |   Special Token Needed   | Result |
+| ------ | -------------- | ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------- | :----------------------: | ------ |
+| GET    | /order/me      | To view self orders |                  |                                                                                                                                 | vendor <br/>or<br/> user |
+| GET    | /order/:id     | View specific order |                  |                                                                                                                                 |                          |
+| GET    | /order/        | View all Orders     |                  |                                                                                                                                 |                          |
+| POST   | /order/cancel  | Cancel an order     |                  | order_id                                                                                                                        | vendor <br/>or<br/> user |
+| POST   | /order/confirm | Confirm an order    |                  | order_id                                                                                                                        |          vendor          |
+| POST   | /order/request | Place a order       |                  | delivery_address(string) <br/> order:[{crop_id(int), item_qty(decimal(10,2))}, {crop_id, item_qty}] with order from same vendor |           user           |
 
 ### Misc
 
