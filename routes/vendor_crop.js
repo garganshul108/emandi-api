@@ -105,6 +105,7 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
   //   exp_timestamp,
   //   description,
   //   crop_price,
+  //   crop_photo_url
   // } = req.body;
 
   const { status: valid, value, optionals } = joiValidator([
@@ -142,7 +143,17 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     exp_timestamp,
     description,
     crop_price,
+    crop_images,
   } = value;
+
+  if (crop_images && !Array.isArray(crop_images) && crop_images.length > 1) {
+    console.log("validate crop_imge", crop_images);
+    return res
+      .status(403)
+      .send([
+        { message: "API v1 only accepts crop_images as an array of size = 1" },
+      ]);
+  }
 
   // if (!crop_qty || !crop_name || !crop_type_id || !crop_price) {
   //   return res
@@ -165,27 +176,60 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
   // }
 
   let sql1 = `insert into CROP(vendor_id, crop_qty, crop_name, crop_type_id, crop_price, packed_timestamp, exp_timestamp, description) values (${vendor_id},${crop_qty},"${crop_name}",${crop_type_id},${crop_price},${packed_timestamp},"${exp_timestamp}","${description}")`;
-  let sql2 = `select * from CROP where crop_id=LAST_INSERT_ID()`;
+  let sql2 = `select LAST_INSERT_ID() as crop_id from CROP`;
+  let sql3 = `insert into CROP_IMAGE(crop_id, crop_image) values`;
+
   let connection;
   let errorOnBeginTransaction = true;
   let errorOnCommit = true;
   let errorOnFetchLastCrop = true;
+  let errorOnFetchLastCropId = true;
+  let errorOnInsertCropPhotos = false; // exception
   let errorOnInsertCrop = true;
+  let errorOnFetchCropPhotos = true;
   try {
     connection = await promisifiedGetConnection(connectionPool);
     await promisifiedBeginTransaction(connection);
     errorOnBeginTransaction = false;
     await promisifiedQuery(connection, sql1, []);
     errorOnInsertCrop = false;
-    let { results: cropInserted } = await promisifiedQuery(
+    let { results: cropInsertedId } = await promisifiedQuery(
       connection,
       sql2,
       []
     );
+    errorOnFetchLastCropId = false;
+    const crop_id = cropInsertedId[0].crop_id;
+    if (crop_images && crop_images.length > 0) {
+      console.log("Photos", crop_images);
+      errorOnInsertCropPhotos = true;
+      let photo_urls = [];
+      for (let photo_url of crop_images) {
+        photo_urls.push(`(${crop_id}, "${photo_url}")`);
+      }
+      photo_urls = photo_urls.join(",");
+      sql3 = `${sql3} ${photo_urls};`;
+      await promisifiedQuery(connection, sql3, []);
+      errorOnInsertCropPhotos = false;
+    }
+
+    let sql4 = `select * from CROP join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) where crop_id=${crop_id}`;
+    let { results: cropInserted } = await promisifiedQuery(
+      connection,
+      sql4,
+      []
+    );
     errorOnFetchLastCrop = false;
+    // let sql5 = `select * from CROP_PHOTO where crop_id=${crop_id}`;
+    // let { results: cropPhotos } = await promisifiedQuery(connection, sql5, []);
+    // errorOnFetchCropPhotos = false;
     await promisifiedCommit(connection);
     errorOnCommit = false;
     connection.release();
+    // console.log("Qry", sql3);
+    // console.log("Qry", sql4);
+    // cropInserted[0].photos = cropPhotos;
+    // console.log("Inserted CROP", cropInserted);
     return res.status(201).send(cropInserted);
   } catch (err) {
     if (!connection) {
@@ -200,22 +244,53 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     } else if (errorOnInsertCrop) {
       console.log("Error on inserting Crop");
       console.log(err);
-      connection.release();
+      connection.rollback(() => {
+        connection.release();
+      });
+      return res.status(400).send([{ message: err.message }]);
+    } else if (errorOnFetchLastCropId) {
+      console.log("Error on fetching last crop id");
+      console.log(err);
+      connection.rollback(() => {
+        connection.release();
+      });
+      return res.status(500).send([{ message: "Internal Server Error" }]);
+    } else if (errorOnInsertCropPhotos) {
+      console.log("Error on inserting Crop Photos");
+      console.log(err);
+      connection.rollback(() => {
+        connection.release();
+      });
       return res.status(400).send([{ message: err.message }]);
     } else if (errorOnFetchLastCrop) {
       console.log("Error on fetching Crop");
       console.log(err);
-      connection.release();
+      connection.rollback(() => {
+        connection.release();
+      });
       return res.status(500).send([{ message: "Internal Server Error" }]);
-    } else if (errorOnCommit) {
+    }
+    // else if (errorOnFetchCropPhotos) {
+    //   console.log("Error on fetching Crop Photos");
+    //   console.log(err);
+    //   connection.rollback(() => {
+    //     connection.release();
+    //   });
+    //   return res.status(500).send([{ message: "Internal Server Error" }]);
+    // }
+    else if (errorOnCommit) {
       console.log("Error on Commit");
       console.log(err);
-      connection.release();
+      connection.rollback(() => {
+        connection.release();
+      });
       return res.status(500).send([{ message: "Internal Server Error" }]);
     } else {
       console.log("UNKNOWN ERROR");
       console.log(err);
-      connection.release();
+      connection.rollback(() => {
+        connection.release();
+      });
       return res.status(500).send([{ message: "Internal Server Error" }]);
     }
   }

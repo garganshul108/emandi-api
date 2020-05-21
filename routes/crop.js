@@ -11,14 +11,13 @@ let attributes = [
   "crop_qty",
   "crop_name",
   "crop_type_id",
-  "packed_timestamp",
-  "exp_timestamp",
   "description",
   "state_id",
   "city_id",
   "crop_class",
   "crop_type_name",
   "vendor_id",
+  "crop_image",
 ];
 
 attributes = attributes.join(" , ");
@@ -89,6 +88,7 @@ router.get("/:id?", async (req, res) => {
   let sql = `select ${attributes} from CROP`;
   sql = `${sql} join VENDOR using(vendor_id)`;
   sql = `${sql} join CROP_TYPE using(crop_type_id)`;
+  sql = `${sql} left join CROP_IMAGE using(crop_id)`;
 
   if (extraQueries) sql = `${sql} where ${subSql}`;
 
