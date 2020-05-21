@@ -1,0 +1,18 @@
+[
+  {
+    "crop_id": 23,
+    "crop_type_id": 10,
+    "vendor_id": 3,
+    "crop_qty": 110,
+    "crop_price": 150,
+    "crop_name": "Oats (Jau)",
+    "packed_timestamp": "2020-05-21T12:47:04.000Z",
+    "exp_timestamp": "1998-12-31T18:30:00.000Z",
+    "description": "Crunch, Soaked, Fresh",
+    "crop_type_name": "Wheat",
+    "crop_class": "GRAINS",
+    "crop_type_image": "https://st2.depositphotos.com/6778576/12429/v/950/depositphotos_124298052-stock-illustration-wheat-crop-icon.jpg",
+    "crop_image_id": 42,
+    "crop_image": "www.gmail.com"
+  }
+]
