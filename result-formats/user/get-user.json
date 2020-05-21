@@ -1,0 +1,20 @@
+[
+  {
+    "user_id": 6,
+    "device_fcm_token": "direct_from_api",
+    "contact": 8076434789,
+    "name": null,
+    "state_id": null,
+    "city_id": null,
+    "pin_code": null,
+    "reg_timestamp": "2020-05-19T13:43:27.000Z",
+    "address": null,
+    "profile_picture": null,
+    "orders_issued": 0,
+    "orders_cancelled_by_user": 0,
+    "order_domino_number": 0,
+    "defaulter_status": "NO_ISSUE",
+    "defaulter_timestamp": "1998-12-31T18:30:00.000Z",
+    "defaulter_period": "1998-12-31T18:30:00.000Z"
+  }
+]

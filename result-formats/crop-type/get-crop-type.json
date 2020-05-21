@@ -1,0 +1,14 @@
+[
+  {
+    "crop_type_id": 1,
+    "crop_type_name": "Potato",
+    "crop_class": "VEGETABLES",
+    "crop_type_image": "https://st2.depositphotos.com/6778576/12429/v/950/depositphotos_124298052-stock-illustration-wheat-crop-icon.jpg"
+  },
+  {
+    "crop_type_id": 2,
+    "crop_type_name": "Tomato",
+    "crop_class": "VEGETABLES",
+    "crop_type_image": "https://st2.depositphotos.com/6778576/12429/v/950/depositphotos_124298052-stock-illustration-wheat-crop-icon.jpg"
+  }
+]

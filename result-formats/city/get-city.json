@@ -1,0 +1,12 @@
+[
+  {
+    "city_id": 5,
+    "name": "Ghaziabad",
+    "state_id": 1
+  },
+  {
+    "city_id": 1,
+    "name": "Kanpur",
+    "state_id": 1
+  }
+]
