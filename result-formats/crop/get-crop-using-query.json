@@ -1,0 +1,28 @@
+[
+  {
+    "crop_id": 1,
+    "crop_qty": 48,
+    "crop_name": "Aaloo",
+    "crop_type_id": 1,
+    "description": "Chipsona Aallo",
+    "state_id": 1,
+    "city_id": 1,
+    "crop_class": "VEGETABLES",
+    "crop_type_name": "Potato",
+    "vendor_id": 2,
+    "crop_image": null
+  },
+  {
+    "crop_id": 2,
+    "crop_qty": 100,
+    "crop_name": "Aaloo",
+    "crop_type_id": 1,
+    "description": "Chipsona Aallo",
+    "state_id": 1,
+    "city_id": 1,
+    "crop_class": "VEGETABLES",
+    "crop_type_name": "Potato",
+    "vendor_id": 2,
+    "crop_image": null
+  }
+]
