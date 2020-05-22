@@ -3,7 +3,7 @@ const buildMakeVendor = require("./vendor");
 const makeAddress = require("../../subentities/address");
 const makeDeviceFCMToken = require("../../subentities/deviceFCMToken");
 const makeTimestamp = require("../../subentities/timestamp");
-const makeProfilePicture = require("../../subentities/profilePicture");
+const makeURL = require("../../subentities/url");
 const makeId = require("../../subentities/id");
 const sanitize = (text) => {
   // TODO: allow more coding embeds
@@ -22,7 +22,7 @@ const makeVendor = buildMakeVendor({
   makeAddress,
   makeDeviceFCMToken,
   makeTimestamp,
-  makeProfilePicture,
+  makeURL,
   makeId,
   sanitize,
 });
