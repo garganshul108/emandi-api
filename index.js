@@ -23,6 +23,7 @@ const vendor = require("./routes/vendor");
 const user = require("./routes/user");
 
 const cropType = require("./routes/crop_type");
+const notification = require("./routes/notification");
 
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -68,7 +69,7 @@ app.use("/user", user);
 app.use("/crop_type", cropType);
 app.use("/crop", crop);
 app.use("/order", order);
-
+app.use("/notification", notification);
 app.get("/", (req, res) => {
   return res
     .status(200)
