@@ -28,7 +28,14 @@ const defaultSchema = {
   description: Joi.string(),
 
   type: Joi.string().valid("vendor", "admin", "user"),
-  crop_class: Joi.string().valid("FRUITS", "GRAINS", "VEGETABLES", "OTHER"),
+  crop_class: Joi.string().valid(
+    "FRUITS",
+    "GRAINS",
+    "VEGETABLES",
+    "PLANTATIONS",
+    "CASH_CROPS",
+    "OTHER"
+  ),
   crop_type_name: Joi.string().min(3),
   name: Joi.string().min(3),
 };
