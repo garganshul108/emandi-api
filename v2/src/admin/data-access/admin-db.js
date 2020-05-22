@@ -1,16 +1,26 @@
 const makeAdminDb = ({ makeDb }) => {
+  const findByUsername = (username) => {
+    return {};
+  };
+
+  const findAll = ({}) => {
+    return {};
+  };
+
+  const removeByUsername = () => {
+    return {};
+  };
+
+  const insert = ({}) => {
+    return {};
+  };
+
   return Object.freeze({
     findByUsername,
     findAll,
     removeByUsername,
     insert,
   });
-
-  const findByUsername = (username) => {
-    const db = makeDb();
-  };
-
-  return adminDb;
 };
 
 module.exports = makeAdminDb;
