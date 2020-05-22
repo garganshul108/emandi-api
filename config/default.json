@@ -1,10 +1,12 @@
 {
   "otp-template-1": {
     "template-id": "26535",
-    "template-variable-order": "{#BB#}|{#AA#}"
+    "template-variable-order": "{#BB#}|{#AA#}",
+    "template-generator": "(({contact, otp}) => `${contact}|${otp}`)"
   },
   "otp-template-2": {
     "template-id": "26663",
-    "template-variable-order": "{#BB#}|{#AA#}"
+    "template-variable-order": "{#BB#}|{#AA#}",
+    "template-generator": "(({contact, otp}) => `${contact}|${otp}`)"
   }
 }
