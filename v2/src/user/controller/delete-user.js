@@ -1,21 +1,15 @@
-const makeGetAdmins = ({ listAdmins }) => {
-  const getAdmins = (httpRequest) => {
+const makeDeleteUser = ({ removeUser }) => {
+  const deleteUser = async (httpRequest) => {
     try {
-      const { username } = httpRequest.query;
-      let list = null;
-      if (username) {
-        list = listAdmins({ username });
-      } else {
-        list = listAdmins();
-      }
-
+      const id = httpRequest.params.id;
+      const deleted = await removeUser({ id });
       return {
         headers: {
           "Content-Type": "application/json",
           "Last-Modified": new Date().toUTCString(),
         },
-        statusCode: 200,
-        body: list.result,
+        statusCode: deleted.deletedCount > 0 ? 201 : 404,
+        body: deleted.message,
       };
     } catch (e) {
       console.log(e);
@@ -30,6 +24,8 @@ const makeGetAdmins = ({ listAdmins }) => {
       };
     }
   };
-  return getAdmins;
+
+  return deleteUser;
 };
-module.exports = makeGetAdmins;
+
+module.exports = makeDeleteUser;

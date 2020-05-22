@@ -1,21 +1,16 @@
-const makeGetAdmins = ({ listAdmins }) => {
-  const getAdmins = (httpRequest) => {
+const makeGetUsersMe = ({ listUsers }) => {
+  const getUsersMe = async (httpRequest) => {
     try {
-      const { username } = httpRequest.query;
-      let list = null;
-      if (username) {
-        list = listAdmins({ username });
-      } else {
-        list = listAdmins();
-      }
+      const id = httpRequest.actor.user_id;
+      const fetched = await listUsers({ id });
 
       return {
         headers: {
           "Content-Type": "application/json",
           "Last-Modified": new Date().toUTCString(),
         },
-        statusCode: 200,
-        body: list.result,
+        statusCode: fetched.foundCount > 0 ? 200 : 404,
+        body: fetched.result,
       };
     } catch (e) {
       console.log(e);
@@ -30,6 +25,8 @@ const makeGetAdmins = ({ listAdmins }) => {
       };
     }
   };
-  return getAdmins;
+
+  return getUsersMe;
 };
-module.exports = makeGetAdmins;
+
+module.exports = makeGetUsersMe;
