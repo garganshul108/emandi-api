@@ -1,30 +1,21 @@
-// const sanitizeHtml = require("sanitize-html");
 const buildMakeVendor = require("./vendor");
-const makeAddress = require("../../subentities/address");
-const makeDeviceFCMToken = require("../../subentities/deviceFCMToken");
-const makeTimestamp = require("../../subentities/timestamp");
+const makeCity = require("../../city/city");
+const makeState = require("../../state/state");
 const makeURL = require("../../subentities/url");
-const makeId = require("../../subentities/id");
-const sanitize = (text) => {
-  // TODO: allow more coding embeds
-  return text;
-  //   return sanitizeHtml(text, {
-  //     allowedIframeHostnames: ["codesandbox.io", "repl.it"],
-  //   });
-};
+const makeTimestamp = require("../../subentities/timestamp");
+const makeDeviceFCMToken = require("../../subentities/deviceFCMToken");
 
-const isValid = (variable, options) => {
-  if (variable) return true;
-};
+const valid = (varible, criteria) => true;
+const sanitize = (text) => text;
 
 const makeVendor = buildMakeVendor({
-  isValid,
-  makeAddress,
   makeDeviceFCMToken,
-  makeTimestamp,
-  makeURL,
-  makeId,
+  makeCity,
   sanitize,
+  valid,
+  makeState,
+  makeURL,
+  makeTimestamp,
 });
 
 module.exports = makeVendor;

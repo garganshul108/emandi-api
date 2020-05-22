@@ -1,11 +1,12 @@
 function buildMakeVendor({
-  isValid,
-  makeAddress,
+  valid,
   makeDeviceFCMToken,
   makeTimestamp,
-  makeProfilePicture,
-  makeId,
+  makeURL,
   sanitize,
+  makeCity,
+  makeState,
+  makeURL,
 }) {
   return function makeVendor({
     id,
@@ -15,9 +16,11 @@ function buildMakeVendor({
     address,
     profile_picture,
     reg_timestamp,
+    city = {},
+    state = {},
   } = {}) {
-    if (name && !isValid(name, { type: "string", minLength: 3 })) {
-      throw new Error("Vendor's name is not valid");
+    if (name && !valid(name, { type: "string", minLength: 3 })) {
+      throw new Error("Invalid vendor name provided");
     }
 
     name = sanitize(name).trim();
@@ -25,43 +28,45 @@ function buildMakeVendor({
       throw new Error("Vendor's name has no permissable characters");
     }
 
-    if (contact && !isValid(contact, { type: "number", exactDigitCount: 10 })) {
-      throw new Error("Vendor's contact is not valid");
+    if (contact && !valid(contact, { type: "number", exactDigitCount: 10 })) {
+      throw new Error("Invalid vendor contact.");
+    }
+    if (city) {
+      city = makeCity(city);
+    }
+
+    if (state) {
+      state = makeState(state);
     }
 
     const validId = null;
-    if (id) {
-      validId = makeId(id);
+    if (id && !valid(id, {})) {
+      throw new Error("Invalid Vendor Id provided.");
     }
 
-    const validDeviceFCMToken = null;
     if (device_fcm_token) {
-      validDeviceFCMToken = makeDeviceFCMToken(device_fcm_token);
+      device_fcm_token = makeDeviceFCMToken({ device_fcm_token });
     }
 
-    const validProfilePicture = null;
     if (profile_picture) {
-      validProfilePicture = makeProfilePicture(profile_picture);
+      profile_picture = makeURL({ url: profile_picture });
     }
 
-    const validRegTimestamp = null;
     if (reg_timestamp) {
-      validRegTimestamp = makeTimestamp(reg_timestamp);
-    }
-
-    const validAddress = null;
-    if (address) {
-      validAddress = makeAddress(address);
+      reg_timestamp = makeTimestamp({ timestamp: reg_timestamp });
     }
 
     return Object.freeze({
-      getAddress: () => validAddress,
       getName: () => name,
+      getId: () => id,
+      getDeviceFCMToken: () => device_fcm_token,
       getContact: () => contact,
-      getProfilePicture: () => validProfile_picture,
-      getId: () => validId,
-      getDeviceFCMToken: () => validDeviceFCMToken,
-      getRegTimestamp: () => validRegTimestamp,
+      getPinCode: () => pin_code,
+      getCity: () => city,
+      getState: () => state,
+      getRegTimestamp: () => reg_timestamp,
+      getAddress: () => address,
+      getProfilePicture: () => profile_picture,
     });
   };
 }
