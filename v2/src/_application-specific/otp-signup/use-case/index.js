@@ -1,7 +1,9 @@
 const makeVerifyAndSignupViaOTP = require("./verify-and-signup-via-otp");
 const makeGenerateSignupOTP = require("./generate-signup-otp");
 const OTPService = require("../../../../third-party-services/otp-service");
-const OTPRegisterationService = require("../../../../custom-services/otp-registering-service");
+const {
+  SignupOTPRegister,
+} = require("../../../../custom-services/otp-registering-service");
 const TokenService = require("../../../../custom-services/token-service");
 
 const { addUser } = require("../../../user/use-case");
@@ -12,11 +14,11 @@ const sendOTP = async ({ contact, otp }) => {
 };
 
 const registerOTP = async ({ otp, contact, type }) => {
-  await OTPRegisterationService.register({ otp, contact, type });
+  await SignupOTPRegister.register({ otp, contact, type });
 };
 
 const verifyOTP = async ({ otp, contact, type }) => {
-  const valid = await OTPRegisterationService.verify({ otp, contact, type });
+  const valid = await SignupOTPRegister.verify({ otp, contact, type });
   return valid;
 };
 
