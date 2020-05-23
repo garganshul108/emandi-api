@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const pool = require("../pool");
 
 const CROP = pool.define("CROP", {
-  crop_id: { type: Sequelize.INTEGER },
+  crop_id: { type: Sequelize.INTEGER, primaryKey: true },
   vendor_id: { type: Sequelize.INTEGER },
   crop_qty: {
     type: Sequelize.DECIMAL(10, 2),
