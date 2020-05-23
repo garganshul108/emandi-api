@@ -45,6 +45,28 @@ VENDOR.belongsTo(STATE, {
   onDelete: "SET NULL",
 });
 
+// city and vendor
+CITY.hasMany(VENDOR, {
+  foreignKey: "city_id",
+  onDelete: "SET NULL",
+});
+
+VENDOR.belongsTo(CITY, {
+  foreignKey: "city_id",
+  onDelete: "SET NULL",
+});
+
+// city and vendor
+CITY.hasMany(USER, {
+  foreignKey: "city_id",
+  onDelete: "SET NULL",
+});
+
+USER.belongsTo(CITY, {
+  foreignKey: "city_id",
+  onDelete: "SET NULL",
+});
+
 //crop and crop type
 CROP_TYPE.hasMany(CROP, {
   foreignKey: "crop_type_id",
@@ -102,7 +124,7 @@ ORDERS.belongsTo(VENDOR, {
   onDelete: "SET NULL",
 });
 
-module.exports = {
+module.exports = Object.freeze({
   ADMIN,
   CITY,
   CROP,
@@ -116,4 +138,4 @@ module.exports = {
   VENDOR,
   ORMPool: pool,
   ORMClass: Sequelize,
-};
+});
