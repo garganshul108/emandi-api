@@ -13,13 +13,13 @@ const VENDOR = sequelize.define("VENDOR", {
   profile_picture: { type: Sequelize.STRING(1000) },
   reg_timestamp: { type: Sequelize.DATE },
   device_fcm_token: { type: Sequelize.STRING(500) },
-  orders_recieved: { type: Sequelize.INTEGER },
-  orders_cancelled_by_user: { type: Sequelize.INTEGER },
-  orders_cancelled_by_vendor: { type: Sequelize.INTEGER },
-  order_domino_number: { type: Sequelize.TINYINT },
-  defaulter_status: { type: Sequelize.STRING(30) },
-  defaulter_timestamp: { type: Sequelize.DATE },
-  defaulter_period: { type: Sequelize.DATE },
+  // orders_recieved: { type: Sequelize.INTEGER },
+  // orders_cancelled_by_user: { type: Sequelize.INTEGER },
+  // orders_cancelled_by_vendor: { type: Sequelize.INTEGER },
+  // order_domino_number: { type: Sequelize.TINYINT },
+  // defaulter_status: { type: Sequelize.STRING(30) },
+  // defaulter_timestamp: { type: Sequelize.DATE },
+  // defaulter_period: { type: Sequelize.DATE },
 });
 
 module.exports = VENDOR;
