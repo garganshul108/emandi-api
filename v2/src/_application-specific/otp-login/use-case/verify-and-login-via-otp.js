@@ -44,10 +44,10 @@ module.exports = buildVerifyAndLoginViaOTP = ({
     let tokenPayload = {};
     if (TypeEnum.verify.vendor(type)) {
       tokenPayload.isVendor = true;
-      tokenPayload.vendor_id = valid.id;
+      tokenPayload.id = valid.id;
     } else if (TypeEnum.verify.user(type)) {
       tokenPayload.isUser = true;
-      tokenPayload.user_id = valid.id;
+      tokenPayload.id = valid.id;
     }
 
     const authToken = await generateAuthToken(tokenPayload);

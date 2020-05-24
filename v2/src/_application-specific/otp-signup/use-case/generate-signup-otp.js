@@ -5,7 +5,6 @@ const makeGenerateSignupOTP = ({
   listVendors,
   TypeEnum,
   sendOTP,
-  OTPRegister
 }) => {
   const generateSignupOTP = ({ type, contact }) => {
     if (!type) {
