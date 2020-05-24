@@ -6,21 +6,19 @@ module.exports = buildMakeCrop = ({
 }) => {
   return (makeCrop = ({
     id,
-    vendor_id,
+    vendor,
     crop_qty,
     crop_price,
     crop_name,
-    crop_type_id,
+    cropType,
     description,
   }) => {
-    let vendor = undefined;
-    if (vendor_id) {
-      vendor = makeVendor({ id: vendor_id });
+    if (vendor) {
+      vendor = makeVendor(vendor);
     }
 
-    let cropType = undefined;
-    if (crop_type_id) {
-      cropType = makeCropType({ id: crop_type_id });
+    if (cropType) {
+      cropType = makeCropType(cropType);
     }
 
     return Object.freeze({
