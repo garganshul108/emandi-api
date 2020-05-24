@@ -18,6 +18,7 @@ let attributes = [
   "crop_type_name",
   "vendor_id",
   "crop_image",
+  "crop_price",
 ];
 
 attributes = attributes.join(" , ");
