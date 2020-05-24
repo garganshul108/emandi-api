@@ -6,4 +6,4 @@ async function makeDb() {
 }
 
 const vendorDb = makeVendorDb({ makeDb });
-return vendorDb;
+module.exports = vendorDb;
