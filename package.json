@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "DEBUG=emandi:* nodemon index.js"
   },
   "engines": {
     "node": "12.16.1"
@@ -23,6 +23,7 @@
     "bcrypt": "^4.0.1",
     "compression": "^1.7.4",
     "config": "^3.3.1",
+    "debug": "^4.1.1",
     "express": "^4.17.1",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
