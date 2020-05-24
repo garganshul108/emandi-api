@@ -15,13 +15,12 @@ const extract = (result) => result.toJSON();
 
 // (async () => {
 //   try {
-//     let results = await db.VENDOR.findByPk(2, {
-//       include: [{ model: db.CITY, include: [{ model: db.STATE }] }],
-//     });
-//     results = arrayLyze(results);
-//     results = results.map((res) => extract(res));
+//     let results = await db.CITY.destroy({ where: { city_id: 6 } });
+//     // results = arrayLyze(results);
+//     // results = results.map((res) => extract(res));
 //     console.log(results);
 //   } catch (e) {
-//     console.log(e);
+//     console.log(e.message);
 //   }
 // })();
+// console.log(db);
