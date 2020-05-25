@@ -8,19 +8,19 @@ module.exports = buildMakeOrder = ({
 }) => {
   return (makeOrder = ({
     id,
-    issue_timestamp,
     user,
     delivery_address,
     vendor,
-    orderStatus,
     orderedItems,
+    issueTimestamp,
+    orderStatus,
   }) => {
     if (id && !valid(id, { type: "number" })) {
       throw new Error("Invalid order id provided.");
     }
 
-    if (issue_timestamp) {
-      issueTimestamp = makeTimestamp({ timestamp: issue_timestamp });
+    if (!issueTimestamp) {
+      issueTimestamp = makeTimestamp({ timestamp: new Date() });
     }
 
     if (user) {
@@ -30,8 +30,9 @@ module.exports = buildMakeOrder = ({
     if (vendor) {
       vendor = makeVendor(vendor);
     }
-
-    if (order_status) {
+    if (!orderStatus) {
+      orderStatus = makeOrderStatus({ status: "PENDING" });
+    } else {
       orderStatus = makeOrderStatus(orderStatus);
     }
 
@@ -42,24 +43,31 @@ module.exports = buildMakeOrder = ({
       }
     }
 
+    let checkoutValue = 0;
     let orderedItemList = [];
     if (orderedItems) {
       for (let item of orderedItems) {
         item = makeOrderedItem(item);
       }
+      checkoutValue += item.getItemFreezedCost();
       orderedItemList.push(item);
     }
 
     return Object.freeze({
       getOrderStatus: () => orderStatus.getStatus(),
-      markStatusCancel: () => orderStatus.mark("CANCEL"),
-      markStatusCanfirm: () => orderStatus.mark("CONFIRM"),
+      markStatusCancel: () => {
+        orderStatus.markCancel();
+      },
+      markStatusCanfirm: () => {
+        orderStatus.markConfirm();
+      },
       getUser: () => user,
       getVendor: () => vendor,
       getId: () => id,
       getIssueTimestamp: () => issueTimestamp.getTimestamp(),
       getDeliveryAddress: () => delivery_address,
       getOrderedItems: () => orderedItemList,
+      getCheckoutValue: () => checkoutValue,
     });
   });
 };

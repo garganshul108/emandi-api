@@ -8,10 +8,10 @@ module.exports = buildMakeOrderStatus = ({}) => {
     return Object.freeze({
       getStatus: () => status,
       markCancel: () => {
-        status = "CANCEL";
+        status = "CANCELLED";
       },
       markConfirm: () => {
-        status = "CONFIRM";
+        status = "CONFIRMED";
       },
     });
   });
