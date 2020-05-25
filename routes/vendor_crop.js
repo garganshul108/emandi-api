@@ -44,7 +44,7 @@ router.get("/:crop_id?", [decodeToken, authVendor], (req, res) => {
       .status(400)
       .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
-  let sql = `select * from CROP where vendor_id=${vendor_id}`;
+  let sql = `select * from CROP join CROP_TYPE using(crop_type_id) join CROP_IMAGE using(crop_id) where vendor_id=${vendor_id}`;
   if (crop_id) {
     sql = `${sql} and crop_id=${crop_id}`;
   }
