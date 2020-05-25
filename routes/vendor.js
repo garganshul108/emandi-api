@@ -30,7 +30,7 @@ router.get("/me", [decodeToken, authVendor], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.get("/:id", [decodeToken, authAdmin], (req, res) => {
+router.get("/:id", (req, res) => {
   let vendor_id = req.params.id;
   const { status: valid, optionals } = joiValidator([
     {
@@ -43,7 +43,7 @@ router.get("/:id", [decodeToken, authAdmin], (req, res) => {
       .status(400)
       .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
-  let sql = `select * from VENDOR where vendor_id=${vendor_id}`;
+  let sql = `select vendor_id as id, name, address, contact, profile_picture from VENDOR where vendor_id=${vendor_id}`;
   return simpleGET(sql, req, res);
 });
 
