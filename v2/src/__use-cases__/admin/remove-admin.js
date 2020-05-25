@@ -1,4 +1,4 @@
-const makeAdmin = require("../admin");
+const makeAdmin = require(".");
 
 const makeRemoveAdmin = ({ adminDb }) => {
   const removeAdmin = async ({ username }) => {
