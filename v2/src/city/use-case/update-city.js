@@ -7,10 +7,10 @@ module.exports = makeUpdateCity = ({ cityDb, filterUndefined }) => {
     }
     const city = makeCity({ id, ...cityInfo });
     const state = city.getState();
-    const options = {
+    const options = filterUndefined({
       name: city.getName() || undefined,
       state_id: state && state.id ? state.id : undefined,
-    };
+    });
     const updated = cityDb.updateById(options);
 
     return {

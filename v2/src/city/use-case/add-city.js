@@ -1,6 +1,6 @@
 const makeCity = require("../city");
 module.exports = makeAddCity = ({ cityDb }) => {
-  return (addCity = ({ name, state }) => {
+  return (addCity = async ({ name, state }) => {
     if (!name) {
       throw new Error("City name must be provided.");
     }
