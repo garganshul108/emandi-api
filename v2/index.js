@@ -24,3 +24,11 @@ const extract = (result) => result.toJSON();
 //   }
 // })();
 // console.log(db);
+
+// (async () => {
+//   try {
+//     await db.CROP_TYPE.destroy({ where: { crop_type_id: 1 } });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// })();

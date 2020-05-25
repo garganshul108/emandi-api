@@ -1,6 +1,6 @@
 const makeOrder = require("../order");
 
-module.exports = makeCancelOrder = ({ orderDb }) => {
+module.exports = makeCancelOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
   return (cancelOrder = async ({ id, vendor, user }) => {
     if (!id) {
       throw new Error("Order id must be provided.");
@@ -30,9 +30,26 @@ module.exports = makeCancelOrder = ({ orderDb }) => {
 
     const orderToBeCancelled = makeOrder({ ...existing });
     if (orderToBeCancelled.getOrderStatus() === "CONFIRMED") {
-      await orderDb.cancelConfirmed({ id });
+      try {
+        const t = TXN.beginTransaction();
+        for (let item of existing.orderToBeCancelled) {
+          const exitsingCrop = 
+          sads;
+          await txnUpdateCropQty({
+            id: crop_id,
+            changeInQty: item_qty,
+            _txn: t,
+          });
+        }
+        await TXN.commitTransaction({ _txn: t });
+        await orderDb.setStatusToCancel({ id });
+      } catch (e) {
+        logOn.core(e);
+        await TXN.rollbackTransaction({ _tex: t });
+        throw new Error("Order could not be confirmed. Try again.");
+      }
     } else {
-      await orderDb.cancelPending({ id });
+      await orderDb.({ id });
     }
     orderToBeCancelled.makeCancelOrder();
 

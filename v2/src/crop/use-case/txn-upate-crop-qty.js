@@ -1,9 +1,15 @@
 const makeCrop = require("../crop");
 
-module.exports = makeUpdateCropQty = ({ cropDb }) => {
-  return (UpdateCropQty = async ({ changeInCropQty, id }) => {
+module.exports = makeTxnUpdateCropQty = ({ cropDb }) => {
+  return (txnUpdateCropQty = async ({ changeInCropQty, id }, { _txn }) => {
     if (!id) {
       throw new Error("Crop id must be specified.");
+    }
+
+    if (!_txn) {
+      throw new Error(
+        "Transaction component must be specified, Internal Server Error."
+      );
     }
 
     if (changeInCropQty === null || changeInCropQty === undefined) {
@@ -17,9 +23,10 @@ module.exports = makeUpdateCropQty = ({ cropDb }) => {
     }
 
     let crop = makeCrop({ id });
-    let updated = await updateCropQtyById({
+    let updated = await txnUpdateCropQtyById({
       id: crop.getid(),
       changeInCropQty,
+      _txn,
     });
     return {
       updatedCount: 1,

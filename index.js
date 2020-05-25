@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 require("./LogOn");
+
 app.listen(PORT, () => {
   console.log(`Listening to ${PORT}...`);
 });
