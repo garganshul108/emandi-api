@@ -40,7 +40,7 @@ router.get("/:item_id", [decodeToken, authUser], async (req, res) => {
       .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
 
-  let sql = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) where item_id=${item_id} and user_id=${user_id}`;
+  let sql = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id)  where item_id=${item_id} and user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -71,7 +71,7 @@ router.get("/", [decodeToken, authUser], async (req, res) => {
       .send([{ message: `Invalid Request ${optionals.errorList}` }]);
   }
 
-  let sql = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) where user_id=${user_id}`;
+  let sql = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id)  where user_id=${user_id}`;
   // let sql = `select * from CART where user_id=${user_id}`;
   const callbacks = {
     onSuccess: (req, res, results) => {
@@ -178,7 +178,7 @@ router.post("/", [decodeToken, authUser], async (req, res) => {
   // }
 
   let sql1 = `insert into CART(user_id, item_qty, crop_id) values (${user_id},${item_qty},${crop_id})`;
-  let sql2 = `select item_id, user_id, item_qty, crop_id, crop_price, (CROP.crop_price*CART.item_qty) as item_cost from CART join CROP using(crop_id) where item_id=LAST_INSERT_ID()`;
+  let sql2 = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) where item_id=LAST_INSERT_ID()`;
   const callbacks = {
     onSuccess: (req, res, results) => {
       res.status(201).send(results);
@@ -223,7 +223,7 @@ router.patch("/:item_id", [decodeToken, authUser], async (req, res) => {
   if (subSql.length > 0) {
     subSql = subSql.join(" , ");
     let sql1 = `update set ${subSql} from CART where item_id=${item_id} and user_id=${user_id}`;
-    let sql2 = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) where item_id=${item_id}`;
+    let sql2 = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) where item_id=${item_id}`;
     const callbacks = {
       onSuccess: (req, res, results) => {
         res.status(201).send(results);
