@@ -1,5 +1,3 @@
-const makeCity = require("../../city");
-
 module.exports = makeRemoveCity = ({ cityDb }) => {
   const doesNotExist = () => {
     return {
@@ -7,19 +5,18 @@ module.exports = makeRemoveCity = ({ cityDb }) => {
       message: "City doesn't exists",
     };
   };
+
   return (removeCity = async ({ id }) => {
     if (!id) {
       throw new Error("City id must be provided.");
     }
 
-    const toBeDeleted = makeCity({ id });
-
-    const existing = cityDb.findById({ id: toBeDeleted.id });
+    const existing = cityDb.findById({ id });
     if (!existing) {
       return doesNotExist();
     }
 
-    await cityDb.removeById({ id: toBeDeleted.getId() });
+    await cityDb.removeById({ id });
     return {
       deletedCount: 1,
       message: "City deleted successfully",

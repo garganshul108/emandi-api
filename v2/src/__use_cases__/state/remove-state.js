@@ -1,5 +1,3 @@
-const makeState = require("../../state");
-
 module.exports = makeRemoveState = ({ stateDb }) => {
   const doesNotExist = () => {
     return {
@@ -12,14 +10,12 @@ module.exports = makeRemoveState = ({ stateDb }) => {
       throw new Error("State id must be provided.");
     }
 
-    const toBeDeleted = makeState({ id });
-
-    const existing = stateDb.findById({ id: toBeDeleted.id });
+    const existing = stateDb.findById({ id });
     if (!existing) {
       return doesNotExist();
     }
 
-    await stateDb.removeById({ id: toBeDeleted.getId() });
+    await stateDb.removeById({ id });
     return {
       deletedCount: 1,
       message: "State deleted successfully",

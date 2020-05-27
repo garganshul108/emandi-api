@@ -1,17 +1,21 @@
 const makeState = require("../../state");
 module.exports = makeAddState = ({ stateDb }) => {
-  return (addCity = async ({ name }) => {
-    if (!name) {
-      throw new Error("State name must be provided.");
+  return (addState = async ({ name }) => {
+    const state = makeState({ name });
+    const existing = stateDb.findByName({ name: state.getName() });
+    if (existing) {
+      return {
+        insertedCount: 0,
+        result: existing,
+      };
     }
 
-    const state = makeState({ name });
     const inserted = await stateDb.insert({
       name: state.getName(),
     });
 
     return {
-      insertCount: 1,
+      insertedCount: 1,
       result: inserted,
     };
   });

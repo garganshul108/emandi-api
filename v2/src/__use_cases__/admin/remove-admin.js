@@ -5,7 +5,6 @@ const makeRemoveAdmin = ({ adminDb }) => {
     if (!username) {
       throw new Error("No username specified");
     }
-    const admin = makeAdmin({ username });
     const existing = await adminDb.findByUsername(admin.getUsername());
     if (!existing) {
       return doNothing();

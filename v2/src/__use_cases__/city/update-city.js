@@ -1,11 +1,19 @@
 const makeCity = require("../../city");
 
 module.exports = makeUpdateCity = ({ cityDb, filterUndefined }) => {
-  return (updateCity = ({ id, ...cityInfo }) => {
+  return (updateCity = ({ id, ...changes }) => {
     if (!id) {
       throw new Error("City id must be provided.");
     }
-    const city = makeCity({ id, ...cityInfo });
+
+    const existing = cityDb.findById({ id });
+    if (!existing) {
+      return {
+        updatedCount: 0,
+        message: "City doesn't exists with id provided.",
+      };
+    }
+    const city = makeCity({ ...existing, ...changes });
     const state = city.getState();
     const options = filterUndefined({
       name: city.getName() || undefined,

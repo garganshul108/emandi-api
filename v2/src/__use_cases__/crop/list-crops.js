@@ -11,7 +11,6 @@ module.exports = makeListCrops = ({ cropDb, filterUndefined }) => {
         vendor_id: crop.getVendor().getId(),
         crop_type_id: crop.getCropType().getId(),
         crop_name: crop.getCropName(),
-        crop_qty: crop.getCropQty(),
         crop_price: crop.getCropPrice(),
       });
       fetched = cropDb.findAll(options);

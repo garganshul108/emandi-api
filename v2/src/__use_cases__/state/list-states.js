@@ -1,19 +1,15 @@
-const makeState = require("../../state");
 module.exports = makeListStates = ({ stateDb, filterUndefined }) => {
-  return (listStates = async (options) => {
+  return (listStates = async ({ id, name }) => {
     let fetched = undefined;
-    if (!options) {
+    if (id) {
+      fetched = stateDb.findById({ id });
+    } else if (name) {
+      fetched = stateDb.findAllByNameLike({ name });
+    } else {
       fetched = stateDb.findAll();
     }
-    const state = makeCity(options);
-    options = {
-      name: state.getName() || undefined,
-      id: state.getId() || undefined,
-    };
-    options = filterUndefined(options);
-    let fetched = await stateDb.findAll(options);
     return {
-      foundCount: result.length,
+      foundCount: 1,
       result: fetched,
     };
   });

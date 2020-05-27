@@ -3,7 +3,6 @@ const makeAdmin = require("../../admin");
 const makeListAdmins = ({ adminDb }) => {
   const listAdmins = async ({ username }) => {
     if (username) {
-      const admin = makeAdmin({ username });
       const existing = await adminDb.findByUsername(admin.getUsername());
       if (!existing) {
         return {

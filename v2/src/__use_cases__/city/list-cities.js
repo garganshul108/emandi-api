@@ -1,20 +1,17 @@
-const makeCity = require("../../city");
-module.exports = makeListCities = ({ cityDb, filterUndefined }) => {
-  return (listCities = async (options) => {
-    if (!options) {
-      return cityDb.findAll();
+module.exports = makeListCities = ({ cityDb }) => {
+  return (listCities = async ({ id, state_id }) => {
+    let cities = undefined;
+    if (id) {
+      cities = await cityDb.findById({ id });
+    } else if (state_id) {
+      cities = await cityDb.findAllByStateId({ id });
+    } else {
+      cities = await cityDb.findAll();
     }
-    const city = makeCity(options);
-    options = {
-      name: city.getName() || undefined,
-      id: city.getId() || undefined,
-      state_id: (city.getState() && city.getState().getId()) || undefined,
-    };
-    options = filterUndefined(options);
-    let result = await cityDb.findAll(options);
+
     return {
-      foundCount: result.length,
-      result,
+      foundCount: 1,
+      result: cities,
     };
   });
 };

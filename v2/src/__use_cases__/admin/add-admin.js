@@ -2,13 +2,14 @@ const makeAdmin = require("../../admin");
 
 const makeAddAdmin = ({ adminDb, generateHash }) => {
   const addAdmin = async ({ username, password }) => {
-    if (!username || !password) {
-      throw new Error("No username or password specified");
-    }
     const admin = makeAdmin({ username, password });
     const existing = await admin.findByUsername(admin.getUsername());
     if (existing) {
-      return existing;
+      return {
+        insertedCount: 0,
+        result: existing,
+        message: "Admin with provided username already exists.",
+      };
     }
 
     const hash = await generateHash(admin.getPassword());
@@ -18,7 +19,7 @@ const makeAddAdmin = ({ adminDb, generateHash }) => {
     });
 
     return {
-      insertedCount: inserted.length,
+      insertedCount: 1,
       result: inserted,
     };
   };
