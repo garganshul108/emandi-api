@@ -77,7 +77,7 @@ router.get("/:id?", async (req, res) => {
   }
   if (vendor_id) {
     extraQueries = true;
-    subSql.push(`crop_type_id="${vendor_id}"`);
+    subSql.push(`vendor_id="${vendor_id}"`);
   }
   if (id) {
     extraQueries = true;
