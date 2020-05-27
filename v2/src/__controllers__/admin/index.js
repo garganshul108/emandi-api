@@ -8,7 +8,7 @@ const {
   removeAdmin,
   loginAdmin,
   listAdmins,
-} = require("../use-case");
+} = require("../../__use_cases__/admin");
 
 const postAdmin = makePostAdmin({ addAdmin });
 const deleteAdmin = makeDeleteAdmin({ removeAdmin });

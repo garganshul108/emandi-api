@@ -1,4 +1,4 @@
-const makeVendor = require("../vendor");
+const makeVendor = require("../../vendor");
 
 function makeEditVendor({ vendorDb }) {
   async function editVendor({ id, ...changes }) {

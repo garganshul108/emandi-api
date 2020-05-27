@@ -1,4 +1,4 @@
-const makeCity = require("../city");
+const makeCity = require("../../city");
 module.exports = makeListCities = ({ cityDb, filterUndefined }) => {
   return (listCities = async (options) => {
     if (!options) {

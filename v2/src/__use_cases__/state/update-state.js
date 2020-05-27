@@ -1,4 +1,4 @@
-const makeState = require("../state");
+const makeState = require("../../state");
 
 module.exports = makeUpdateState = ({ stateDb, filterUndefined }) => {
   return (updateState = ({ id, ...stateInfo }) => {

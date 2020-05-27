@@ -1,4 +1,4 @@
-const makeOrder = require("../order");
+const makeOrder = require("../../order");
 
 module.exports = makeConfirmOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
   return (confirmOrder = async ({ id, vendor }) => {

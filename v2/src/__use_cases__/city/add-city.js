@@ -1,4 +1,4 @@
-const makeCity = require("../city");
+const makeCity = require("../../city");
 module.exports = makeAddCity = ({ cityDb }) => {
   return (addCity = async ({ name, state }) => {
     if (!name) {

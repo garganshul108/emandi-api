@@ -1,4 +1,4 @@
-const makeState = require("../state");
+const makeState = require("../../state");
 module.exports = makeListStates = ({ stateDb, filterUndefined }) => {
   return (listStates = async (options) => {
     let fetched = undefined;

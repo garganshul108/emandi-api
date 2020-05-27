@@ -1,14 +1,14 @@
 const makeVerifyAndSignupViaOTP = require("./verify-and-signup-via-otp");
 const makeGenerateSignupOTP = require("./generate-signup-otp");
-const OTPService = require("../../../../third-party-services/otp-service");
+const OTPService = require("../../../helper/third-party-services/otp-service");
 const {
   SignupOTPRegister,
-} = require("../../../../custom-services/otp-registering-service");
-const TokenService = require("../../../../custom-services/token-service");
+} = require("../../../helper/custom-services/otp-registering-service");
+const TokenService = require("../../../helper/custom-services/token-service");
 
-const { addUser } = require("../../../user/use-case");
-const { addVendor } = require("../../../vendor/use-case");
-const TypeEnum = require("../../type-enum");
+const { addUser } = require("../user");
+const { addVendor } = require("../vendor");
+const TypeEnum = require("../../subentities/type-enum");
 const sendOTP = async ({ contact, otp }) => {
   await OTPService.send(otp, contact);
 };

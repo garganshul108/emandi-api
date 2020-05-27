@@ -1,4 +1,4 @@
-const makeCrop = require("../crop");
+const makeCrop = require("../../crop");
 
 module.exports = makeUpdateCrop = ({ cropDb, filterUndefined }) => {
   return (updateCrop = async ({ id, ...cropInfo }) => {

@@ -1,4 +1,4 @@
-const makeState = require("../state");
+const makeState = require("../../state");
 
 module.exports = makeRemoveState = ({ stateDb }) => {
   const doesNotExist = () => {

@@ -1,4 +1,4 @@
-const makeVendor = require("../vendor");
+const makeVendor = require("../../vendor");
 
 function makeListVendors({ vendorDb }) {
   async function listVendors({ id }) {

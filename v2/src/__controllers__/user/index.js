@@ -6,7 +6,12 @@ const makePatchUserMe = require("./patch-user-me");
 const makePatchUser = require("./patch-user");
 const makePostUser = require("./post-user-via-otp");
 
-const { addUser, listUsers, removeUser, updateUser } = require("../use-case");
+const {
+  addUser,
+  listUsers,
+  removeUser,
+  updateUser,
+} = require("../../__use_cases__/user");
 
 const postUser = makePostUser({ addUser });
 const patchUser = makePatchUser({ updateUser });

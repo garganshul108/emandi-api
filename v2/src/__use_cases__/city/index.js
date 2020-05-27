@@ -3,8 +3,8 @@ const makeListCities = require("./list-cities");
 const makeRemoveCity = require("./remove-city");
 const makeUpdateCity = require("./update-city");
 
-const filterUndefined = require("../../../util/filter-undefined.js");
-const cityDb = require("../data-access");
+const filterUndefined = require("../../../helper/util/filter-undefined");
+const cityDb = require("../../__data_access__/city");
 
 const addCity = makeAddCity({ cityDb });
 const listCitites = makeListCities({ cityDb, filterUndefined });

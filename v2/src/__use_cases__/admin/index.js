@@ -3,7 +3,7 @@ const makeLoginAdmin = require("./login-admin");
 const makeRemoveAdmin = require("./remove-admin");
 const makeListAdmins = require("./list-admins");
 
-const adminDb = require("../data-access");
+const adminDb = require("../../__data_access__/admin");
 const { hash, compare } = require("../../../../util/hash");
 
 const compareHash = async (newValue, oldHash) => {

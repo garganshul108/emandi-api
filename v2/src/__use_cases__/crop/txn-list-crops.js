@@ -1,4 +1,4 @@
-const makeCrop = require("../crop");
+const makeCrop = require("../../crop");
 
 module.exports = makeTxnListCrops = ({ cropDb, filterUndefined }) => {
   return (txnListCrops = async (cropInfo, { _txn }) => {

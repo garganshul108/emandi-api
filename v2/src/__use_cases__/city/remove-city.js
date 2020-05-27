@@ -1,4 +1,4 @@
-const makeCity = require("../city");
+const makeCity = require("../../city");
 
 module.exports = makeRemoveCity = ({ cityDb }) => {
   const doesNotExist = () => {

@@ -1,4 +1,4 @@
-const makeVendor = require("../vendor");
+const makeVendor = require("../../vendor");
 
 function makeRemoveVendor({ vendorDb }) {
   async function removeVendor({ id }) {

@@ -3,7 +3,7 @@ const {
   editVendor,
   listVendors,
   removeVendor,
-} = require("../use-case");
+} = require("../../__use_cases__/vendor");
 const makeDeleteVendor = require("./delete-vendor");
 const makeGetVendors = require("./get-vendors");
 const makePostVendor = require("./post-vendor");

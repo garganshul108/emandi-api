@@ -1,4 +1,4 @@
-const makeUser = require("../user");
+const makeUser = require("../../user");
 
 const makeAddUser = ({}) => {
   const addUser = ({}) => {};
