@@ -1,8 +1,6 @@
 module.exports = buildMakeOrder = ({
   valid,
   makeTimestamp,
-  makeUser,
-  makeVendor,
   makeOrderedItem,
   sanitize,
 }) => {
@@ -23,17 +21,22 @@ module.exports = buildMakeOrder = ({
       issueTimestamp = makeTimestamp({ timestamp: new Date() });
     }
 
-    if (user) {
-      user = makeUser(user);
+    if (!user || !user.id) {
+      throw new Error("User id must be provided.");
     }
 
-    if (vendor) {
-      vendor = makeVendor(vendor);
+    if (!vendor || !vendor.id) {
+      throw new Error("Vendor id must be provided.");
     }
+
     if (!orderStatus) {
       orderStatus = makeOrderStatus({ status: "PENDING" });
     } else {
       orderStatus = makeOrderStatus(orderStatus);
+    }
+
+    if (!delivery_address) {
+      throw new Error("Delivery address must be provided.");
     }
 
     if (delivery_address) {
@@ -55,11 +58,19 @@ module.exports = buildMakeOrder = ({
 
     return Object.freeze({
       getOrderStatus: () => orderStatus.getStatus(),
-      markStatusCancel: () => {
+      cancel: () => {
+        for (let item of orderedItemList) {
+          item.cancelDispatch();
+        }
         orderStatus.markCancel();
+        return orderedItemList;
       },
-      markStatusCanfirm: () => {
+      confirm: () => {
+        for (let item of orderedItemList) {
+          item.dispatch();
+        }
         orderStatus.markConfirm();
+        return orderedItemList;
       },
       getUser: () => user,
       getVendor: () => vendor,

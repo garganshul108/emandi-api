@@ -1,8 +1,6 @@
 const buildMakeUser = ({
   sanitize,
   valid,
-  makeCity,
-  makeState,
   makeTimestamp,
   makeDeviceFCMToken,
   makePinCode,
@@ -20,32 +18,34 @@ const buildMakeUser = ({
     address,
     profile_picture,
   }) => {
-    if (id && !valid(id, {})) {
-      throw new Error("Invalid user id provided");
+    if (!device_fcm_token) {
+      throw new Error("User's Device FCM Token must be provided.");
+    }
+
+    if (!contact) {
+      throw new Error("User contact must be provided.");
+    }
+
+    if (id && !valid(id, { type: "number" })) {
+      throw new Error("Invalid user id provided.");
     }
 
     if (device_fcm_token) {
       device_fcm_token = makeDeviceFCMToken({ device_fcm_token });
     }
 
-    if (contact && !valid(contact, {})) {
+    if (contact && !valid(contact, { type: "number" })) {
       throw new Error("Invalid user contact provided.");
     }
 
-    if (name && !valid(name, {})) {
-      throw new Error("Invalid user name provided.");
+    if (name) {
+      name = sanitize(name);
+      if (!valid(name, { type: "string" }))
+        throw new Error("Invalid user name provided.");
     }
 
     if (pin_code) {
       pin_code = makePinCode({ pin_code });
-    }
-
-    if (city) {
-      city = makeCity(city);
-    }
-
-    if (state) {
-      state = makeState(state);
     }
 
     if (reg_timestamp) {
@@ -54,7 +54,7 @@ const buildMakeUser = ({
 
     if (address) {
       address = sanitize(address);
-      if (!valid(address, {})) {
+      if (!valid(address, { type: "string" })) {
         throw new Error("Invalid user address provided.");
       }
     }
@@ -69,8 +69,8 @@ const buildMakeUser = ({
       getDeviceFCMToken: () => device_fcm_token,
       getContact: () => contact,
       getPinCode: () => pin_code,
-      getCity: () => city,
-      getState: () => state,
+      getCity: () => Object.freeze({ getId: () => city.id }),
+      getState: () => Object.freeze({ getId: () => state.id }),
       getRegTimestamp: () => reg_timestamp,
       getAddress: () => address,
       getProfilePicture: () => profile_picture,

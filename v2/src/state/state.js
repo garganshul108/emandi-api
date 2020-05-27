@@ -1,5 +1,9 @@
 const buildMakeState = ({ valid, sanitize }) => {
   const makeState = ({ id, name }) => {
+    if (!name) {
+      throw new Error("State name must be provided.");
+    }
+
     if (id && !valid(id, { type: "number" })) {
       throw new Error("Invalid state id provided.");
     }
