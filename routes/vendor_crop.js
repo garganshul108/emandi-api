@@ -146,7 +146,8 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
     crop_images,
   } = value;
 
-  if (crop_images && !Array.isArray(crop_images) && crop_images.length > 1) {
+  console.log(value);
+  if (crop_images && (!Array.isArray(crop_images) || crop_images.length > 1)) {
     console.log("validate crop_imge", crop_images);
     return res
       .status(403)
