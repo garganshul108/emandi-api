@@ -1,10 +1,8 @@
-module.exports = buildMakeOrderedItem = ({ makeCrop }) => {
+module.exports = buildMakeOrderedItem = ({ updateCrop }) => {
   return (makeOrderedItem = ({ crop, item_qty }) => {
     if (!crop) {
       throw new Error("Crop must be provided.");
     }
-
-    crop = makeCrop(crop);
 
     if (item_qty && !valid(item_qty, { type: "number" })) {
       throw new Error(`Invaid item qty provided for crop id = ${crop.getId()}`);
@@ -14,23 +12,29 @@ module.exports = buildMakeOrderedItem = ({ makeCrop }) => {
       throw new Error("Item qty must be positive.");
     }
 
-    if (!crop.getCropPrice()) {
+    if (!crop.crop_price) {
       throw new Error(
         "Crop price must be provided for item_freezed_cost calculation"
       );
     }
 
-    const itemFreezedCost = crop.getCropPrice() * item_qty;
+    const itemFreezedCost = crop.crop_price() * item_qty;
 
     return Object.freeze({
       getItemFreezedCost: () => itemFreezedCost,
       getCrop: () => crop,
       getItemQty: () => item_qty,
-      dispatch: () => {
-        crop.addCropQty(-item_qty);
+      dispatch: async (transactionKey) => {
+        await updateCrop(
+          { id: crop.id, changeInCropQty: -1 * item.getItemQty() },
+          transactionKey
+        );
       },
-      cancelDispatch: () => {
-        crop.addCropQty(item_qty);
+      cancelDispatch: async (transactionKey) => {
+        await updateCrop(
+          { id: crop.id, changeInCropQty: item.getItemQty() },
+          transactionKey
+        );
       },
     });
   });

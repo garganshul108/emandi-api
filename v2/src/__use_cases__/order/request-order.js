@@ -7,34 +7,26 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
     delivery_address,
     ...extrainfo
   }) => {
-    if (!user || !user.id) {
-      throw new Error("User id must be provided.");
-    }
-
-    if (!delivery_address) {
-      throw new Error("Delivery address must be provided.");
-    }
-
-    if (!vendor || !vendor.id) {
-      throw new Error("Vendor id must be provided.");
-    }
-
     if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
       throw new Error("Ordered items must be provided enclosed in array.");
     }
 
     for (let item of orderedItems) {
-      let id = item.crop.id;
-      let crop = await listCrops({ id });
-      if (!crop || crop.length < 1) {
+      if (!item.crop || !item.crop.id) {
+        throw new Error("Crop id for the item must be provided.");
+      }
+
+      let c_id = item.crop.id;
+
+      let crop = await listCrops({ id: c_id });
+      if (!crop) {
         throw new Error("Invalid crop id provided.");
       }
-      crop = crop[0];
 
-      if (crop.vendor_id !== vendor.id) {
+      if (crop.vendor.id !== vendor.id) {
         throw new Error("Crop doesn't belong to the vendor provided.");
       }
-      item.crop.crop_price = crop.crop_price;
+      item.crop = crop;
     }
 
     const order = makeOrder({
@@ -57,11 +49,11 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
 
     logOn.core("Place order with options: ", options);
 
-    const placed = orderDb.insert(options);
+    const requested = orderDb.request(options);
 
     return {
-      placedCount: 1,
-      result: placed,
+      requestedCount: 1,
+      result: requested,
     };
   });
 };

@@ -1,19 +1,21 @@
 module.exports = makeListOrders = ({ orderDb, filterUndefined }) => {
-  return (listOrders = async (options) => {
+  return (listOrders = async ({ id, vendor_id, user_id }) => {
     let orders = undefined;
-    if (!options) {
-      orders = await orderDb.findAll();
+    if (id) {
+      orders = await orderDb.findById({ id });
+    } else if (user_id || vendor_id) {
+      orders = await orderDb.findAllByUserIdAndOrVendorId(
+        filterUndefined({
+          user_id: user_id || undefined,
+          vendor_id: vendor_id || undefined,
+        })
+      );
     } else {
-      let criteria = filterUndefined({
-        vendor_id: vendor.id,
-        user_id: user.id,
-        id,
-      });
-      orders = await ordersDb.findAll(criteria);
+      orders = await ordersDb.findAll();
     }
 
     return {
-      fetchedCount: orders.length,
+      fetchedCount: 1,
       result: orders,
     };
   });

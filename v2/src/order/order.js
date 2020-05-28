@@ -17,6 +17,10 @@ module.exports = buildMakeOrder = ({
       throw new Error("Invalid order id provided.");
     }
 
+    if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
+      throw new Error("Ordered items must be provided enclosed in array.");
+    }
+
     if (!issueTimestamp) {
       issueTimestamp = makeTimestamp({ timestamp: new Date() });
     }
@@ -42,7 +46,7 @@ module.exports = buildMakeOrder = ({
     if (delivery_address) {
       delivery_address = sanitize(delivery_address);
       if (!valid(delivery_address, { type: "string" })) {
-        throw new Error("Invalid deliveru address is provided.");
+        throw new Error("Invalid delivery address is provided.");
       }
     }
 
@@ -58,22 +62,22 @@ module.exports = buildMakeOrder = ({
 
     return Object.freeze({
       getOrderStatus: () => orderStatus.getStatus(),
-      cancel: () => {
+      cancel: async (transactionKey) => {
         for (let item of orderedItemList) {
-          item.cancelDispatch();
+          await item.cancelDispatch(transactionKey);
         }
         orderStatus.markCancel();
         return orderedItemList;
       },
-      confirm: () => {
+      confirm: async (transactionKey) => {
         for (let item of orderedItemList) {
-          item.dispatch();
+          await item.dispatch(transactionKey);
         }
         orderStatus.markConfirm();
         return orderedItemList;
       },
-      getUser: () => user,
-      getVendor: () => vendor,
+      getUser: () => Object.freeze({ getId: () => user.id }),
+      getVendor: () => Object.freeze({ getId: () => vendor.id }),
       getId: () => id,
       getIssueTimestamp: () => issueTimestamp.getTimestamp(),
       getDeliveryAddress: () => delivery_address,

@@ -1,6 +1,6 @@
 const makeOrder = require("../../order");
 
-module.exports = makeConfirmOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
+module.exports = makeConfirmOrder = ({ orderDb, TXN, updateCrop }) => {
   return (confirmOrder = async ({ id, vendor }) => {
     if (!id) {
       throw new Error("Order id must be provided.");
@@ -10,8 +10,8 @@ module.exports = makeConfirmOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
       throw new Error("Vendor id must be provided.");
     }
 
-    const order = makeOrder({ id });
-    const existing = orderDb.findById({ id: order.getId() });
+    const existing = orderDb.findById({ id });
+
     if (!existing) {
       return {
         cancelledCount: 0,
@@ -19,23 +19,31 @@ module.exports = makeConfirmOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
       };
     }
 
-    existing = existing[0];
+    const order = makeOrder(...existing);
 
-    if (existing.order_status === "CONFIRMED") {
+    if (order.getOrderStatus() === "CONFIRMED") {
       return {
         confirmedCount: 0,
         message: "Order already confirmed.",
       };
     }
 
-    if (existing.order_status === "CANCELLED") {
+    if (order.getOrderStatus === "CANCELLED") {
       return {
         confirmedCount: 0,
         message: "Order was cancelled already, could not be confirmed.",
       };
     }
 
-    if (existing.order_status !== "PENDING") {
+    if (order.getOrderStatus() === "IN QUEUE") {
+      return {
+        confirmedCount: 0,
+        message:
+          "Order is in queue. Further actions only allowed after processing",
+      };
+    }
+
+    if (order.getOrderStatus() !== "PENDING") {
       return {
         confirmedCount: 0,
         message: "Only order in PENDING state can be confirmed.",
@@ -43,22 +51,14 @@ module.exports = makeConfirmOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
     }
 
     try {
-      const t = TXN.beginTransaction();
-      for (let item of existing.orderedItems) {
-        await txnUpdateCropQty(
-          {
-            id: crop_id,
-            changeInQty: -1 * item_qty,
-          },
-          { _txn: t }
-        );
-      }
-      await TXN.commitTransaction({ _txn: t });
+      const t = await TXN.getTransactionKey();
+      await order.confirm({ t });
+      await TXN.commitTransaction({ t });
       await orderDb.setStatusToConfirm({ id });
     } catch (e) {
       logOn.core(e);
-      await TXN.rollbackTransaction({ _tex: t });
-      throw new Error("Order could not be confirmed. Try again.");
+      await TXN.rollbackTransaction({ t });
+      throw new Error(`Order could not be confirmed. ${e.message}`);
     }
 
     const confirmed = orderDb.findById({ id });

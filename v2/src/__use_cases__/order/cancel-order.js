@@ -1,17 +1,17 @@
 const makeOrder = require("../../order");
 
-module.exports = makeCancelOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
-  return (cancelOrder = async ({ id, vendor, user }) => {
+module.exports = makeCancelOrder = ({ orderDb, TXN }) => {
+  return (cancelOrder = async ({ id, vendor }) => {
     if (!id) {
       throw new Error("Order id must be provided.");
     }
 
-    if (!user || !user.id || !vendor || !vendor.id) {
-      throw new Error("At least one actor for cancel action must be provided");
+    if (!vendor || !vendor.id) {
+      throw new Error("Vendor id must be provided.");
     }
 
-    const order = makeOrder({ id });
-    const existing = orderDb.findById({ id: order.getId() });
+    const existing = orderDb.findById({ id });
+
     if (!existing) {
       return {
         cancelledCount: 0,
@@ -19,43 +19,39 @@ module.exports = makeCancelOrder = ({ orderDb, TXN, txnUpdateCropQty }) => {
       };
     }
 
-    existing = existing[0];
+    const order = makeOrder(...existing);
 
-    if (existing.order_status === "CANCELLED") {
+    if (order.getOrderStatus() === "CANCELLED") {
       return {
         cancelledCount: 0,
         message: "Order already cancelled.",
       };
     }
 
-    const orderToBeCancelled = makeOrder({ ...existing });
-    if (orderToBeCancelled.getOrderStatus() === "CONFIRMED") {
-      try {
-        const t = TXN.beginTransaction();
-        for (let item of existing.orderToBeCancelled) {
-          const exitsingCrop = 
-          sads;
-          await txnUpdateCropQty({
-            id: crop_id,
-            changeInQty: item_qty,
-            _txn: t,
-          });
-        }
-        await TXN.commitTransaction({ _txn: t });
-        await orderDb.setStatusToCancel({ id });
-      } catch (e) {
-        logOn.core(e);
-        await TXN.rollbackTransaction({ _tex: t });
-        throw new Error("Order could not be confirmed. Try again.");
-      }
-    } else {
-      await orderDb.({ id });
+    if (order.getOrderStatus() === "IN QUEUE") {
+      return {
+        cancelledCount: 0,
+        message:
+          "Order is in queue. Further actions only allowed after processing",
+      };
     }
-    orderToBeCancelled.makeCancelOrder();
+
+    try {
+      const t = await TXN.getTransactionKey();
+      await order.cancel({ t });
+      await TXN.commitTransaction({ t });
+      await orderDb.setStatusToCancel({ id });
+    } catch (e) {
+      logOn.core(e);
+      await TXN.rollbackTransaction({ t });
+      throw new Error(`Order could not be cancelled. ${e.message}`);
+    }
+
+    const cancelled = orderDb.findById({ id });
 
     return {
       cancelledCount: 1,
-      message: "Order was cancelled successfully.",
+      result: cancelled,
     };
   });
 };
