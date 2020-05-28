@@ -82,7 +82,7 @@ router.get("/", [decodeToken, authUser], async (req, res) => {
 });
 
 router.delete("/:item_id", [decodeToken, authUser], async (req, res) => {
-  let item_id = req.param.item_id;
+  let item_id = req.params.item_id;
   let user_id = req.actor.user_id;
   const { status: valid, optionals } = joiValidator([
     {

@@ -376,7 +376,7 @@ router.patch("/:crop_id", [decodeToken, authVendor], async (req, res) => {
 
   if (subSql.length > 0) {
     subSql = subSql.join(" , ");
-    let sql1 = `update set ${subSql} from CROP where crop_id=${crop_id} and vendor_id=${vendor_id}`;
+    let sql1 = `update CROP set ${subSql} where crop_id=${crop_id} and vendor_id=${vendor_id}`;
     let sql2 = `select * from CROP where crop_id=${crop_id}`;
     const callbacks = {
       onSuccess: (req, res, results) => {
