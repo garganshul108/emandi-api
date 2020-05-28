@@ -222,7 +222,7 @@ router.patch("/:item_id", [decodeToken, authUser], async (req, res) => {
 
   if (subSql.length > 0) {
     subSql = subSql.join(" , ");
-    let sql1 = `update set ${subSql} from CART where item_id=${item_id} and user_id=${user_id}`;
+    let sql1 = `update CART set ${subSql} where item_id=${item_id} and user_id=${user_id}`;
     let sql2 = `select *, (crop_price*item_qty) as item_price from CART join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) where item_id=${item_id}`;
     const callbacks = {
       onSuccess: (req, res, results) => {
