@@ -1,3 +1,5 @@
+//deprecated
+
 const makeCrop = require("../../crop");
 
 module.exports = makeUpdateCropQty = ({ cropDb }) => {
@@ -16,11 +18,17 @@ module.exports = makeUpdateCropQty = ({ cropDb }) => {
       throw new Error("Crop change in qty must be a number");
     }
 
-    let crop = makeCrop({ id });
-    let updated = await updateCropQtyById({
-      id: crop.getid(),
-      changeInCropQty,
-    });
+    const existing = cropDb.findById({ id });
+    if (!existing) {
+      return {
+        updatedCount: 0,
+        message: "No crop exists with provided id.",
+      };
+    }
+
+    let crop = makeCrop({ ...existing });
+    crop.addCropQty(changeInCropQty);
+
     return {
       updatedCount: 1,
       result: updated,

@@ -1,21 +1,33 @@
 const makeCrop = require("../../crop");
 
 module.exports = makeUpdateCrop = ({ cropDb, filterUndefined }) => {
-  return (updateCrop = async ({ id, ...cropInfo }) => {
+  return (updateCrop = async ({ id, changeInCropQty, ...changes }) => {
     if (!id) {
       throw new Error("Crop id must be provided.");
     }
 
-    let crop = makeCrop(cropInfo);
+    const existing = cropDb.findbyId({ id });
+    if (!existing) {
+      return {
+        updateCount: 0,
+        message: "No crop with provided id exists.",
+      };
+    }
 
-    let options = filterUndefined({
-      crop_type_id: crop.getCropType().getId(),
-      crop_name: crop.getCropName(),
-      crop_price: crop.getCropPrice(),
+    const crop = makeCrop({ ...existing, ...changes });
+
+    if (changeInCropQty) {
+      crop.addCropQty(changeInCropQty);
+    }
+
+    const updated = cropDb.updateById({
       id: crop.getId(),
+      crop_name: crop.getName(),
+      description: crop.getDescription(),
+      crop_qty: crop.getCropQty(),
+      crop_type_id: crop.getCropType().getId(),
+      crop_price: crop.getCropPrice(),
     });
-
-    const updated = await cropDb.updateById(options);
 
     return {
       updateCount: 1,

@@ -9,7 +9,7 @@ module.exports = makeListStates = ({ stateDb, filterUndefined }) => {
       fetched = stateDb.findAll();
     }
     return {
-      foundCount: 1,
+      fetchedCount: 1,
       result: fetched,
     };
   });

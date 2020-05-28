@@ -6,19 +6,19 @@ const makeListAdmins = ({ adminDb }) => {
       const existing = await adminDb.findByUsername(admin.getUsername());
       if (!existing) {
         return {
-          foundCount: 0,
+          fetchedCount: 0,
           message: "No admin with given username.",
         };
       }
       return {
-        foundCount: 1,
+        fetchedCount: 1,
         result: existing,
       };
     }
 
     const allAdmins = await adminDb.findAll();
     return {
-      foundCount: allAdmins.length,
+      fetchedCount: allAdmins.length,
       result: allAdmins,
     };
   };

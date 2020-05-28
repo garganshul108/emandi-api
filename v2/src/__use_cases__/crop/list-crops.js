@@ -1,23 +1,21 @@
 const makeCrop = require("../../crop");
 
 module.exports = makeListCrops = ({ cropDb, filterUndefined }) => {
-  return (listCrops = async (cropInfo) => {
-    if (!cropInfo) {
-      fetched = await cropDb.findAll();
+  return (listCrops = async ({ id, vendor_id, crop_type_id, crop_class }) => {
+    let fetched = undefined;
+    if (id) {
+      fetched = cropDb.findById({ id });
     } else {
-      let crop = makeCrop(cropInfo);
       let options = filterUndefined({
-        id: crop.getId(),
-        vendor_id: crop.getVendor().getId(),
-        crop_type_id: crop.getCropType().getId(),
-        crop_name: crop.getCropName(),
-        crop_price: crop.getCropPrice(),
+        vendor_id: vendor_id || undefined,
+        crop_type_id: crop_type_id || undefined,
+        crop_class: crop_class || undefined,
       });
       fetched = cropDb.findAll(options);
     }
 
     return {
-      fetchedCount: fetched.length,
+      fetchedCount: 1,
       result: fetched,
     };
   });

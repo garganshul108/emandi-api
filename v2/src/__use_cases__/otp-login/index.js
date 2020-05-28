@@ -1,5 +1,5 @@
-const makeVerifyAndSignupViaOTP = require("./verify-and-signup-via-otp");
-const makeGenerateSignupOTP = require("./generate-signup-otp");
+const makeVerifyAndLoginViaOTP = require("./verify-and-login-via-otp");
+const makeGenerateLoginOTP = require("./generate-login-otp");
 const OTPService = require("../../../helper/third-party-services/otp-service");
 const {
   LoginOTPRegister,
@@ -28,7 +28,7 @@ const generateAuthToken = (payload) => {
 
 const contactValidator = (contact) => true;
 
-const verifyAndSignupViaOTP = makeVerifyAndSignupViaOTP({
+const verifyAndLoginViaOTP = makeVerifyAndLoginViaOTP({
   verifyOTP,
   listUsers,
   listVendors,
@@ -36,7 +36,7 @@ const verifyAndSignupViaOTP = makeVerifyAndSignupViaOTP({
   contactValidator,
   generateAuthToken,
 });
-const generateSignupOTP = makeGenerateSignupOTP({
+const generateLoginOTP = makeGenerateLoginOTP({
   contactValidator,
   TypeEnum,
   registerOTP,
@@ -46,6 +46,6 @@ const generateSignupOTP = makeGenerateSignupOTP({
 });
 
 module.exports = {
-  verifyAndSignupViaOTP,
-  generateSignupOTP,
+  verifyAndLoginViaOTP,
+  generateLoginOTP,
 };

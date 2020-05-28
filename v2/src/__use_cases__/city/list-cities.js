@@ -10,7 +10,7 @@ module.exports = makeListCities = ({ cityDb }) => {
     }
 
     return {
-      foundCount: 1,
+      fetchedCount: 1,
       result: cities,
     };
   });
