@@ -11,7 +11,7 @@ const USER = require("./models/user");
 const VENDOR = require("./models/vendor");
 const pool = require("./pool");
 const Sequelize = require("sequelize");
-
+const unitOfWork = require("./unitOfWork");
 // state and city
 STATE.hasMany(CITY, {
   foreignKey: "state_id",
@@ -138,4 +138,5 @@ module.exports = Object.freeze({
   VENDOR,
   ORMPool: pool,
   ORMClass: Sequelize,
+  unitOfWork,
 });
