@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const pool = require("../pool");
 
 const CROP = pool.define("CROP", {
-  crop_id: { type: Sequelize.INTEGER, primaryKey: true },
+  crop_id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   vendor_id: { type: Sequelize.INTEGER },
   crop_qty: {
     type: Sequelize.DECIMAL(10, 2),
@@ -12,9 +12,6 @@ const CROP = pool.define("CROP", {
   },
   crop_price: {
     type: Sequelize.DECIMAL(10, 2),
-    validate: {
-      min: 0,
-    },
   },
   crop_name: { type: Sequelize.STRING(200) },
   crop_type_id: { type: Sequelize.INTEGER },
