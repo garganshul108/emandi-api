@@ -36,18 +36,7 @@ module.exports = makeCancelOrder = ({ orderDb, TXN }) => {
       };
     }
 
-    try {
-      const t = await TXN.getTransactionKey();
-      await order.cancel({ t });
-      await TXN.commitTransaction({ t });
-      await orderDb.setStatusToCancel({ id });
-    } catch (e) {
-      logOn.core(e);
-      await TXN.rollbackTransaction({ t });
-      throw new Error(`Order could not be cancelled. ${e.message}`);
-    }
-
-    const cancelled = orderDb.findById({ id });
+    const cancelled = orderDb.cancelById({ id });
 
     return {
       cancelledCount: 1,

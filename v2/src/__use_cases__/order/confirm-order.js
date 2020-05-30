@@ -50,18 +50,8 @@ module.exports = makeConfirmOrder = ({ orderDb, TXN, updateCrop }) => {
       };
     }
 
-    try {
-      const t = await TXN.getTransactionKey();
-      await order.confirm({ t });
-      await TXN.commitTransaction({ t });
-      await orderDb.setStatusToConfirm({ id });
-    } catch (e) {
-      logOn.core(e);
-      await TXN.rollbackTransaction({ t });
-      throw new Error(`Order could not be confirmed. ${e.message}`);
-    }
 
-    const confirmed = orderDb.findById({ id });
+    const confirmed = orderDb.confirmById({ id });
 
     return {
       confirmedCount: 1,
