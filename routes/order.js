@@ -15,12 +15,30 @@ const simpleAsyncFetch = require("../db/requests/simple_async_fetch");
 const simpleAsyncDelete = require("../db/requests/simple_async_delete");
 const transactionProtectedAsyncQueries = require("../db/requests/transaction_protected_async_queries");
 
+let attr = [
+  "order_id",
+  "CROP.vendor_id",
+  "user_id",
+  "crop_id",
+  "crop_price",
+  "crop_name",
+  "crop_image",
+  "crop_type_image",
+  "item_qty",
+  "item_freezed_cost",
+  "issue_timestamp",
+  "delivery_address",
+  "order_status",
+];
+
+attr = attr.join(" , ");
+
 router.get("/me", [decodeToken], async (req, res) => {
   let sql;
   if (req.actor.user_id) {
-    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where user_id=${req.actor.user_id}`;
+    sql = `select * from ORDERS where user_id=${req.actor.user_id}`;
   } else if (req.actor.vendor_id) {
-    sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where vendor_id=${req.actor.vendor_id}`;
+    sql = `select * from ORDERS where vendor_id=${req.actor.vendor_id}`;
   }
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
@@ -46,7 +64,7 @@ router.get("/:id", async (req, res) => {
 
   let order_id = value.id;
 
-  let sql = `select * from ORDERS join ORDERED_ITEM using(order_id) where order_id=${order_id}`;
+  let sql = `select ${attr} from ORDERED_ITEM join ORDERS using(order_id) join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) where order_id=${order_id}`;
   return await simpleAsyncFetch(sql, req, res, {
     onSuccess: (req, res, results) => {
       res.status(200).send(results);
@@ -288,7 +306,7 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
     {
       getQueryStatement: (prevResults, prevFields) => {
         let order_id = prevResults["query_3"][0].order_id;
-        return `select * from ORDERED_ITEM join ORDERS using(order_id) where order_id=${order_id}`;
+        return `select ${attr} from ORDERED_ITEM join CROP using(crop_id) join CROP_TYPE using(crop_type_id) left join CROP_IMAGE using(crop_id) join ORDERS using(order_id) where order_id=${order_id}`;
       },
     },
   ];
