@@ -225,6 +225,8 @@ router.post("/request", [decodeToken, authUser], async (req, res) => {
       .send([{ message: `Invalid Request Format ${optionals.errorList}` }]);
   }
 
+  console.log("Incoming order body", req.body);
+
   // if (!delivery_address || !order) {
   //   return res
   //     .status(400)
