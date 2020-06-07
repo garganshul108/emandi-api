@@ -1,4 +1,6 @@
-module.exports = buildMakeOrderedItem = ({ updateCrop }) => {
+// TODO: needs a fix as 'Error: Cannot make a entity dependent upon a use case'
+
+module.exports = buildMakeOrderedItem = () => {
   return (makeOrderedItem = ({ crop, item_qty }) => {
     if (!crop) {
       throw new Error("Crop must be provided.");
@@ -24,17 +26,14 @@ module.exports = buildMakeOrderedItem = ({ updateCrop }) => {
       getItemFreezedCost: () => itemFreezedCost,
       getCrop: () => crop,
       getItemQty: () => item_qty,
-      dispatch: async (transactionKey) => {
-        await updateCrop(
-          { id: crop.id, changeInCropQty: -1 * item.getItemQty() },
-          transactionKey
-        );
+      dispatch: async () => {
+        await updateCrop({
+          id: crop.id,
+          changeInCropQty: -1 * item.getItemQty(),
+        });
       },
-      cancelDispatch: async (transactionKey) => {
-        await updateCrop(
-          { id: crop.id, changeInCropQty: item.getItemQty() },
-          transactionKey
-        );
+      cancelDispatch: async () => {
+        await updateCrop({ id: crop.id, changeInCropQty: item.getItemQty() });
       },
     });
   });

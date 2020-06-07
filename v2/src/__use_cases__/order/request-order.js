@@ -5,10 +5,10 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
     vendor,
     orderedItems,
     delivery_address,
-    ...extrainfo
+    ...extraInfo
   }) => {
     if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
-      throw new Error("Ordered items must be provided enclosed in array.");
+      throw new Error("Array of ordered items must be provided.");
     }
 
     for (let item of orderedItems) {
@@ -34,7 +34,7 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
       vendor,
       orderedItems,
       delivery_address,
-      ...extrainfo,
+      ...extraInfo,
     });
 
     const options = filterUndefined({
