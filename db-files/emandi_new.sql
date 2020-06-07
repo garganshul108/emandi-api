@@ -166,6 +166,14 @@ create table CART(
     ON DELETE CASCADE
 );
 
+create table CROP_IMAGE(
+	crop_image_id int primary key auto_increment,  
+	crop_id int,   
+	crop_image varchar(500), 
+	FOREIGN KEY (crop_id)     
+	REFERENCES CROP(crop_id)     
+	ON DELETE CASCADE 
+);
 
 
 
