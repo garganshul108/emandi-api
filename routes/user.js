@@ -29,7 +29,7 @@ router.get("/me", [decodeToken, authUser], (req, res) => {
   return simpleGET(sql, req, res);
 });
 
-router.get("/:id", [decodeToken, authAdmin], (req, res) => {
+router.get("/:id", (req, res) => {
   let user_id = req.params.id;
   const { status: valid, optionals } = joiValidator([
     { schema: { ...defaultSchema }, object: { user_id } },
