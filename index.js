@@ -74,7 +74,7 @@ app.get("/", (req, res) => {
   return res
     .status(200)
     .send(
-      "<h1 style=\"font-family: 'Fira Code';\">Server is up and running...<h1>"
+      "<h1 style=\"font-family: 'Fira Code';\">Server is up and running...</h1>"
     );
 });
 
