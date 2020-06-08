@@ -111,12 +111,40 @@ router.post("/cancel", [decodeToken], async (req, res) => {
   let sqls = [
     {
       getQueryStatement: (prevResults, prevFields) => {
+        return `select order_status from ORDERS where order_id = ${order_id}`;
+      },
+      checkQueryResultSatisfaction: (prevResults, prevFields) => {
+        const orderStatus = prevResults[`query_1`][0].order_status;
+        if (orderStatus === "CANCELLED" || orderStatus === "DELIVERED") {
+          return {
+            statisfactionStatus: false,
+            action: (req, res, prevResults, prevFields) => {
+              return res.status(400).send([
+                {
+                  message: `Order cannot be cancelled. Current order status: ${orderStatus}.`,
+                },
+              ]);
+            },
+          };
+        } else {
+          return {
+            statisfactionStatus: true,
+          };
+        }
+      },
+    },
+    {
+      getQueryStatement: (prevResults, prevFields) => {
+        if (prevResults[`query_1`][0].order_status === "PENDING")
+          return `select 1+1;`;
         return `select crop_id, item_qty from ORDERED_ITEM where order_id = ${order_id}`;
       },
     },
     {
       getQueryStatement: (prevResults, prevFields) => {
-        let items = prevResults["query_1"];
+        if (prevResults[`query_1`][0].order_status === "PENDING")
+          return `select 1+1;`;
+        let items = prevResults["query_2"];
         let sql = `update CROP set crop_qty = case`;
         let ids = [];
         for (let item of items) {
@@ -124,7 +152,7 @@ router.post("/cancel", [decodeToken], async (req, res) => {
           ids.push(item.crop_id);
         }
         ids = ids.join(",");
-        sql = `${sql} where crop_id in (${ids})`;
+        sql = `${sql} end where crop_id in (${ids})`;
         return sql;
       },
     },
@@ -163,12 +191,40 @@ router.post("/confirm", [decodeToken, authVendor], async (req, res) => {
   let sqls = [
     {
       getQueryStatement: (prevResults, prevFields) => {
+        return `select order_status from ORDERS where order_id = ${order_id}`;
+      },
+      checkQueryResultSatisfaction: (prevResults, prevFields) => {
+        const orderStatus = prevResults[`query_1`][0].order_status;
+        if (
+          orderStatus === "CONFIRMED" ||
+          orderStatus === "CANCELLED" ||
+          orderStatus === "DELIVERED"
+        ) {
+          return {
+            statisfactionStatus: false,
+            action: (req, res, prevResults, prevFields) => {
+              return res.status(400).send([
+                {
+                  message: `Order cannot be confirmed. Current order status: ${orderStatus}.`,
+                },
+              ]);
+            },
+          };
+        } else {
+          return {
+            statisfactionStatus: true,
+          };
+        }
+      },
+    },
+    {
+      getQueryStatement: (prevResults, prevFields) => {
         return `select crop_id, item_qty from ORDERED_ITEM where order_id = ${order_id}`;
       },
     },
     {
       getQueryStatement: (prevResults, prevFields) => {
-        let items = prevResults["query_1"];
+        let items = prevResults["query_2"];
         let sql = `update CROP set crop_qty = case`;
         let ids = [];
         for (let item of items) {
