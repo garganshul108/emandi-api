@@ -107,6 +107,9 @@ router.post("/", [decodeToken, authVendor], async (req, res) => {
   //   crop_price,
   //   crop_photo_url
   // } = req.body;
+  if (!req.body.description) {
+    req.body.description = "No description.";
+  }
 
   const { status: valid, value, optionals } = joiValidator([
     {
