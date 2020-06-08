@@ -19,6 +19,8 @@ const crop = require("./routes/crop");
 const order = require("./routes/order");
 const upload = require("./routes/upload");
 
+const logIncomingRequest = require("./middleware/log_request");
+
 const vendor = require("./routes/vendor");
 const user = require("./routes/user");
 
@@ -28,6 +30,7 @@ const notification = require("./routes/notification");
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(logIncomingRequest);
 
 // CORS
 // app.use(function(req, res, next) {
