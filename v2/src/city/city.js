@@ -1,10 +1,10 @@
 const buildMakeCity = ({ sanitize, valid, makeState }) => {
-  const makeCity = ({ id, name, state = {} }) => {
+  const makeCity = ({ id, name, stateId }) => {
     if (!name) {
       throw new Error("City name must be provided.");
     }
 
-    if (!state || !state.id) {
+    if (!stateId) {
       throw new Error("State id must be provided.");
     }
 
@@ -20,11 +20,12 @@ const buildMakeCity = ({ sanitize, valid, makeState }) => {
     }
 
     return Object.freeze({
-      getState: () => Object.freeze({ getId: () => state.id }),
+      getStateId: () => stateId,
       getName: () => name,
       getId: () => id,
     });
   };
+
   return makeCity;
 };
 

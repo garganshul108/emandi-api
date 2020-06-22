@@ -1,40 +1,40 @@
 module.exports = buildMakeCrop = ({ sanitize, valid }) => {
   return (makeCrop = ({
     id,
-    vendor,
-    crop_qty,
-    crop_price,
-    crop_name,
-    cropType,
+    vendorId,
+    qty,
+    price,
+    name,
+    cropTypeId,
     description,
   }) => {
-    if (!vendor || !vendor.id) {
+    if (!vendorId) {
       throw new Error("Vendor id must be provided.");
     }
 
-    if (!cropType || !cropType.id) {
+    if (!cropTypeId) {
       throw new Error("Vendor id must be provided.");
     }
 
-    if (!crop_qty) {
+    if (!qty) {
       throw new Error("Crop qty must be provided.");
     }
 
-    if (!crop_price) {
+    if (!price) {
       throw new Error("Crop price must be provided.");
     }
 
-    if (crop_qty <= 0) {
+    if (qty <= 0) {
       throw new Error("Crop qty must be greater than 0.");
     }
 
-    if (crop_price <= 0) {
+    if (price <= 0) {
       throw new Error("Crop price must be positive.");
     }
 
-    if (crop_name) {
-      crop_name = sanitize(crop_name);
-      if (!valid(crop_name, { type: "string" })) {
+    if (name) {
+      name = sanitize(name);
+      if (!valid(name, { type: "string" })) {
         throw new Error("Invalid crop name provided.");
       }
     }
@@ -45,13 +45,13 @@ module.exports = buildMakeCrop = ({ sanitize, valid }) => {
 
     return Object.freeze({
       getId: () => id,
-      getVendor: () => Object.freeze({ getId: () => vendor.id }),
-      getCropQty: () => crop_qty,
-      getCropPrice: () => crop_price,
-      getCropName: () => crop_name,
-      getCropType: () => Object.freeze({ getId: () => cropType.id }),
+      getVendorId: () => vendorId,
+      getQty: () => qty,
+      getPrice: () => price,
+      getName: () => name,
+      getCropTypeId: () => cropTypeId,
       getDescription: () => description,
-      addCropQty: (q) => {
+      addQty: (q) => {
         if (crop_qty + q < 0) {
           throw new Error("Insufficient crop qty.");
         }

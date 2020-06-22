@@ -8,17 +8,17 @@ const buildMakeUser = ({
 }) => {
   const makeUser = ({
     id,
-    device_fcm_token,
+    deviceFCMToken,
     contact,
     name,
-    pin_code,
-    city = {},
-    state = {},
-    reg_timestamp,
+    pincode,
+    cityId,
+    stateId,
+    regTimestamp,
     address,
-    profile_picture,
+    profilePictureURL,
   }) => {
-    if (!device_fcm_token) {
+    if (!deviceFCMToken) {
       throw new Error("User's Device FCM Token must be provided.");
     }
 
@@ -30,9 +30,7 @@ const buildMakeUser = ({
       throw new Error("Invalid user id provided.");
     }
 
-    if (device_fcm_token) {
-      device_fcm_token = makeDeviceFCMToken({ device_fcm_token });
-    }
+    deviceFCMToken = makeDeviceFCMToken({ token: deviceFCMToken });
 
     if (contact && !valid(contact, { type: "number" })) {
       throw new Error("Invalid user contact provided.");
@@ -44,12 +42,12 @@ const buildMakeUser = ({
         throw new Error("Invalid user name provided.");
     }
 
-    if (pin_code) {
-      pin_code = makePinCode({ pin_code });
+    if (pincode) {
+      pincode = makePinCode({ pincode });
     }
 
-    if (reg_timestamp) {
-      reg_timestamp = makeTimestamp({ timestamp: reg_timestamp });
+    if (regTimestamp) {
+      regTimestamp = makeTimestamp({ timestamp: regTimestamp });
     }
 
     if (address) {
@@ -59,21 +57,21 @@ const buildMakeUser = ({
       }
     }
 
-    if (profile_picture) {
-      profile_picture = makeURL({ url: profile_picture });
+    if (profilePictureURL) {
+      profilePictureURL = makeURL({ url: profilePictureURL });
     }
 
     return Object.freeze({
       getName: () => name,
       getId: () => id,
-      getDeviceFCMToken: () => device_fcm_token,
+      getDeviceFCMToken: () => deviceFCMToken,
       getContact: () => contact,
-      getPinCode: () => pin_code,
-      getCity: () => Object.freeze({ getId: () => city.id }),
-      getState: () => Object.freeze({ getId: () => state.id }),
-      getRegTimestamp: () => reg_timestamp,
+      getPinCode: () => pincode,
+      getCityId: () => cityId,
+      getStateId: () => stateId,
+      getRegTimestamp: () => regTimestamp,
       getAddress: () => address,
-      getProfilePicture: () => profile_picture,
+      getProfilePicture: () => profilePictureURL,
     });
   };
 

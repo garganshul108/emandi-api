@@ -10,14 +10,15 @@ function buildMakeVendor({
 }) {
   return function makeVendor({
     id,
-    device_fcm_token,
+    deviceFCMToken,
     contact,
     name,
     address,
-    profile_picture,
-    reg_timestamp,
-    city = {},
-    state = {},
+    profilePictureURL,
+    regTimestamp,
+    pincode,
+    cityId,
+    stateId,
   } = {}) {
     if (name && !valid(name, { type: "string", minLength: 3 })) {
       throw new Error("Invalid vendor name provided");
@@ -31,42 +32,34 @@ function buildMakeVendor({
     if (contact && !valid(contact, { type: "number", exactDigitCount: 10 })) {
       throw new Error("Invalid vendor contact.");
     }
-    if (city) {
-      city = makeCity(city);
-    }
 
-    if (state) {
-      state = makeState(state);
-    }
-
-    const validId = null;
-    if (id && !valid(id, {})) {
+    if (id && !valid(id, { type: "number" })) {
       throw new Error("Invalid Vendor Id provided.");
     }
 
-    if (device_fcm_token) {
-      device_fcm_token = makeDeviceFCMToken({ device_fcm_token });
+    if (deviceFCMToken) {
+      deviceFCMToken = makeDeviceFCMToken({ deviceFCMToken });
     }
 
-    if (profile_picture) {
-      profile_picture = makeURL({ url: profile_picture });
+    if (profilePictureURL) {
+      profilePictureURL = makeURL({ url: profilePictureURL });
     }
 
-    if (reg_timestamp) {
-      reg_timestamp = makeTimestamp({ timestamp: reg_timestamp });
+    if (regTimestamp) {
+      regTimestamp = makeTimestamp({ timestamp: regTimestamp });
     }
 
     return Object.freeze({
       getName: () => name,
       getId: () => id,
-      getDeviceFCMToken: () => device_fcm_token,
+      getDeviceFCMToken: () => deviceFCMToken,
       getContact: () => contact,
-      getPinCode: () => pin_code,
-      getCity: () => city,
-      getState: () => state,
-      getRegTimestamp: () => reg_timestamp,
+      getPinCode: () => pincode,
+      getCityId: () => cityId,
+      getStateId: () => stateId,
+      getRegTimestamp: () => regTimestamp,
       getAddress: () => address,
-      getProfilePicture: () => profile_picture,
+      getProfilePicture: () => profilePictureURL,
     });
   };
 }
