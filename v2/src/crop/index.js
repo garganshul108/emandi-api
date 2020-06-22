@@ -10,3 +10,6 @@ module.exports = makeCrop = buildMakeCrop({
   sanitize,
   valid,
 });
+
+// Dirty-cache
+module.exports = { dirtyCache };

@@ -14,7 +14,11 @@ module.exports = makeUpdateCrop = ({ dirtyCache, cropDb, filterUndefined }) => {
     }
 
     if (!dirtyCache.add({ id })) {
-      throw new Error("Internal Server Error.");
+      return {
+        updatedCount: 0,
+        serverError: 1,
+        message: "Internal Server Error. Not able to dirty cache the crop id",
+      };
     }
 
     const existing = await cropDb.findbyId({ id });
