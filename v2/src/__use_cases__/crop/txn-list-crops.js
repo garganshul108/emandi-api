@@ -1,3 +1,5 @@
+// deprecated
+
 const makeCrop = require("../../crop");
 
 module.exports = makeTxnListCrops = ({ cropDb, filterUndefined }) => {
