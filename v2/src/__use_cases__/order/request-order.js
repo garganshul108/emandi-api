@@ -1,15 +1,27 @@
 const makeOrder = require("../../order");
-module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
+module.exports = makePlaceOrder = ({
+  dirtyCache,
+  orderDb,
+  listCrops,
+  filterUndefined,
+}) => {
+  const unCacheIds = (ids) => {
+    ids.map((id) => {
+      dirtyCache.remove({ id });
+    });
+  };
   return (placeOrder = async ({
     userId,
     vendorId,
     orderedItems,
     delivery_address,
-    ...extrainfo
+    ...extraInfo
   }) => {
     if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
-      throw new Error("Ordered items must be provided enclosed in array.");
+      throw new Error("Array of ordered items must be provided.");
     }
+
+    let cachedIds = [];
 
     for (let item of orderedItems) {
       if (!item.cropId) {
@@ -20,18 +32,23 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
 
       let crop = await listCrops({ id: cId });
       if (!crop) {
-        throw new Error("Invalid crop id provided.");
+        unCacheIds(cachedIds);
+        throw new Error("No crop found with the provided id.");
       }
 
       if (crop.vendor.id !== vendorId) {
         throw new Error("Crop doesn't belong to the vendor provided.");
       }
+
+      dirtyCache.add({ id: cId });
+      cachedIds.push(cId);
+
       item.crop = crop;
     }
 
     const order = makeOrder({
-      user,
-      vendor,
+      userId,
+      vendorId,
       orderedItems,
       deliveryAddress,
       ...extrainfo,
