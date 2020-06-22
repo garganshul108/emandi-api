@@ -1,8 +1,8 @@
 const makeOrder = require("../../order");
 module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
   return (placeOrder = async ({
-    user,
-    vendor,
+    userId,
+    vendorId,
     orderedItems,
     delivery_address,
     ...extrainfo
@@ -12,18 +12,18 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
     }
 
     for (let item of orderedItems) {
-      if (!item.crop || !item.crop.id) {
+      if (!item.cropId) {
         throw new Error("Crop id for the item must be provided.");
       }
 
-      let c_id = item.crop.id;
+      let cId = item.cropId;
 
-      let crop = await listCrops({ id: c_id });
+      let crop = await listCrops({ id: cId });
       if (!crop) {
         throw new Error("Invalid crop id provided.");
       }
 
-      if (crop.vendor.id !== vendor.id) {
+      if (crop.vendor.id !== vendorId) {
         throw new Error("Crop doesn't belong to the vendor provided.");
       }
       item.crop = crop;
@@ -33,7 +33,7 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
       user,
       vendor,
       orderedItems,
-      delivery_address,
+      deliveryAddress,
       ...extrainfo,
     });
 
@@ -46,8 +46,6 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
       issue_timestamp: order.getIssueTimestamp(),
       checkout_value: order.getCheckoutValue(),
     });
-
-    logOn.core("Place order with options: ", options);
 
     const requested = orderDb.request(options);
 
