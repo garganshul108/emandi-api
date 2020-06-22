@@ -1,10 +1,10 @@
 module.exports = makeListCities = ({ cityDb }) => {
-  return (listCities = async ({ id, state_id }) => {
+  return (listCities = async ({ id, stateId }) => {
     let cities = undefined;
     if (id) {
       cities = await cityDb.findById({ id });
-    } else if (state_id) {
-      cities = await cityDb.findAllByStateId({ id });
+    } else if (stateId) {
+      cities = await cityDb.findAllByStateId({ id: stateId });
     } else {
       cities = await cityDb.findAll();
     }

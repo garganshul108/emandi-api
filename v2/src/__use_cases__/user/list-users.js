@@ -1,16 +1,16 @@
 const makeListUsers = ({ userDb }) => {
-  const listUsers = async ({ id, city_id, state_id }) => {
+  const listUsers = async ({ id, cityId, stateId }) => {
     let user = null;
     if (id) {
       user = await userDb.findById({ id });
     }
 
-    if (city_id) {
-      user = await userDb.findAllByCityId({ city_id });
+    if (cityId) {
+      user = await userDb.findAllByCityId({ city_id: cityId });
     }
 
-    if (state_id) {
-      user = await userDb.findAllByStateId({ state_id });
+    if (stateId) {
+      user = await userDb.findAllByStateId({ state_id: stateId });
     }
 
     if (!user) {
