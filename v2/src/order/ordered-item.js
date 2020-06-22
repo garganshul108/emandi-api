@@ -1,41 +1,40 @@
-module.exports = buildMakeOrderedItem = ({ updateCrop }) => {
-  return (makeOrderedItem = ({ crop, item_qty }) => {
+module.exports = buildMakeOrderedItem = ({}) => {
+  return (makeOrderedItem = ({ crop, itemQty }) => {
     if (!crop) {
       throw new Error("Crop must be provided.");
     }
 
-    if (item_qty && !valid(item_qty, { type: "number" })) {
+    if (
+      itemQty === null ||
+      itemQty === undefined ||
+      itemQty === "" ||
+      itemQty === NaN
+    ) {
+      throw new Error("Item qty must be provided.");
+    }
+
+    if (!valid(itemQty, { type: "number" })) {
       throw new Error(`Invaid item qty provided for crop id = ${crop.getId()}`);
     }
 
-    if (item_qty <= 0) {
+    if (itemQty <= 0) {
       throw new Error("Item qty must be positive.");
     }
 
-    if (!crop.crop_price) {
+    if (!crop.price) {
       throw new Error(
         "Crop price must be provided for item_freezed_cost calculation"
       );
     }
 
-    const itemFreezedCost = crop.crop_price() * item_qty;
+    const itemFreezedCost = crop.price() * item_qty;
 
     return Object.freeze({
       getItemFreezedCost: () => itemFreezedCost,
       getCrop: () => crop,
-      getItemQty: () => item_qty,
-      dispatch: async (transactionKey) => {
-        await updateCrop(
-          { id: crop.id, changeInCropQty: -1 * item.getItemQty() },
-          transactionKey
-        );
-      },
-      cancelDispatch: async (transactionKey) => {
-        await updateCrop(
-          { id: crop.id, changeInCropQty: item.getItemQty() },
-          transactionKey
-        );
-      },
+      getItemQty: () => itemQty,
     });
   });
 };
+
+// removed the dispatch and cancelDispatch methods

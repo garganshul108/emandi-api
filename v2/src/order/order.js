@@ -6,9 +6,9 @@ module.exports = buildMakeOrder = ({
 }) => {
   return (makeOrder = ({
     id,
-    user,
-    delivery_address,
-    vendor,
+    userId,
+    deliveryAddress,
+    vendorId,
     orderedItems,
     issueTimestamp,
     orderStatus,
@@ -17,19 +17,15 @@ module.exports = buildMakeOrder = ({
       throw new Error("Invalid order id provided.");
     }
 
-    if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
-      throw new Error("Ordered items must be provided enclosed in array.");
-    }
-
     if (!issueTimestamp) {
       issueTimestamp = makeTimestamp({ timestamp: new Date() });
     }
 
-    if (!user || !user.id) {
+    if (!userId) {
       throw new Error("User id must be provided.");
     }
 
-    if (!vendor || !vendor.id) {
+    if (!vendorId) {
       throw new Error("Vendor id must be provided.");
     }
 
@@ -39,15 +35,17 @@ module.exports = buildMakeOrder = ({
       orderStatus = makeOrderStatus(orderStatus);
     }
 
-    if (!delivery_address) {
+    if (!deliveryAddress) {
       throw new Error("Delivery address must be provided.");
     }
 
-    if (delivery_address) {
-      delivery_address = sanitize(delivery_address);
-      if (!valid(delivery_address, { type: "string" })) {
-        throw new Error("Invalid delivery address is provided.");
-      }
+    deliveryAddress = sanitize(deliveryAddress);
+    if (!valid(deliveryAddress, { type: "string" })) {
+      throw new Error("Invalid delivery address is provided.");
+    }
+
+    if (!Array.isArray(orderedItems) || orderedItems.length < 1) {
+      throw new Error("Ordered items must be provided enclosed in array.");
     }
 
     let checkoutValue = 0;
@@ -62,20 +60,6 @@ module.exports = buildMakeOrder = ({
 
     return Object.freeze({
       getOrderStatus: () => orderStatus.getStatus(),
-      cancel: async (transactionKey) => {
-        for (let item of orderedItemList) {
-          await item.cancelDispatch(transactionKey);
-        }
-        orderStatus.markCancel();
-        return orderedItemList;
-      },
-      confirm: async (transactionKey) => {
-        for (let item of orderedItemList) {
-          await item.dispatch(transactionKey);
-        }
-        orderStatus.markConfirm();
-        return orderedItemList;
-      },
       getUser: () => Object.freeze({ getId: () => user.id }),
       getVendor: () => Object.freeze({ getId: () => vendor.id }),
       getId: () => id,
