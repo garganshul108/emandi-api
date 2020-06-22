@@ -58,24 +58,24 @@ module.exports = makePlaceOrder = ({
       ...extraInfo,
     });
 
-    const options = filterUndefined({
-      user_id: order.getUser().getId(),
-      vendor_id: order.getVendor().getId(),
-      delivery_address: order.getDeliveryAddress(),
-      ordered_items: order.getOrderedItems(),
-      order_status: order.getOrderStatus().getStatus(),
-      issue_timestamp: order.getIssueTimestamp(),
-      checkout_value: order.getCheckoutValue(),
-    });
+    try {
+      const options = filterUndefined({
+        user_id: order.getUser().getId(),
+        vendor_id: order.getVendor().getId(),
+        delivery_address: order.getDeliveryAddress(),
+        ordered_items: order.getOrderedItems(),
+        order_status: order.getOrderStatus().getStatus(),
+        issue_timestamp: order.getIssueTimestamp(),
+        checkout_value: order.getCheckoutValue(),
+      });
 
-    logOn.core("Place order with options: ", options);
-
-    const requested = await orderDb.request(options);
-
-    unCacheIds(cachedIds);
-    return {
-      requestedCount: 1,
-      result: requested,
-    };
+      const requested = await orderDb.request(options);
+      return {
+        requestedCount: 1,
+        result: requested,
+      };
+    } finally {
+      unCacheIds(cachedIds);
+    }
   });
 };
