@@ -6,9 +6,9 @@ module.exports = buildMakeOrder = ({
 }) => {
   return (makeOrder = ({
     id,
-    user,
+    userId,
     delivery_address,
-    vendor,
+    vendorId,
     orderedItems,
     issueTimestamp,
     orderStatus,
@@ -25,11 +25,11 @@ module.exports = buildMakeOrder = ({
       issueTimestamp = makeTimestamp({ timestamp: new Date() });
     }
 
-    if (!user || !user.id) {
+    if (!userId) {
       throw new Error("User id must be provided.");
     }
 
-    if (!vendor || !vendor.id) {
+    if (!vendorId) {
       throw new Error("Vendor id must be provided.");
     }
 
@@ -76,8 +76,8 @@ module.exports = buildMakeOrder = ({
         orderStatus.markConfirm();
         return orderedItemList;
       },
-      getUser: () => Object.freeze({ getId: () => user.id }),
-      getVendor: () => Object.freeze({ getId: () => vendor.id }),
+      getUserId: () => userId,
+      getVendorId: () => vendorId,
       getId: () => id,
       getIssueTimestamp: () => issueTimestamp.getTimestamp(),
       getDeliveryAddress: () => delivery_address,

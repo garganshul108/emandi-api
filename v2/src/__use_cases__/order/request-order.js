@@ -1,5 +1,15 @@
 const makeOrder = require("../../order");
-module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
+module.exports = makePlaceOrder = ({
+  dirtyCache,
+  orderDb,
+  listCrops,
+  filterUndefined,
+}) => {
+  const unCacheIds = (ids) => {
+    ids.map((id) => {
+      dirtyCache.remove({ id });
+    });
+  };
   return (placeOrder = async ({
     user,
     vendor,
@@ -11,27 +21,38 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
       throw new Error("Array of ordered items must be provided.");
     }
 
+    let cachedIds = [];
+
     for (let item of orderedItems) {
-      if (!item.crop || !item.crop.id) {
+      if (!item.cropId) {
+        unCacheIds(cachedIds);
         throw new Error("Crop id for the item must be provided.");
       }
 
-      let c_id = item.crop.id;
+      let cId = item.cropId;
 
-      let crop = await listCrops({ id: c_id });
+      let crop = await listCrops({ id: cId });
       if (!crop) {
-        throw new Error("Invalid crop id provided.");
+        unCacheIds(cachedIds);
+        throw new Error("No crop found with the provided id.");
       }
 
-      if (crop.vendor.id !== vendor.id) {
-        throw new Error("Crop doesn't belong to the vendor provided.");
+      if (crop.vendor.id !== vendorId) {
+        unCacheIds(cachedIds);
+        throw new Error(
+          `Crop with id as ${cropId} doesn't belong to the vendor provided.`
+        );
       }
+
+      dirtyCache.add({ id: cId });
+      cachedIds.push(cId);
+
       item.crop = crop;
     }
 
     const order = makeOrder({
-      user,
-      vendor,
+      userId,
+      vendorId,
       orderedItems,
       delivery_address,
       ...extraInfo,
@@ -41,7 +62,7 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
       user_id: order.getUser().getId(),
       vendor_id: order.getVendor().getId(),
       delivery_address: order.getDeliveryAddress(),
-      orderedItems: order.getOrderedItems(),
+      ordered_items: order.getOrderedItems(),
       order_status: order.getOrderStatus().getStatus(),
       issue_timestamp: order.getIssueTimestamp(),
       checkout_value: order.getCheckoutValue(),
@@ -49,8 +70,9 @@ module.exports = makePlaceOrder = ({ orderDb, listCrops, filterUndefined }) => {
 
     logOn.core("Place order with options: ", options);
 
-    const requested = orderDb.request(options);
+    const requested = await orderDb.request(options);
 
+    unCacheIds(cachedIds);
     return {
       requestedCount: 1,
       result: requested,
