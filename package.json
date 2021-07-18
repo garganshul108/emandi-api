@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "DEBUG=emandi:info nodemon index.js",
     "dev": "DEBUG=emandi:* nodemon index.js"
   },
   "engines": {
@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "config": "^3.3.1",
     "debug": "^4.1.1",
