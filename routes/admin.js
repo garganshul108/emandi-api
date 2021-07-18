@@ -9,7 +9,10 @@ const {
 
 const makeCallback = require("../helper/express-callback");
 
+// call to login the admin
 router.post("/admin/login", makeCallback(postLoginAdmin));
+
+// add Admin
 router.post("/admin", [decodeToken, authAdmin], makeCallback(postAdmin));
 
 router.get("/admin/:username", makeCallback(getAdmins));
@@ -22,3 +25,20 @@ router.delete(
 );
 
 module.exports = router;
+
+/**
+ * Who is admin?
+ * - Adminstrator of the API; Performs special/previledged actions
+ * - Is Farmer an Admin? NO
+ * - Is Buyer an Admin? NO
+ *
+ * Admin Specific Actions
+ * - Create/Delete Groups
+ * - Create/Delete Permissions
+ * - Give/Take-off Permissions from a Group
+ * - Add user to a group
+ *
+ * Special Admin Name - Root
+ *
+ *
+ */
